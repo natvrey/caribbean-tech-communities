@@ -107,3 +107,5 @@ Use one of the supported directory scopes:
 Treat this repository as a dataset first, README second. Manual edits to generated markdown files are not the preferred contribution path.
 
 If a contributor updates `data/communities.json`, they should also run `npm run validate` and `npm run generate` before opening a pull request.
+
+If you are contributing from Windows, this repository uses `.gitattributes` to keep generated files and documentation on consistent line endings. If Git shows many files as modified after generation, run `git add --renormalize .` once and review the diff before committing.
