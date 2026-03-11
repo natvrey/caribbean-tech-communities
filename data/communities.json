@@ -13,19 +13,6 @@
     "description": "Regional community connecting Caribbean developers, creators, and tech professionals through content, events, and collaboration."
   },
   {
-    "name": "Caribbean Cybersecurity and Privacy Association",
-    "country": "Regional",
-    "language": "English",
-    "focus": ["cybersecurity", "privacy", "professional development"],
-    "links": [
-      {
-        "label": "Website",
-        "url": "https://caribbeancspa.org/"
-      }
-    ],
-    "description": "Regional body focused on developing cybersecurity professionals, protecting businesses, and educating Caribbean citizens."
-  },
-  {
     "name": "Women in InfoSec Caribbean",
     "country": "Regional",
     "language": "English",
