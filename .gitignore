@@ -6,6 +6,10 @@ __pycache__/
 node_modules/
 dist/
 build/
+coverage/
+.nyc_output/
+.cache/
+.eslintcache
 *.log
 .env
 .idea/

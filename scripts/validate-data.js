@@ -23,19 +23,6 @@ const ALLOWED_COUNTRIES = new Set([
   "Trinidad and Tobago"
 ]);
 
-const ALLOWED_PLATFORMS = new Set([
-  "WhatsApp",
-  "Discord",
-  "Slack",
-  "Telegram",
-  "Facebook",
-  "Meetup",
-  "Forum",
-  "Mailing List",
-  "LinkedIn",
-  "Other"
-]);
-
 const ALLOWED_DOMAINS = [
   "discord.gg",
   "discord.com",
@@ -76,7 +63,7 @@ function isNonEmptyString(value) {
 
 function validateRecord(record, index, seenLinks) {
   const label = `Record ${index + 1}`;
-  const requiredFields = ["name", "country", "platform", "language", "focus", "join_link", "description"];
+  const requiredFields = ["name", "country", "language", "focus", "description"];
 
   for (const field of requiredFields) {
     if (!(field in record)) {
@@ -90,10 +77,6 @@ function validateRecord(record, index, seenLinks) {
 
   if (!ALLOWED_COUNTRIES.has(record.country)) {
     fail(`${label}: unsupported country '${record.country}'.`);
-  }
-
-  if (!ALLOWED_PLATFORMS.has(record.platform)) {
-    fail(`${label}: unsupported platform '${record.platform}'.`);
   }
 
   if (!Array.isArray(record.focus) || record.focus.length === 0 || record.focus.some((item) => !isNonEmptyString(item))) {
@@ -116,37 +99,75 @@ function validateRecord(record, index, seenLinks) {
     fail(`${label}: 'city' must be a non-empty string when provided.`);
   }
 
-  if (!isNonEmptyString(record.join_link)) {
-    fail(`${label}: 'join_link' must be a non-empty string.`);
+  if (
+    record.socials !== undefined &&
+    (!Array.isArray(record.socials) ||
+      record.socials.some(
+        (social) =>
+          typeof social !== "object" ||
+          social === null ||
+          !isNonEmptyString(social.platform) ||
+          !isNonEmptyString(social.handle)
+      ))
+  ) {
+    fail(`${label}: 'socials' must be an array of { platform, handle } objects when provided.`);
+  }
+
+  if (record.links !== undefined && (!Array.isArray(record.links) || record.links.length === 0)) {
+    fail(`${label}: 'links' must be a non-empty array when provided.`);
+  }
+
+  if (
+    record.links !== undefined &&
+    record.links.some(
+      (link) =>
+        typeof link !== "object" ||
+        link === null ||
+        !isNonEmptyString(link.label) ||
+        !isNonEmptyString(link.url)
+    )
+  ) {
+    fail(`${label}: 'links' must contain only { label, url } objects.`);
     return;
   }
 
-  let url;
-  try {
-    url = new URL(record.join_link);
-  } catch {
-    fail(`${label}: 'join_link' must be a valid URL.`);
-    return;
+  if (record.links) {
+    for (const link of record.links) {
+    let url;
+    try {
+      url = new URL(link.url);
+    } catch {
+      fail(`${label}: link '${link.label}' must contain a valid URL.`);
+      continue;
+    }
+
+    if (url.protocol !== "https:") {
+      fail(`${label}: link '${link.label}' must use https.`);
+    }
+
+    const host = url.hostname.toLowerCase();
+    if (SHORTENER_DOMAINS.has(host)) {
+      fail(`${label}: shortened URLs are not allowed (${host}).`);
+    }
+
+    const isApprovedDomain = ALLOWED_DOMAINS.some((domain) => host === domain || host.endsWith(`.${domain}`));
+    const isKnownGenericLabel = ["Website", "Community Page", "Other", "Forum"].includes(link.label);
+    if (!isApprovedDomain && !isKnownGenericLabel) {
+      fail(`${label}: domain '${host}' does not match the expected domain for link label '${link.label}'.`);
+    }
+
+    if (seenLinks.has(link.url)) {
+      fail(`${label}: duplicate URL '${link.url}'.`);
+    }
+    seenLinks.add(link.url);
+  }
   }
 
-  if (url.protocol !== "https:") {
-    fail(`${label}: 'join_link' must use https.`);
+  const hasLinks = Array.isArray(record.links) && record.links.length > 0;
+  const hasSocials = Array.isArray(record.socials) && record.socials.length > 0;
+  if (!hasLinks && !hasSocials) {
+    fail(`${label}: provide at least one link or one social handle.`);
   }
-
-  const host = url.hostname.toLowerCase();
-  if (SHORTENER_DOMAINS.has(host)) {
-    fail(`${label}: shortened URLs are not allowed (${host}).`);
-  }
-
-  const isApprovedDomain = ALLOWED_DOMAINS.some((domain) => host === domain || host.endsWith(`.${domain}`));
-  if (!isApprovedDomain && record.platform !== "Other" && record.platform !== "Forum") {
-    fail(`${label}: domain '${host}' does not match the expected platform domains.`);
-  }
-
-  if (seenLinks.has(record.join_link)) {
-    fail(`${label}: duplicate join_link '${record.join_link}'.`);
-  }
-  seenLinks.add(record.join_link);
 }
 
 function main() {

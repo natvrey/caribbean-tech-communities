@@ -70,10 +70,11 @@ body:
       required: true
 
   - type: input
-    id: join_link
+    id: links
     attributes:
-      label: Join link
-      placeholder: https://...
+      label: Public links
+      description: Provide one or more public URLs separated by commas.
+      placeholder: https://example.com, https://discord.gg/example
     validations:
       required: true
 
@@ -91,6 +92,13 @@ body:
     attributes:
       label: Approximate member count (optional)
       placeholder: 250
+
+  - type: input
+    id: socials
+    attributes:
+      label: Social handles (optional)
+      description: Provide handles in a simple format, for example X:@example, Instagram:@example.
+      placeholder: X:@example, Instagram:@example
 
   - type: textarea
     id: description

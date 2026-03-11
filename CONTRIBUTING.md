@@ -24,11 +24,25 @@ Each object in `data/communities.json` should follow this shape:
   "name": "Kingston Tech Community",
   "country": "Jamaica",
   "city": "Kingston",
-  "platform": "Slack",
   "language": "English",
   "focus": ["software engineering", "startups"],
   "member_count": 250,
-  "join_link": "https://join.slack.com/example",
+  "socials": [
+    {
+      "platform": "X",
+      "handle": "@examplecommunity"
+    }
+  ],
+  "links": [
+    {
+      "label": "Slack",
+      "url": "https://join.slack.com/example"
+    },
+    {
+      "label": "Website",
+      "url": "https://example.com"
+    }
+  ],
   "description": "Community for Jamaican developers, founders, and students."
 }
 ```
@@ -37,10 +51,10 @@ Each object in `data/communities.json` should follow this shape:
 
 - `name`
 - `country`
-- `platform`
 - `language`
 - `focus`
-- `join_link`
+- `links` (optional if `socials` is provided)
+- `socials` (optional)
 - `description`
 
 ## Validation Rules
@@ -48,23 +62,11 @@ Each object in `data/communities.json` should follow this shape:
 Submissions may be rejected if they:
 
 - Duplicate an existing `join_link`
-- Use an unsupported or unknown platform
+- Duplicate an existing URL inside `links`
 - Use shortened URLs
 - Omit a useful description
 - Are not relevant to tech in the Caribbean
-
-## Approved Platforms
-
-- WhatsApp
-- Discord
-- Slack
-- Telegram
-- Facebook
-- Meetup
-- Forum
-- Mailing List
-- LinkedIn
-- Other
+- Include at least one public link or one clearly labeled social handle
 
 ## Country Values
 
@@ -91,6 +93,8 @@ Use one of the supported directory scopes:
 ## Quality Bar
 
 - Prefer direct, public join URLs
+- Add multiple links when they help, for example `Website`, `Discord`, `LinkedIn`, `Meetup`, or `WhatsApp`
+- Use `socials` for handles like `@JamDevCo` when there is no direct profile URL available
 - Avoid private or permission-sensitive invite links unless they are intentionally public
 - Keep descriptions short and factual
 - Use `focus` as a short list of topics or audiences

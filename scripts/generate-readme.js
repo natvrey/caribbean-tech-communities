@@ -42,12 +42,50 @@ function sortCommunities(communities) {
   });
 }
 
+function renderPlatformLabels(community) {
+  const labels = [];
+
+  if (community.links) {
+    for (const link of community.links) {
+      if (!labels.includes(link.label)) {
+        labels.push(link.label);
+      }
+    }
+  }
+
+  if (community.socials) {
+    for (const social of community.socials) {
+      if (!labels.includes(social.platform)) {
+        labels.push(social.platform);
+      }
+    }
+  }
+
+  return labels.join(", ");
+}
+
+function renderSocials(community) {
+  if (!community.socials || community.socials.length === 0) {
+    return "";
+  }
+
+  return community.socials.map((social) => `${social.platform}: ${social.handle}`).join("<br>");
+}
+
 function renderCountryPage(country, communities) {
   const rows = communities.length
     ? communities
         .map(
-          (community) =>
-            `| ${community.name} | ${community.platform} | ${community.description} | [Join](${community.join_link}) |`
+          (community) => {
+            const joinLinks = community.links
+              ? community.links.map((link) => `[${link.label}](${link.url})`).join("<br>")
+              : "";
+            const socials = renderSocials(community);
+            const joinParts = [joinLinks, socials].filter(Boolean);
+            const joinCell = joinParts.length > 0 ? joinParts.join("<br>") : "-";
+
+            return `| ${community.name} | ${renderPlatformLabels(community)} | ${community.description} | ${joinCell} |`;
+          }
         )
         .join("\n")
     : "| No listings yet | - | Submit the first listing for this area. | - |";
@@ -113,11 +151,11 @@ function renderReadme() {
     "- `name`",
     "- `country`",
     "- `city` (optional)",
-    "- `platform`",
     "- `language`",
     "- `focus`",
     "- `member_count` (optional)",
-    "- `join_link`",
+    "- `links`",
+    "- `socials` (optional)",
     "- `description`",
     "",
     "## Automation",
@@ -132,9 +170,7 @@ function main() {
   fs.mkdirSync(COUNTRIES_DIR, { recursive: true });
 
   for (const country of COUNTRIES) {
-    const countryCommunities = communities.filter(
-      (community) => community.country === country || (community.country === "Regional" && country !== "Regional")
-    );
+    const countryCommunities = communities.filter((community) => community.country === country);
 
     fs.writeFileSync(
       path.join(COUNTRIES_DIR, `${slugify(country)}.md`),

@@ -1,1 +1,219 @@
-[]
+[
+  {
+    "name": "Caribbean Tech Connect",
+    "country": "Regional",
+    "language": "English",
+    "focus": ["community building", "software development", "career growth"],
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://caribbean.dev/"
+      }
+    ],
+    "description": "Regional community connecting Caribbean developers, creators, and tech professionals through content, events, and collaboration."
+  },
+  {
+    "name": "Caribbean Cybersecurity and Privacy Association",
+    "country": "Regional",
+    "language": "English",
+    "focus": ["cybersecurity", "privacy", "professional development"],
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://caribbeancspa.org/"
+      }
+    ],
+    "description": "Regional body focused on developing cybersecurity professionals, protecting businesses, and educating Caribbean citizens."
+  },
+  {
+    "name": "Women in InfoSec Caribbean",
+    "country": "Regional",
+    "language": "English",
+    "focus": ["cybersecurity", "women in tech", "mentorship"],
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://wisc.g5cybersecurity.com/"
+      }
+    ],
+    "description": "Regional initiative supporting Caribbean women and girls who want to develop careers in information security."
+  },
+  {
+    "name": "Women in Tech Caribbean",
+    "country": "Regional",
+    "language": "English",
+    "focus": ["women in tech", "networking", "career development"],
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://www.womenintechcaribbean.com/"
+      }
+    ],
+    "description": "Regional community connecting Caribbean women in tech at home and in the diaspora for networking and growth."
+  },
+  {
+    "name": "Caribbean Girls Hack",
+    "country": "Regional",
+    "language": "English",
+    "focus": ["girls in tech", "digital skills", "hackathons"],
+    "socials": [
+      {
+        "platform": "Instagram",
+        "handle": "@cgirlzhack_"
+      }
+    ],
+    "description": "Regional initiative focused on bridging the gender digital divide by engaging and upskilling girls and young women."
+  },
+  {
+    "name": "Docker Jamaica",
+    "country": "Jamaica",
+    "city": "Kingston",
+    "language": "English",
+    "focus": ["devops", "containers", "cloud"],
+    "links": [
+      {
+        "label": "Meetup",
+        "url": "https://www.meetup.com/docker-jamaica/"
+      }
+    ],
+    "description": "Community for developers and ops engineers in Jamaica who are using and learning about Docker and containers."
+  },
+  {
+    "name": "Jamaica Artificial Intelligence Association",
+    "country": "Jamaica",
+    "language": "English",
+    "focus": ["artificial intelligence", "machine learning", "community learning"],
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://www.jaia.org.jm/"
+      }
+    ],
+    "description": "Community for Jamaicans interested in AI and its practical applications, with regular discussions and learning sessions."
+  },
+  {
+    "name": "Jamaica Developers Association",
+    "country": "Jamaica",
+    "language": "English",
+    "focus": ["software development", "networking", "local community"],
+    "links": [
+      {
+        "label": "Facebook",
+        "url": "https://www.facebook.com/groups/114051488653980"
+      }
+    ],
+    "description": "Facebook group for Jamaica-based developers and tech enthusiasts to connect, share opportunities, and discuss the industry."
+  },
+  {
+    "name": "Jamaican Developers",
+    "country": "Jamaica",
+    "city": "Kingston",
+    "language": "English",
+    "focus": ["software development", "networking", "events"],
+    "socials": [
+      {
+        "platform": "Social Media",
+        "handle": "@JamDevCo"
+      }
+    ],
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://jamaicandevelopers.com/"
+      },
+      {
+        "label": "Meetup",
+        "url": "https://www.meetup.com/Jamaican-Developers-Group/"
+      },
+      {
+        "label": "Telegram",
+        "url": "https://t.me/joinchat/yNJvatu1stMyODdh"
+      }
+    ],
+    "description": "Community of Jamaican tech enthusiasts focused on skill-building, knowledge-sharing, and collaboration, with a current shift toward Caribbean Tech Connect."
+  },
+  {
+    "name": "Jamaica Game Developer Society",
+    "country": "Jamaica",
+    "language": "English",
+    "focus": ["game development", "digital media", "community"],
+    "links": [
+      {
+        "label": "Discord",
+        "url": "https://discord.gg/V8YMne5"
+      }
+    ],
+    "description": "Coalition supporting Jamaica's game development ecosystem through education, networking, showcases, and collaboration."
+  },
+  {
+    "name": "Kingston WordPress Meetup",
+    "country": "Jamaica",
+    "city": "Kingston",
+    "language": "English",
+    "focus": ["wordpress", "web development", "community learning"],
+    "links": [
+      {
+        "label": "Meetup",
+        "url": "https://www.meetup.com/kingston-wordpress-meetup/"
+      }
+    ],
+    "description": "Jamaica-based WordPress community for learning, sharing, and connecting around websites, publishing, and web development."
+  },
+  {
+    "name": "AWS User Group Jamaica",
+    "country": "Jamaica",
+    "language": "English",
+    "focus": ["aws", "cloud", "developer community"],
+    "links": [
+      {
+        "label": "Meetup",
+        "url": "https://www.meetup.com/aws-user-group-jamaica/"
+      }
+    ],
+    "description": "Community for people in Jamaica interested in Amazon Web Services, cloud technologies, and shared learning."
+  },
+  {
+    "name": "Python Jamaica",
+    "country": "Jamaica",
+    "city": "Kingston",
+    "language": "English",
+    "focus": ["python", "web development", "automation"],
+    "links": [
+      {
+        "label": "Meetup",
+        "url": "https://www.meetup.com/PythonJamaica/"
+      }
+    ],
+    "description": "Community for people in Jamaica interested in Python, including automation, web development, and data work."
+  },
+  {
+    "name": "Tech Chat Jamaica",
+    "country": "Jamaica",
+    "language": "English",
+    "focus": ["general tech", "networking", "discussion"],
+    "links": [
+      {
+        "label": "Facebook",
+        "url": "https://www.facebook.com/groups/319257644759106"
+      }
+    ],
+    "description": "General Facebook community for people in Jamaica to discuss tech topics, opportunities, and local happenings."
+  },
+  {
+    "name": "UX Designer Network Jamaica",
+    "country": "Jamaica",
+    "language": "English",
+    "focus": ["ux design", "product design", "research"],
+    "links": [
+      {
+        "label": "Community Page",
+        "url": "https://caribbean.dev/community/ux-designer-network-jamaica/"
+      },
+      {
+        "label": "LinkedIn",
+        "url": "https://www.linkedin.com/groups/9011923/"
+      }
+    ],
+    "description": "Community for Jamaica-based UX and product designers to collaborate, learn, and discover project or job opportunities."
+  }
+]
