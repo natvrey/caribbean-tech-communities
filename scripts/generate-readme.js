@@ -34,6 +34,17 @@ function readCommunities() {
   return JSON.parse(fs.readFileSync(DATA_PATH, "utf8"));
 }
 
+function writeIfChanged(filePath, content) {
+  if (fs.existsSync(filePath)) {
+    const existing = fs.readFileSync(filePath, "utf8");
+    if (existing === content) {
+      return;
+    }
+  }
+
+  fs.writeFileSync(filePath, content, "utf8");
+}
+
 function sortCommunities(communities) {
   return [...communities].sort((a, b) => {
     const countryCompare = a.country.localeCompare(b.country);
@@ -109,7 +120,7 @@ function renderReadme() {
   return [
     "# Caribbean Tech Communities",
     "",
-    "A curated directory of technology communities across the Caribbean.",
+    "A directory of tech communities across the 13 sovereign Caribbean states, plus Belize, Guyana, and Suriname, focused on strengthening visibility & communication among the tech industry in these countries.",
     "",
     "This repository is managed as a dataset first and a directory second:",
     "",
@@ -117,14 +128,15 @@ function renderReadme() {
     "",
     "Platforms can include:",
     "",
+    "- Websites",
     "- WhatsApp",
     "- Discord",
     "- Slack",
     "- Telegram",
-    "- Facebook",
     "- Meetup",
     "- Forums",
     "- Mailing lists",
+    "- Social media sites such as Instagram, LinkedIn, X, and Facebook",
     "",
     "## Directory",
     "",
@@ -171,15 +183,13 @@ function main() {
 
   for (const country of COUNTRIES) {
     const countryCommunities = communities.filter((community) => community.country === country);
+    const outputPath = path.join(COUNTRIES_DIR, `${slugify(country)}.md`);
+    const outputContent = renderCountryPage(country, countryCommunities);
 
-    fs.writeFileSync(
-      path.join(COUNTRIES_DIR, `${slugify(country)}.md`),
-      renderCountryPage(country, countryCommunities),
-      "utf8"
-    );
+    writeIfChanged(outputPath, outputContent);
   }
 
-  fs.writeFileSync(README_PATH, renderReadme(), "utf8");
+  writeIfChanged(README_PATH, renderReadme());
 }
 
 main();
