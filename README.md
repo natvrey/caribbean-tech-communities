@@ -8,14 +8,15 @@ This repository is managed as a dataset first and a directory second:
 
 Platforms can include:
 
+- Websites
 - WhatsApp
 - Discord
 - Slack
 - Telegram
-- Facebook
 - Meetup
 - Forums
 - Mailing lists
+- Social media sites such as Instagram, LinkedIn, X, and Facebook
 
 ## Directory
 
