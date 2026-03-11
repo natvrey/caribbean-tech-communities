@@ -13,7 +13,7 @@ To contribute:
 5. Commit the updated data and generated markdown files
 6. Open a pull request
 
-If you do not want to open a pull request, submit a community through the issue template.
+If you do not want to open a pull request, use the issue template to submit a community.
 
 ## Record Schema
 
@@ -57,11 +57,12 @@ Each object in `data/communities.json` should follow this shape:
 - `socials` (optional)
 - `description`
 
+Each record must include at least one public `link` or one clearly labeled social handle in `socials`.
+
 ## Validation Rules
 
 Submissions may be rejected if they:
 
-- Duplicate an existing `join_link`
 - Duplicate an existing URL inside `links`
 - Use shortened URLs
 - Omit a useful description
@@ -95,6 +96,7 @@ Use one of the supported directory scopes:
 - Prefer direct, public join URLs
 - Add multiple links when they help, for example `Website`, `Discord`, `LinkedIn`, `Meetup`, or `WhatsApp`
 - Use `socials` for handles like `@JamDevCo` when there is no direct profile URL available
+- Label social handles clearly, for example `Instagram`, `X`, `LinkedIn`, or `Social Media`
 - Avoid private or permission-sensitive invite links unless they are intentionally public
 - Keep descriptions short and factual
 - Use `focus` as a short list of topics or audiences
@@ -103,3 +105,5 @@ Use one of the supported directory scopes:
 ## Maintainer Direction
 
 Treat this repository as a dataset first, README second. Manual edits to generated markdown files are not the preferred contribution path.
+
+If a contributor updates `data/communities.json`, they should also run `npm run validate` and `npm run generate` before opening a pull request.

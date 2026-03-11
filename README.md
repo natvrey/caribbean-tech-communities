@@ -1,6 +1,6 @@
 # Caribbean Tech Communities
 
-A directory of tech communities across the sovereign Caribbean states, plus Belize, Guyana, and Suriname, focused on strengthening visibility & communication among the tech industry in these countries.
+A directory of tech communities across the 13 sovereign Caribbean states, plus Belize, Guyana, and Suriname, focused on strengthening visibility & communication among the tech industry in these countries.
 
 This repository is managed as a dataset first and a directory second:
 
