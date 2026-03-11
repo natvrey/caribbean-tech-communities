@@ -29,11 +29,17 @@
     "name": "Women in Tech Caribbean",
     "country": "Regional",
     "language": "English",
-    "focus": ["women in tech", "networking", "career development"],
+    "focus": ["women in tech", "networking", "career development", "events"],
     "links": [
       {
         "label": "Website",
         "url": "https://www.womenintechcaribbean.com/"
+      }
+    ],
+     "socials": [
+      {
+        "platform": "Instagram",
+        "handle": "@womenintechcaribbean"
       }
     ],
     "description": "Regional community connecting Caribbean women in tech at home and in the diaspora for networking and growth."
@@ -82,7 +88,7 @@
     "name": "Jamaica Developers Association",
     "country": "Jamaica",
     "language": "English",
-    "focus": ["software development", "networking", "local community"],
+    "focus": ["software development", "networking", "community building"],
     "links": [
       {
         "label": "Facebook",
