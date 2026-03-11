@@ -1,0 +1,10 @@
+{
+  "name": "caribbean-tech-communities",
+  "private": true,
+  "version": "0.1.0",
+  "description": "A structured directory of Caribbean tech communities.",
+  "scripts": {
+    "generate": "node scripts/generate-readme.js",
+    "validate": "node scripts/validate-data.js"
+  }
+}

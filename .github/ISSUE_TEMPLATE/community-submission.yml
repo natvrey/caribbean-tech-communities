@@ -1,0 +1,110 @@
+name: Community submission
+description: Suggest a new Caribbean tech community for the directory
+title: "[Community] "
+labels:
+  - community-submission
+body:
+  - type: input
+    id: community_name
+    attributes:
+      label: Community name
+      placeholder: Caribbean AI Builders
+    validations:
+      required: true
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Country or scope
+      options:
+        - Regional
+        - Antigua and Barbuda
+        - Bahamas
+        - Barbados
+        - Belize
+        - Cuba
+        - Dominica
+        - Dominican Republic
+        - Grenada
+        - Guyana
+        - Haiti
+        - Jamaica
+        - Saint Kitts and Nevis
+        - Saint Lucia
+        - Saint Vincent and the Grenadines
+        - Suriname
+        - Trinidad and Tobago
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - WhatsApp
+        - Discord
+        - Slack
+        - Telegram
+        - Facebook
+        - Meetup
+        - Forum
+        - Mailing List
+        - LinkedIn
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: city
+    attributes:
+      label: City (optional)
+      placeholder: Kingston
+
+  - type: input
+    id: language
+    attributes:
+      label: Primary language
+      placeholder: English
+    validations:
+      required: true
+
+  - type: input
+    id: join_link
+    attributes:
+      label: Join link
+      placeholder: https://...
+    validations:
+      required: true
+
+  - type: input
+    id: focus
+    attributes:
+      label: Focus or audience
+      description: Provide a comma-separated list of topics or audiences.
+      placeholder: software engineering, startups, students
+    validations:
+      required: true
+
+  - type: input
+    id: member_count
+    attributes:
+      label: Approximate member count (optional)
+      placeholder: 250
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      placeholder: Community for Caribbean developers, founders, and students.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Verification notes
+      description: Explain how you know this link is valid and appropriate to share.
+      placeholder: I joined successfully on 2026-03-10, or the public landing page is active.
+    validations:
+      required: true

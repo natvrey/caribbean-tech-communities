@@ -1,0 +1,26 @@
+name: Build Directory
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Generate directory pages
+        run: npm run generate
+
+      - name: Ensure generated files are committed
+        run: git diff --exit-code
