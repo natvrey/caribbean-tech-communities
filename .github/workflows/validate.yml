@@ -2,9 +2,28 @@ name: Validate
 
 on:
   pull_request:
+    paths:
+      - "data/**"
+      - "countries/**"
+      - "scripts/**"
+      - ".github/workflows/**"
+      - "README.md"
+      - "CONTRIBUTING.md"
+      - "package.json"
   push:
     branches:
       - main
+    paths:
+      - "data/**"
+      - "countries/**"
+      - "scripts/**"
+      - ".github/workflows/**"
+      - "README.md"
+      - "CONTRIBUTING.md"
+      - "package.json"
+
+permissions:
+  contents: read
 
 jobs:
   validate:
