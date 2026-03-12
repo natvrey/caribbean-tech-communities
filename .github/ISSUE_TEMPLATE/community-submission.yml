@@ -37,24 +37,6 @@ body:
     validations:
       required: true
 
-  - type: dropdown
-    id: platform
-    attributes:
-      label: Platform
-      options:
-        - WhatsApp
-        - Discord
-        - Slack
-        - Telegram
-        - Facebook
-        - Meetup
-        - Forum
-        - Mailing List
-        - LinkedIn
-        - Other
-    validations:
-      required: true
-
   - type: input
     id: city
     attributes:
@@ -73,10 +55,8 @@ body:
     id: links
     attributes:
       label: Public links
-      description: Provide one or more public URLs separated by commas.
+      description: Provide one or more public URLs separated by commas. This can be left blank if you are only submitting social handles.
       placeholder: https://example.com, https://discord.gg/example
-    validations:
-      required: true
 
   - type: input
     id: focus
@@ -97,8 +77,8 @@ body:
     id: socials
     attributes:
       label: Social handles (optional)
-      description: Provide handles in a simple format, for example X:@example, Instagram:@example.
-      placeholder: X:@example, Instagram:@example
+      description: Provide handles in a simple format, for example Instagram:@example, X:@example, LinkedIn:@example.
+      placeholder: Instagram:@example, X:@example
 
   - type: textarea
     id: description
@@ -112,7 +92,7 @@ body:
     id: evidence
     attributes:
       label: Verification notes
-      description: Explain how you know this link is valid and appropriate to share.
-      placeholder: I joined successfully on 2026-03-10, or the public landing page is active.
+      description: Explain how you know this submission is valid and appropriate to share.
+      placeholder: I joined successfully on 2026-03-11, the public landing page is active, or the handle is the official community account.
     validations:
       required: true
