@@ -13,7 +13,7 @@ To contribute:
 5. Commit the updated data and generated markdown files
 6. Open a pull request
 
-If you do not want to open a pull request, use the issue template to submit a community.
+If you do not want to open a pull request, use the [community submission form](https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml) to submit a community.
 
 ## Record Schema
 
