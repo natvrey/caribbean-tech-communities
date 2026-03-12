@@ -71,7 +71,7 @@ body:
     id: member_count
     attributes:
       label: Approximate member count (optional)
-      placeholder: 250
+      placeholder: "250"
 
   - type: input
     id: socials
