@@ -53,6 +53,10 @@ function sortCommunities(communities) {
   });
 }
 
+function renderCommunitiesJson(communities) {
+  return `${JSON.stringify(communities, null, 2)}\n`;
+}
+
 function renderPlatformLabels(community) {
   const labels = [];
 
@@ -180,6 +184,8 @@ function renderReadme() {
 function main() {
   const communities = sortCommunities(readCommunities());
   fs.mkdirSync(COUNTRIES_DIR, { recursive: true });
+
+  writeIfChanged(DATA_PATH, renderCommunitiesJson(communities));
 
   for (const country of COUNTRIES) {
     const countryCommunities = communities.filter((community) => community.country === country);

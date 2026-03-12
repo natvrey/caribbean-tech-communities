@@ -34,9 +34,15 @@ const ALLOWED_DOMAINS = [
   "facebook.com",
   "www.facebook.com",
   "m.facebook.com",
+  "instagram.com",
+  "www.instagram.com",
   "meetup.com",
   "linkedin.com",
-  "www.linkedin.com"
+  "www.linkedin.com",
+  "x.com",
+  "www.x.com",
+  "twitter.com",
+  "www.twitter.com"
 ];
 
 const SHORTENER_DOMAINS = new Set([
