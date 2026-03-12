@@ -81,6 +81,10 @@
       {
         "label": "Discord",
         "url": "https://discord.gg/V8YMne5"
+      },
+      {
+        "label": "Facebook",
+        "url": "https://www.facebook.com/groups/474036352692959/"
       }
     ],
     "description": "Coalition supporting Jamaica's game development ecosystem through education, networking, showcases, and collaboration."
@@ -246,6 +250,23 @@
     "description": "Community for Jamaica-based UX and product designers to collaborate, learn, and discover project or job opportunities."
   },
   {
+    "name": "Caribbean Developers",
+    "country": "Regional",
+    "language": "English",
+    "focus": [
+      "software development",
+      "networking",
+      "regional community"
+    ],
+    "links": [
+      {
+        "label": "Facebook",
+        "url": "https://www.facebook.com/groups/devcarib/"
+      }
+    ],
+    "description": "Private Facebook group for software developers who have a background or interest in the Caribbean region."
+  },
+  {
     "name": "Caribbean Girls Hack",
     "country": "Regional",
     "language": "English",
@@ -278,6 +299,23 @@
       }
     ],
     "description": "Regional community connecting Caribbean developers, creators, and tech professionals through content, events, and collaboration."
+  },
+  {
+    "name": "Jammin",
+    "country": "Regional",
+    "language": "English",
+    "focus": [
+      "game development",
+      "game jams",
+      "community"
+    ],
+    "links": [
+      {
+        "label": "Discord",
+        "url": "https://discord.gg/w5P27yWcdW"
+      }
+    ],
+    "description": "Regional community space for Caribbean game jams, game developers, and related collaboration."
   },
   {
     "name": "Women in InfoSec Caribbean",
@@ -327,5 +365,56 @@
       }
     ],
     "description": "Regional community connecting Caribbean women in tech at home and in the diaspora for networking and growth."
+  },
+  {
+    "name": "Game Developers Trinidad and Tobago",
+    "country": "Trinidad and Tobago",
+    "language": "English",
+    "focus": [
+      "game development",
+      "digital media",
+      "community"
+    ],
+    "links": [
+      {
+        "label": "Facebook",
+        "url": "https://www.facebook.com/groups/475148955927293/"
+      }
+    ],
+    "description": "Community for game developers and enthusiasts in Trinidad and Tobago to connect, share work, and support the local games ecosystem."
+  },
+  {
+    "name": "Internet Society Trinidad and Tobago",
+    "country": "Trinidad and Tobago",
+    "language": "English",
+    "focus": [
+      "internet governance",
+      "digital development",
+      "community advocacy"
+    ],
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://www.isoc.tt/"
+      }
+    ],
+    "description": "Trinidad and Tobago chapter of the Internet Society focused on internet development, digital inclusion, and related community initiatives."
+  },
+  {
+    "name": "The Developers' Hub (D'Hub)",
+    "country": "Trinidad and Tobago",
+    "language": "English",
+    "focus": [
+      "developer education",
+      "digital skills",
+      "community support"
+    ],
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://dhub.mdt.gov.tt/about-us/"
+      }
+    ],
+    "description": "Government-supported developer initiative in Trinidad and Tobago focused on digital skills, learning, and local ecosystem support."
   }
 ]
