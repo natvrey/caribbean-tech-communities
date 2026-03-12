@@ -52,23 +52,6 @@
     "description": "Community for Jamaicans interested in AI and its practical applications, with regular discussions and learning sessions."
   },
   {
-    "name": "Jamaica Developers Association",
-    "country": "Jamaica",
-    "language": "English",
-    "focus": [
-      "software development",
-      "networking",
-      "community building"
-    ],
-    "links": [
-      {
-        "label": "Facebook",
-        "url": "https://www.facebook.com/groups/114051488653980"
-      }
-    ],
-    "description": "Facebook group for Jamaica-based developers and tech enthusiasts to connect, share opportunities, and discuss the industry."
-  },
-  {
     "name": "Jamaica Game Developer Society",
     "country": "Jamaica",
     "language": "English",
@@ -88,6 +71,23 @@
       }
     ],
     "description": "Coalition supporting Jamaica's game development ecosystem through education, networking, showcases, and collaboration."
+  },
+  {
+    "name": "Jamaica Software Developers Association",
+    "country": "Jamaica",
+    "language": "English",
+    "focus": [
+      "software development",
+      "networking",
+      "community building"
+    ],
+    "links": [
+      {
+        "label": "Facebook",
+        "url": "https://www.facebook.com/groups/114051488653980"
+      }
+    ],
+    "description": "Facebook group for Jamaica-based developers and tech enthusiasts to connect, share opportunities, and discuss the industry."
   },
   {
     "name": "Jamaica Technology & Digital Alliance (JTDA)",
@@ -119,7 +119,7 @@
     "description": "Jamaica industry alliance focused on advancing the local technology ecosystem, digital development, and collaboration."
   },
   {
-    "name": "Jamaican Developers",
+    "name": "Jamaican Developers Community",
     "country": "Jamaica",
     "city": "Kingston",
     "language": "English",
@@ -135,10 +135,6 @@
       }
     ],
     "links": [
-      {
-        "label": "Website",
-        "url": "https://jamaicandevelopers.com/"
-      },
       {
         "label": "Meetup",
         "url": "https://www.meetup.com/Jamaican-Developers-Group/"
