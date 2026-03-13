@@ -126,6 +126,8 @@ function renderReadme() {
     "",
     "## Directory",
     "",
+    "Click the country links below to browse communities by location. Each country page lists the community name, the platforms it uses, a short description, and direct links to join or learn more.",
+    "",
     "| Country | Communities |",
     "| --- | --- |",
     rows,
