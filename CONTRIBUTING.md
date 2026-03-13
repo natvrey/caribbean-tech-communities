@@ -27,16 +27,14 @@ Each object in `data/communities.json` should follow this shape:
   "language": "English",
   "focus": ["software engineering", "startups"],
   "member_count": 250,
-  "socials": [
-    {
-      "platform": "X",
-      "handle": "@examplecommunity"
-    }
-  ],
   "links": [
     {
       "label": "Slack",
       "url": "https://join.slack.com/example"
+    },
+    {
+      "label": "X",
+      "url": "https://x.com/examplecommunity"
     },
     {
       "label": "Website",
@@ -53,11 +51,10 @@ Each object in `data/communities.json` should follow this shape:
 - `country`
 - `language`
 - `focus`
-- `links` (optional if `socials` is provided)
-- `socials` (optional)
+- `links`
 - `description`
 
-Each record must include at least one public `link` or one clearly labeled social handle in `socials`.
+Each record must include at least one public URL in `links`.
 
 ## Validation Rules
 
@@ -67,7 +64,7 @@ Submissions may be rejected if they:
 - Use shortened URLs
 - Omit a useful description
 - Are not relevant to tech in the Caribbean
-- Include at least one public link or one clearly labeled social handle
+- Don't include at least one public link
 
 ## Country Values
 
@@ -94,9 +91,7 @@ Use one of the supported directory scopes:
 ## Quality Bar
 
 - Prefer direct, public join URLs
-- Add multiple links when they help, for example `Website`, `Discord`, `LinkedIn`, `Meetup`, or `WhatsApp`
-- Use `socials` for handles like `@JamDevCo` when there is no direct profile URL available
-- Label social handles clearly, for example `Instagram`, `X`, `LinkedIn`, or `Social Media`
+- Add multiple links when they help, for example `Website`, `Discord`, `LinkedIn`, `Instagram`, `X`, `Meetup`, or `WhatsApp`
 - Avoid private or permission-sensitive invite links unless they are intentionally public
 - Keep descriptions short and factual
 - Use `focus` as a short list of topics or audiences

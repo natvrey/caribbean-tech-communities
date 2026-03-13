@@ -68,23 +68,7 @@ function renderPlatformLabels(community) {
     }
   }
 
-  if (community.socials) {
-    for (const social of community.socials) {
-      if (!labels.includes(social.platform)) {
-        labels.push(social.platform);
-      }
-    }
-  }
-
   return labels.join(", ");
-}
-
-function renderSocials(community) {
-  if (!community.socials || community.socials.length === 0) {
-    return "";
-  }
-
-  return community.socials.map((social) => `${social.platform}: ${social.handle}`).join("<br>");
 }
 
 function renderCountryPage(country, communities) {
@@ -95,9 +79,7 @@ function renderCountryPage(country, communities) {
             const joinLinks = community.links
               ? community.links.map((link) => `[${link.label}](${link.url})`).join("<br>")
               : "";
-            const socials = renderSocials(community);
-            const joinParts = [joinLinks, socials].filter(Boolean);
-            const joinCell = joinParts.length > 0 ? joinParts.join("<br>") : "-";
+            const joinCell = joinLinks || "-";
 
             return `| ${community.name} | ${renderPlatformLabels(community)} | ${community.description} | ${joinCell} |`;
           }
@@ -153,10 +135,11 @@ function renderReadme() {
     "To add a community:",
     "",
     "1. Edit `data/communities.json`",
-    "2. Run `npm run generate`",
-    "3. Submit a pull request",
+    "2. Run `npm run validate`",
+    "3. Run `npm run generate`",
+    "4. Submit a pull request",
     "",
-    "You can also submit a community through GitHub Issues.",
+    "Don't want to open a pull request? Use the [community submission form](https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml).",
     "",
     "See `CONTRIBUTING.md`.",
     "",
@@ -171,7 +154,6 @@ function renderReadme() {
     "- `focus`",
     "- `member_count` (optional)",
     "- `links`",
-    "- `socials` (optional)",
     "- `description`",
     "",
     "## Automation",
