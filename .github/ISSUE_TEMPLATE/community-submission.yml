@@ -55,8 +55,8 @@ body:
     id: links
     attributes:
       label: Public links
-      description: Provide one or more public URLs separated by commas. This can be left blank if you are only submitting social handles.
-      placeholder: https://example.com, https://discord.gg/example
+      description: Provide one or more public URLs separated by commas, including website, invite, or profile links.
+      placeholder: https://example.com, https://discord.gg/example, https://instagram.com/example
 
   - type: input
     id: focus
@@ -73,13 +73,6 @@ body:
       label: Approximate member count (optional)
       placeholder: "250"
 
-  - type: input
-    id: socials
-    attributes:
-      label: Social handles (optional)
-      description: Provide handles in a simple format, for example Instagram:@example, X:@example, LinkedIn:@example.
-      placeholder: Instagram:@example, X:@example
-
   - type: textarea
     id: description
     attributes:
@@ -93,6 +86,6 @@ body:
     attributes:
       label: Verification notes
       description: Explain how you know this submission is valid and appropriate to share.
-      placeholder: I joined successfully on 2026-03-11, the public landing page is active, or the handle is the official community account.
+      placeholder: I joined successfully on 2026-03-11, the public landing page is active, or the listed URLs are the official community links.
     validations:
       required: true

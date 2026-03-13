@@ -48,7 +48,7 @@ To add a community:
 2. Run `npm run generate`
 3. Submit a pull request
 
-You can also submit a community through GitHub Issues.
+Don't want to open a pull request? Use the [community submission form](https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml).
 
 See `CONTRIBUTING.md`.
 
@@ -63,7 +63,6 @@ Each community record should use these fields:
 - `focus`
 - `member_count` (optional)
 - `links`
-- `socials` (optional)
 - `description`
 
 ## Automation

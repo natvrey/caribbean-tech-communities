@@ -105,20 +105,6 @@ function validateRecord(record, index, seenLinks) {
     fail(`${label}: 'city' must be a non-empty string when provided.`);
   }
 
-  if (
-    record.socials !== undefined &&
-    (!Array.isArray(record.socials) ||
-      record.socials.some(
-        (social) =>
-          typeof social !== "object" ||
-          social === null ||
-          !isNonEmptyString(social.platform) ||
-          !isNonEmptyString(social.handle)
-      ))
-  ) {
-    fail(`${label}: 'socials' must be an array of { platform, handle } objects when provided.`);
-  }
-
   if (record.links !== undefined && (!Array.isArray(record.links) || record.links.length === 0)) {
     fail(`${label}: 'links' must be a non-empty array when provided.`);
   }
@@ -166,13 +152,12 @@ function validateRecord(record, index, seenLinks) {
       fail(`${label}: duplicate URL '${link.url}'.`);
     }
     seenLinks.add(link.url);
-  }
+    }
   }
 
   const hasLinks = Array.isArray(record.links) && record.links.length > 0;
-  const hasSocials = Array.isArray(record.socials) && record.socials.length > 0;
-  if (!hasLinks && !hasSocials) {
-    fail(`${label}: provide at least one link or one social handle.`);
+  if (!hasLinks) {
+    fail(`${label}: provide at least one public link.`);
   }
 }
 

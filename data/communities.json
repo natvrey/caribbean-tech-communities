@@ -128,12 +128,6 @@
       "networking",
       "events"
     ],
-    "socials": [
-      {
-        "platform": "Social Media",
-        "handle": "@JamDevCo"
-      }
-    ],
     "links": [
       {
         "label": "Meetup",
@@ -142,6 +136,14 @@
       {
         "label": "Telegram",
         "url": "https://t.me/joinchat/yNJvatu1stMyODdh"
+      },
+      {
+        "label": "Instagram",
+        "url": "https://www.instagram.com/JamDevCo/"
+      },
+      {
+        "label": "X",
+        "url": "https://x.com/JamDevCo"
       }
     ],
     "description": "Community of Jamaican tech enthusiasts focused on skill-building, knowledge-sharing, and collaboration, with a current shift toward Caribbean Tech Connect."
@@ -235,10 +237,6 @@
     ],
     "links": [
       {
-        "label": "Community Page",
-        "url": "https://caribbean.dev/community/ux-designer-network-jamaica/"
-      },
-      {
         "label": "LinkedIn",
         "url": "https://www.linkedin.com/groups/9011923/"
       }
@@ -271,10 +269,10 @@
       "digital skills",
       "hackathons"
     ],
-    "socials": [
+    "links": [
       {
-        "platform": "Instagram",
-        "handle": "@cgirlzhack_"
+        "label": "Instagram",
+        "url": "https://www.instagram.com/cgirlzhack_/"
       }
     ],
     "description": "Regional initiative focused on bridging the gender digital divide by engaging and upskilling girls and young women."
@@ -352,12 +350,10 @@
       {
         "label": "X",
         "url": "https://x.com/womencaribbean"
-      }
-    ],
-    "socials": [
+      },
       {
-        "platform": "Instagram",
-        "handle": "@womenintechcaribbean"
+        "label": "Instagram",
+        "url": "https://www.instagram.com/womenintechcaribbean/"
       }
     ],
     "description": "Regional community connecting Caribbean women in tech at home and in the diaspora for networking and growth."
