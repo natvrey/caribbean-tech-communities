@@ -1,4 +1,4 @@
-name: Validate
+name: Check Generated Files
 
 on:
   pull_request:
@@ -26,7 +26,7 @@ permissions:
   contents: read
 
 jobs:
-  validate:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -41,9 +41,8 @@ jobs:
       - name: Validate dataset
         run: npm run validate
 
-      - name: Check community links
-        uses: lycheeverse/lychee-action@v2
-        with:
-          args: --no-progress --verbose data/communities.json countries README.md CONTRIBUTING.md
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate directory pages
+        run: npm run generate
+
+      - name: Ensure generated files are committed
+        run: git diff --exit-code
