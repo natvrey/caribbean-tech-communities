@@ -2,4 +2,4 @@
 
 | Community | Platform | Description | Join |
 | --- | --- | --- | --- |
-| No listings yet | - | Submit the first listing for this area. | - |
+| Hackers & Founders Santo Domingo | Facebook, Instagram | Santo Domingo tech community sharing events, updates, and networking opportunities through its public social channels. | [Facebook](https://www.facebook.com/hfsantodomingo/)<br>[Instagram](https://www.instagram.com/hfsantodomingo/?hl=en) |

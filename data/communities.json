@@ -1,5 +1,96 @@
 [
   {
+    "name": "Barnados Gaming Alliance (BGA)",
+    "country": "Barbados",
+    "language": "English",
+    "focus": [
+      "gaming",
+      "community",
+      "digital media"
+    ],
+    "links": [
+      {
+        "label": "Facebook",
+        "url": "https://www.facebook.com/groups/barbadosgaming/"
+      }
+    ],
+    "description": "Facebook community for people in Barbados interested in gaming, discussion, and connecting around the local gaming scene."
+  },
+  {
+    "name": "GDG Bridgetown",
+    "country": "Barbados",
+    "city": "Bridgetown",
+    "language": "English",
+    "focus": [
+      "google technologies",
+      "developer education",
+      "events"
+    ],
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://gdg.community.dev/gdg-bridgetown/"
+      }
+    ],
+    "description": "Google Developer Group chapter in Bridgetown for developers interested in Google technologies, events, and community learning."
+  },
+  {
+    "name": "Hackers & Founders Santo Domingo",
+    "country": "Dominican Republic",
+    "city": "Santo Domingo",
+    "language": "Spanish",
+    "focus": [
+      "community events",
+      "technology",
+      "networking"
+    ],
+    "links": [
+      {
+        "label": "Facebook",
+        "url": "https://www.facebook.com/hfsantodomingo/"
+      },
+      {
+        "label": "Instagram",
+        "url": "https://www.instagram.com/hfsantodomingo/?hl=en"
+      }
+    ],
+    "description": "Santo Domingo tech community sharing events, updates, and networking opportunities through its public social channels."
+  },
+  {
+    "name": "Guyana Technology User Group",
+    "country": "Guyana",
+    "language": "English",
+    "focus": [
+      "it",
+      "networking",
+      "discussion"
+    ],
+    "links": [
+      {
+        "label": "Facebook",
+        "url": "https://www.facebook.com/groups/localit/"
+      }
+    ],
+    "description": "Facebook community for IT professionals and enthusiasts in Guyana to connect around local tech discussions and networking."
+  },
+  {
+    "name": "STEMGuyana",
+    "country": "Guyana",
+    "language": "English",
+    "focus": [
+      "stem education",
+      "youth development",
+      "technology"
+    ],
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://www.stemguyana.com/"
+      }
+    ],
+    "description": "Guyana-based STEM organization providing clubs, AI programs, robotics, and technology education for youth across the country."
+  },
+  {
     "name": "AWS User Group Jamaica",
     "country": "Jamaica",
     "language": "English",
@@ -278,6 +369,65 @@
     "description": "Regional initiative focused on bridging the gender digital divide by engaging and upskilling girls and young women."
   },
   {
+    "name": "Caribbean Network Operators Group (CaribNOG)",
+    "country": "Regional",
+    "language": "English",
+    "focus": [
+      "network engineering",
+      "internet infrastructure",
+      "capacity building"
+    ],
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://www.caribnog.org/about"
+      }
+    ],
+    "description": "Regional network operators community focused on exchanging technical knowledge, building capacity, and supporting Caribbean internet infrastructure."
+  },
+  {
+    "name": "Caribbean Science Foundation",
+    "country": "Regional",
+    "language": "English",
+    "focus": [
+      "stem education",
+      "science and engineering",
+      "innovation"
+    ],
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://caribbeanscience.org/"
+      }
+    ],
+    "description": "Regional organization using science, engineering, and technology programs to support education, innovation, and economic development in the Caribbean."
+  },
+  {
+    "name": "Caribbean Tech Collective",
+    "country": "Regional",
+    "language": "English",
+    "focus": [
+      "career growth",
+      "community building",
+      "networking"
+    ],
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://caribbeantechcollective.com/"
+      },
+      {
+        "label": "Instagram",
+        "url": "https://instagram.com/caribbeantechcollective"
+      },
+      {
+        "label": "LinkedIn",
+        "url": "https://www.linkedin.com/company/caribbean-tech-collective"
+      }
+    ],
+    "description": "Regional collective connecting Caribbean tech talent through community, career development, and professional networking."
+  },
+  {
     "name": "Caribbean Tech Connect",
     "country": "Regional",
     "language": "English",
@@ -310,6 +460,23 @@
       }
     ],
     "description": "Regional community space for Caribbean game jams, game developers, and related collaboration."
+  },
+  {
+    "name": "Palisadoes",
+    "country": "Regional",
+    "language": "English",
+    "focus": [
+      "engineering leadership",
+      "community",
+      "knowledge sharing"
+    ],
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://www.palisadoes.org/"
+      }
+    ],
+    "description": "Regional technology community centered on engineering leadership, knowledge sharing, and collaboration across the Caribbean."
   },
   {
     "name": "Women in InfoSec Caribbean",
@@ -359,6 +526,23 @@
     "description": "Regional community connecting Caribbean women in tech at home and in the diaspora for networking and growth."
   },
   {
+    "name": "FinTechTT",
+    "country": "Trinidad and Tobago",
+    "language": "English",
+    "focus": [
+      "fintech",
+      "industry collaboration",
+      "policy"
+    ],
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://fintechtt.com/frequently-asked-questions/"
+      }
+    ],
+    "description": "Non-profit association that brings together fintech stakeholders in Trinidad and Tobago to collaborate, network, and shape the industry."
+  },
+  {
     "name": "Game Developers Trinidad and Tobago",
     "country": "Trinidad and Tobago",
     "language": "English",
@@ -374,6 +558,24 @@
       }
     ],
     "description": "Community for game developers and enthusiasts in Trinidad and Tobago to connect, share work, and support the local games ecosystem."
+  },
+  {
+    "name": "GDG Port of Spain",
+    "country": "Trinidad and Tobago",
+    "city": "Port of Spain",
+    "language": "English",
+    "focus": [
+      "google technologies",
+      "developer education",
+      "events"
+    ],
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://gdg.community.dev/gdg-port-of-spain/"
+      }
+    ],
+    "description": "Google Developer Group chapter in Port of Spain for developers interested in Google technologies, events, and community learning."
   },
   {
     "name": "Internet Society Trinidad and Tobago",
@@ -393,6 +595,24 @@
     "description": "Trinidad and Tobago chapter of the Internet Society focused on internet development, digital inclusion, and related community initiatives."
   },
   {
+    "name": "PyData T&T",
+    "country": "Trinidad and Tobago",
+    "city": "Port of Spain",
+    "language": "English",
+    "focus": [
+      "data science",
+      "machine learning",
+      "python"
+    ],
+    "links": [
+      {
+        "label": "Meetup",
+        "url": "https://www.meetup.com/pydata-t-t/"
+      }
+    ],
+    "description": "Trinidad and Tobago data community for people learning and practicing data science, analytics, machine learning, and Python."
+  },
+  {
     "name": "The Developers' Hub (D'Hub)",
     "country": "Trinidad and Tobago",
     "language": "English",
@@ -408,5 +628,26 @@
       }
     ],
     "description": "Government-supported developer initiative in Trinidad and Tobago focused on digital skills, learning, and local ecosystem support."
+  },
+  {
+    "name": "Women in Data Science Trinidad and Tobago",
+    "country": "Trinidad and Tobago",
+    "language": "English",
+    "focus": [
+      "data science",
+      "women in tech",
+      "mentorship"
+    ],
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://widstt.com/"
+      },
+      {
+        "label": "LinkedIn",
+        "url": "https://www.linkedin.com/in/widstt/"
+      }
+    ],
+    "description": "Trinidad and Tobago initiative that supports women and girls in data science through workshops, networking, and skill-building."
   }
 ]
