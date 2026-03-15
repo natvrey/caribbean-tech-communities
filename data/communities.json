@@ -91,6 +91,52 @@
     "description": "Guyana-based STEM organization providing clubs, AI programs, robotics, and technology education for youth across the country."
   },
   {
+    "name": "Haiti Tech Summit Community",
+    "country": "Haiti",
+    "language": "English",
+    "focus": [
+      "community",
+      "events",
+      "networking"
+    ],
+    "links": [
+      {
+        "label": "Facebook",
+        "url": "https://www.facebook.com/groups/haititechsummit/"
+      }
+    ],
+    "description": "Facebook community connected to Haiti Tech Summit for sharing updates, conversations, and networking across Haiti's tech ecosystem."
+  },
+  {
+    "name": "Haitians in Tech",
+    "country": "Haiti",
+    "language": "English",
+    "focus": [
+      "community",
+      "networking",
+      "career development"
+    ],
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://haitiansintech.com/join/"
+      },
+      {
+        "label": "Slack",
+        "url": "https://haitiansintech.slack.com/join/shared_invite/zt-fgnpda29-9ZwxDnnv2dHRfKzPFkqgVQ#/shared-invite/email"
+      },
+      {
+        "label": "LinkedIn",
+        "url": "https://www.linkedin.com/company/haitians-in-tech/"
+      },
+      {
+        "label": "Instagram",
+        "url": "https://www.instagram.com/haitiansintech/"
+      }
+    ],
+    "description": "Community for Haitians in technology to connect, join conversations, and access networking opportunities through public channels and Slack."
+  },
+  {
     "name": "AWS User Group Jamaica",
     "country": "Jamaica",
     "language": "English",
