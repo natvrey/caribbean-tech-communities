@@ -10,17 +10,6 @@ on:
       - "README.md"
       - "CONTRIBUTING.md"
       - "package.json"
-  push:
-    branches:
-      - main
-    paths:
-      - "data/**"
-      - "countries/**"
-      - "scripts/**"
-      - ".github/workflows/**"
-      - "README.md"
-      - "CONTRIBUTING.md"
-      - "package.json"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
