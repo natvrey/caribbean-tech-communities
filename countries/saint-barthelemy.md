@@ -1,4 +1,4 @@
-# Saint Barth Tech Communities
+# Saint Barthélemy Tech Communities
 
 Regional status: CARICOM No | CSME No
 
