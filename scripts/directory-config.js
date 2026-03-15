@@ -52,12 +52,12 @@ const DIRECTORY_SECTIONS = [
   {
     title: "French Overseas Collectivities",
     description: "French Caribbean collectivities with a different constitutional status from the overseas departments.",
-    countries: ["Saint Barth", "Saint Martin"]
+    countries: ["Saint Barthélemy", "Saint Martin"]
   },
   {
     title: "Autonomous Countries Within the Kingdom of the Netherlands",
     description: "Self-governing Caribbean countries within the Kingdom of the Netherlands.",
-    countries: ["Aruba", "Curacao", "Sint Maarten"]
+    countries: ["Aruba", "Curaçao", "Sint Maarten"]
   },
   {
     title: "Caribbean Municipalities of the Netherlands",
@@ -111,7 +111,7 @@ const REGIONAL_STATUS = {
     caricom: "No",
     csme: "No"
   },
-  Curacao: {
+  "Curaçao": {
     caricom: "Associate Member",
     csme: "No"
   },
@@ -159,7 +159,7 @@ const REGIONAL_STATUS = {
     caricom: "No",
     csme: "No"
   },
-  "Saint Barth": {
+  "Saint Barthélemy": {
     caricom: "No",
     csme: "No"
   },

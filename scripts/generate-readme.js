@@ -10,6 +10,8 @@ const README_PATH = path.join(ROOT, "README.md");
 function slugify(value) {
   return value
     .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
     .replace(/\b([a-z])\./g, "$1")
     .replace(/&/g, "and")
     .replace(/[^a-z0-9]+/g, "-")

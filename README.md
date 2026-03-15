@@ -97,7 +97,7 @@ French Caribbean collectivities with a different constitutional status from the 
 
 | Country | Communities | CARICOM | CSME |
 | --- | --- | --- | --- |
-| Saint Barth | [countries/saint-barth.md](countries/saint-barth.md) | No | No |
+| Saint Barthélemy | [countries/saint-barthelemy.md](countries/saint-barthelemy.md) | No | No |
 | Saint Martin | [countries/saint-martin.md](countries/saint-martin.md) | No | No |
 
 ### Autonomous Countries Within the Kingdom of the Netherlands
@@ -107,7 +107,7 @@ Self-governing Caribbean countries within the Kingdom of the Netherlands.
 | Country | Communities | CARICOM | CSME |
 | --- | --- | --- | --- |
 | Aruba | [countries/aruba.md](countries/aruba.md) | No | No |
-| Curacao | [countries/curacao.md](countries/curacao.md) | Associate Member | No |
+| Curaçao | [countries/curacao.md](countries/curacao.md) | Associate Member | No |
 | Sint Maarten | [countries/sint-maarten.md](countries/sint-maarten.md) | No | No |
 
 ### Caribbean Municipalities of the Netherlands

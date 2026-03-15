@@ -1,4 +1,4 @@
-# Curacao Tech Communities
+# Curaçao Tech Communities
 
 Regional status: CARICOM Associate Member | CSME No
 
