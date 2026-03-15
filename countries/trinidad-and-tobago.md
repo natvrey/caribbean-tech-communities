@@ -1,5 +1,7 @@
 # Trinidad and Tobago Tech Communities
 
+Regional status: CARICOM Member State | CSME Participant
+
 | Community | Platform | Description | Join |
 | --- | --- | --- | --- |
 | FinTechTT | Website | Non-profit association that brings together fintech stakeholders in Trinidad and Tobago to collaborate, network, and shape the industry. | [Website](https://fintechtt.com/frequently-asked-questions/) |

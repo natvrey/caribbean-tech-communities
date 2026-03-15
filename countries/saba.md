@@ -1,6 +1,6 @@
-# Haiti Tech Communities
+# Saba Tech Communities
 
-Regional status: CARICOM Member State | CSME Signed on, limited participation
+Regional status: CARICOM No | CSME No
 
 | Community | Platform | Description | Join |
 | --- | --- | --- | --- |

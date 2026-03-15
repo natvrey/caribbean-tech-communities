@@ -1,6 +1,6 @@
-# Haiti Tech Communities
+# Montserrat Tech Communities
 
-Regional status: CARICOM Member State | CSME Signed on, limited participation
+Regional status: CARICOM Member State | CSME Participates in elements
 
 | Community | Platform | Description | Join |
 | --- | --- | --- | --- |

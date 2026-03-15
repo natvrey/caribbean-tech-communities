@@ -1,25 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-
-const COUNTRIES = [
-  "Regional",
-  "Antigua and Barbuda",
-  "Bahamas",
-  "Barbados",
-  "Belize",
-  "Cuba",
-  "Dominica",
-  "Dominican Republic",
-  "Grenada",
-  "Guyana",
-  "Haiti",
-  "Jamaica",
-  "Saint Kitts and Nevis",
-  "Saint Lucia",
-  "Saint Vincent and the Grenadines",
-  "Suriname",
-  "Trinidad and Tobago"
-];
+const { COUNTRIES, DIRECTORY_SECTIONS, REGIONAL_STATUS } = require("./directory-config");
 
 const ROOT = process.cwd();
 const DATA_PATH = path.join(ROOT, "data", "communities.json");
@@ -27,7 +8,12 @@ const COUNTRIES_DIR = path.join(ROOT, "countries");
 const README_PATH = path.join(ROOT, "README.md");
 
 function slugify(value) {
-  return value.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  return value
+    .toLowerCase()
+    .replace(/\b([a-z])\./g, "$1")
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
 function readCommunities() {
@@ -72,6 +58,7 @@ function renderPlatformLabels(community) {
 }
 
 function renderCountryPage(country, communities) {
+  const status = REGIONAL_STATUS[country] || { caricom: "No", csme: "No" };
   const rows = communities.length
     ? communities
         .map(
@@ -90,6 +77,8 @@ function renderCountryPage(country, communities) {
   return [
     `# ${country} Tech Communities`,
     "",
+    `Regional status: CARICOM ${status.caricom} | CSME ${status.csme}`,
+    "",
     "| Community | Platform | Description | Join |",
     "| --- | --- | --- | --- |",
     rows,
@@ -98,15 +87,31 @@ function renderCountryPage(country, communities) {
 }
 
 function renderReadme() {
-  const rows = COUNTRIES.map((country) => {
-    const slug = slugify(country);
-    return `| ${country} | [countries/${slug}.md](countries/${slug}.md) |`;
+  const sections = DIRECTORY_SECTIONS.map((section) => {
+    const rows = section.countries
+      .map((country) => {
+        const slug = slugify(country);
+        const status = REGIONAL_STATUS[country] || { caricom: "No", csme: "No" };
+        return `| ${country} | [countries/${slug}.md](countries/${slug}.md) | ${status.caricom} | ${status.csme} |`;
+      })
+      .join("\n");
+
+    return [
+      `### ${section.title}`,
+      "",
+      section.description,
+      "",
+      "| Country | Communities | CARICOM | CSME |",
+      "| --- | --- | --- | --- |",
+      rows,
+      ""
+    ].join("\n");
   }).join("\n");
 
   return [
     "# Caribbean Tech Communities",
     "",
-    "A directory of tech communities across the 13 sovereign Caribbean states, plus Belize, Guyana, and Suriname, focused on strengthening visibility & communication among the tech industry in these countries.",
+    "A directory of tech communities across sovereign Caribbean states, mainland Caribbean countries, and non-sovereign Caribbean dependencies and territories, focused on strengthening visibility and communication across the region's tech ecosystem.",
     "",
     "This repository is managed as a dataset first and a directory second:",
     "",
@@ -126,11 +131,15 @@ function renderReadme() {
     "",
     "## Directory",
     "",
-    "Click the country links below to browse communities by location. Each country page lists the community name, the platforms it uses, a short description, and direct links to join or learn more.",
+    "Browse communities by sovereignty status and constitutional relationship. Each location page lists the community name, the platforms it uses, a short description, and direct links to join or learn more.",
+    "CARICOM and CSME status labels below are based on official CARICOM and CSME sources.",
     "",
-    "| Country | Communities |",
-    "| --- | --- |",
-    rows,
+    sections,
+    "## References",
+    "",
+    "- Country sovereignty and constitutional-status grouping: [Caribbean Atlas, The Caribbean Islands](http://www.caribbean-atlas.com/en/the-caribbean-in-brief/the-caribbean-islands/).",
+    "- CARICOM member state and associate member status: [CARICOM Member States and Associate Members](https://caricom.org/member-states-and-associate-members/).",
+    "- CSME participation status: [CARICOM Single Market and Economy](https://caricom.org/projects/caricom-single-market-and-economy/) and [CSME About Us](https://csme.me/about-us/).",
     "",
     "## Contributing",
     "",

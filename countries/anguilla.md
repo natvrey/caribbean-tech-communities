@@ -1,6 +1,6 @@
-# Haiti Tech Communities
+# Anguilla Tech Communities
 
-Regional status: CARICOM Member State | CSME Signed on, limited participation
+Regional status: CARICOM Associate Member | CSME No
 
 | Community | Platform | Description | Join |
 | --- | --- | --- | --- |

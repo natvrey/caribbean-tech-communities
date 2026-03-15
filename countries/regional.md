@@ -1,5 +1,7 @@
 # Regional Tech Communities
 
+Regional status: CARICOM N/A | CSME N/A
+
 | Community | Platform | Description | Join |
 | --- | --- | --- | --- |
 | Caribbean Developers | Facebook | Private Facebook group for software developers who have a background or interest in the Caribbean region. | [Facebook](https://www.facebook.com/groups/devcarib/) |
