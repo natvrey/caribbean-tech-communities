@@ -1,5 +1,7 @@
 # Jamaica Tech Communities
 
+Regional status: CARICOM Member State | CSME Participant
+
 | Community | Platform | Description | Join |
 | --- | --- | --- | --- |
 | AWS User Group Jamaica | Meetup | Community for people in Jamaica interested in Amazon Web Services, cloud technologies, and shared learning. | [Meetup](https://www.meetup.com/aws-user-group-jamaica/) |

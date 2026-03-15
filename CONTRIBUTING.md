@@ -72,21 +72,38 @@ Use one of the supported directory scopes:
 
 - Regional
 - Antigua and Barbuda
+- Anguilla
+- Aruba
 - Bahamas
 - Barbados
 - Belize
+- Bonaire
+- British Virgin Islands
+- Cayman Islands
 - Cuba
+- Curacao
 - Dominica
 - Dominican Republic
 - Grenada
+- Guadeloupe
 - Guyana
 - Haiti
 - Jamaica
+- Martinique
+- Montserrat
+- Puerto Rico
+- Saba
+- Saint Barth
+- Saint Eustatius
 - Saint Kitts and Nevis
 - Saint Lucia
+- Saint Martin
 - Saint Vincent and the Grenadines
+- Sint Maarten
 - Suriname
 - Trinidad and Tobago
+- Turks and Caicos Islands
+- U.S. Virgin Islands
 
 ## Quality Bar
 

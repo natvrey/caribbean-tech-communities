@@ -1,27 +1,9 @@
 const fs = require("fs");
 const path = require("path");
+const { COUNTRIES } = require("./directory-config");
 
 const DATA_PATH = path.join(process.cwd(), "data", "communities.json");
-
-const ALLOWED_COUNTRIES = new Set([
-  "Regional",
-  "Antigua and Barbuda",
-  "Bahamas",
-  "Barbados",
-  "Belize",
-  "Cuba",
-  "Dominica",
-  "Dominican Republic",
-  "Grenada",
-  "Guyana",
-  "Haiti",
-  "Jamaica",
-  "Saint Kitts and Nevis",
-  "Saint Lucia",
-  "Saint Vincent and the Grenadines",
-  "Suriname",
-  "Trinidad and Tobago"
-]);
+const ALLOWED_COUNTRIES = new Set(COUNTRIES);
 
 const ALLOWED_DOMAINS = [
   "discord.gg",
