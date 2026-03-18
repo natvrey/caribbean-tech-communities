@@ -1,12 +1,17 @@
 # Caribbean Tech Communities
 
-A directory of tech communities across sovereign Caribbean states, mainland Caribbean countries, and non-sovereign Caribbean dependencies and territories, focused on strengthening visibility and communication across the region's tech ecosystem.
+A directory of tech communities across sovereign Caribbean states, mainland Caribbean countries, and non-sovereign Caribbean dependencies and territories, focused on strengthening visibility and communication across the region's tech ecosystem. Platforms can include websites, WhatsApp, Discord, Slack, Telegram, Meetup, forums, mailing lists, and social media.
 
-This repository is managed as a dataset first and a directory second:
+Browse the directory:
+
+- Public website: [natvrey.github.io/caribbean-tech-communities](https://natvrey.github.io/caribbean-tech-communities/)
+- In this repository: start below in the `Directory` section or open `countries/*.md`
+
+This repository is managed as a dataset first and a directory second.
 
 `data/communities.json` -> generated pages -> `README.md` and `countries/*.md`
 
-Platforms can include websites, WhatsApp, Discord, Slack, Telegram, Meetup, forums, mailing lists, and social media.
+The dataset forms the basis of the public website. Each push to `main` autodeploys to the site.
 
 ## Directory
 
@@ -130,6 +135,8 @@ Don't want to open a pull request? Use the [community submission form](https://g
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Website
+
+Public site: [natvrey.github.io/caribbean-tech-communities](https://natvrey.github.io/caribbean-tech-communities/).
 
 To build the static site locally:
 
