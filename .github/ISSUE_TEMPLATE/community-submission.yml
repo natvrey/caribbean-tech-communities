@@ -4,6 +4,11 @@ title: "[Community] "
 labels:
   - community-submission
 body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for submitting a community. After you send this form, the submission will be reviewed and validated. If validation succeeds, it will be added to the repository.
+
   - type: input
     id: community_name
     attributes:
@@ -19,21 +24,38 @@ body:
       options:
         - Regional
         - Antigua and Barbuda
+        - Anguilla
+        - Aruba
         - Bahamas
         - Barbados
         - Belize
+        - Bonaire
+        - British Virgin Islands
+        - Cayman Islands
         - Cuba
+        - Curacao
         - Dominica
         - Dominican Republic
         - Grenada
+        - Guadeloupe
         - Guyana
         - Haiti
         - Jamaica
+        - Martinique
+        - Montserrat
+        - Puerto Rico
+        - Saba
+        - Saint Barthelemy
+        - Saint Eustatius
         - Saint Kitts and Nevis
         - Saint Lucia
+        - Saint Martin
         - Saint Vincent and the Grenadines
+        - Sint Maarten
         - Suriname
         - Trinidad and Tobago
+        - Turks and Caicos Islands
+        - U.S. Virgin Islands
     validations:
       required: true
 

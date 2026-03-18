@@ -129,6 +129,17 @@ Don't want to open a pull request? Use the [community submission form](https://g
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Website
+
+To build the static site locally:
+
+1. Run `npm run validate`
+2. Run `npm run build:site`
+3. Open `dist/index.html`
+
+The GitHub Pages deploy workflow is defined in `.github/workflows/deploy-pages.yml`.
+After GitHub Pages is configured to use GitHub Actions, every push to `main` that updates the dataset or site scripts will rebuild and redeploy the site automatically.
+
 ## Automation
 
 GitHub Actions validate the dataset and ensure generated pages stay up to date. This keeps formatting consistent even as the directory grows.
