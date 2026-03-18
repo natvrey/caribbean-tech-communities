@@ -7,6 +7,48 @@ const DATA_PATH = path.join(ROOT, "data", "communities.json");
 const DIST_DIR = path.join(ROOT, "dist");
 const COUNTRIES_DIR = path.join(DIST_DIR, "countries");
 const STYLES_PATH = path.join(DIST_DIR, "styles.css");
+const COUNTRY_FLAGS = {
+  Regional: { kind: "globe", label: "Regional" },
+  "Antigua and Barbuda": { kind: "flag", code: "ag" },
+  Anguilla: { kind: "flag", code: "ai" },
+  Aruba: { kind: "flag", code: "aw" },
+  Bahamas: { kind: "flag", code: "bs" },
+  Barbados: { kind: "flag", code: "bb" },
+  Belize: { kind: "flag", code: "bz" },
+  Bonaire: { kind: "flag", code: "bq" },
+  "British Virgin Islands": { kind: "flag", code: "vg" },
+  "Cayman Islands": { kind: "flag", code: "ky" },
+  Cuba: { kind: "flag", code: "cu" },
+  Curacao: { kind: "flag", code: "cw" },
+  Dominica: { kind: "flag", code: "dm" },
+  "Dominican Republic": { kind: "flag", code: "do" },
+  Grenada: { kind: "flag", code: "gd" },
+  Guadeloupe: { kind: "flag", code: "gp" },
+  Guyana: { kind: "flag", code: "gy" },
+  Haiti: { kind: "flag", code: "ht" },
+  Jamaica: { kind: "flag", code: "jm" },
+  Martinique: { kind: "flag", code: "mq" },
+  Montserrat: { kind: "flag", code: "ms" },
+  "Puerto Rico": { kind: "flag", code: "pr" },
+  Saba: {
+    kind: "flag",
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Saba.svg"
+  },
+  "Saint Barthelemy": { kind: "flag", code: "bl" },
+  "Saint Eustatius": {
+    kind: "flag",
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Sint_Eustatius.svg"
+  },
+  "Saint Kitts and Nevis": { kind: "flag", code: "kn" },
+  "Saint Lucia": { kind: "flag", code: "lc" },
+  "Saint Martin": { kind: "flag", code: "mf" },
+  "Saint Vincent and the Grenadines": { kind: "flag", code: "vc" },
+  "Sint Maarten": { kind: "flag", code: "sx" },
+  Suriname: { kind: "flag", code: "sr" },
+  "Trinidad and Tobago": { kind: "flag", code: "tt" },
+  "Turks and Caicos Islands": { kind: "flag", code: "tc" },
+  "U.S. Virgin Islands": { kind: "flag", code: "vi" }
+};
 
 function slugify(value) {
   return value
@@ -58,6 +100,29 @@ function renderCommunityCount(count) {
   return `${count} ${count === 1 ? "community" : "communities"}`;
 }
 
+function renderCountryFlag(country, className = "country-flag") {
+  const flag = COUNTRY_FLAGS[country];
+  const displayCountry = getDisplayName(country);
+
+  if (!flag || flag.kind === "globe") {
+    return [
+      `<span class="${className} country-flag-fallback" aria-hidden="true">`,
+      '  <svg viewBox="0 0 24 24" role="presentation" focusable="false">',
+      '    <circle cx="12" cy="12" r="9"></circle>',
+      '    <path d="M3 12h18"></path>',
+      '    <path d="M12 3a14 14 0 0 0 0 18"></path>',
+      '    <path d="M12 3a14 14 0 0 1 0 18"></path>',
+      '    <path d="M6 7.5c2 .8 4 .8 6 0s4-.8 6 0"></path>',
+      '    <path d="M6 16.5c2-.8 4-.8 6 0s4 .8 6 0"></path>',
+      " </svg>",
+      "</span>"
+    ].join("");
+  }
+
+  const src = flag.src || `https://flagcdn.com/w40/${flag.code}.png`;
+  return `<img class="${className}" src="${src}" alt="${escapeHtml(displayCountry)} flag" loading="lazy" width="26" height="18">`;
+}
+
 function renderLinkList(links) {
   return links
     .map((link) => {
@@ -102,10 +167,11 @@ function renderCountryCards(countries, communitiesByCountry) {
       const status = REGIONAL_STATUS[country] || { caricom: "No", csme: "No" };
       const cardClass = count > 0 ? "country-card country-card-active" : "country-card country-card-empty";
       const displayCountry = getDisplayName(country);
+      const flag = renderCountryFlag(country);
 
       return [
         `<article class="${cardClass}">`,
-        `<h3><a href="./countries/${slug}.html">${escapeHtml(displayCountry)}</a></h3>`,
+        `<h3><a href="./countries/${slug}.html">${flag}<span>${escapeHtml(displayCountry)}</span></a></h3>`,
         `<p>${renderCommunityCount(count)}</p>`,
         `<p class="country-status">CARICOM: ${escapeHtml(status.caricom)}<br>CSME: ${escapeHtml(status.csme)}</p>`,
         `<a class="text-link" href="./countries/${slug}.html">View communities</a>`,
@@ -204,6 +270,7 @@ function renderHomePage(communities, communitiesByCountry) {
 function renderCountryPage(country, communities) {
   const status = REGIONAL_STATUS[country] || { caricom: "No", csme: "No" };
   const displayCountry = getDisplayName(country);
+  const flag = renderCountryFlag(country, "country-flag country-flag-hero");
   const cards = communities.length
     ? communities.map((community) => renderCommunityCard(community)).join("\n")
     : [
@@ -220,11 +287,11 @@ function renderCountryPage(country, communities) {
   const body = [
     '<main class="main-content">',
     '  <section class="country-hero">',
-    '    <a class="back-link" href="../index.html">Back to directory</a>',
-    `    <h1>${escapeHtml(displayCountry)}</h1>`,
+    `    <h1>${flag}<span>${escapeHtml(displayCountry)}</span></h1>`,
     `    <p class="country-status">CARICOM: ${escapeHtml(status.caricom)} | CSME: ${escapeHtml(status.csme)}</p>`,
     '    <p class="status-note"><a href="https://caricom.org/our-community/who-we-are/" target="_blank" rel="noreferrer">CARICOM</a> stands for the Caribbean Community, and <a href="https://csme.me/" target="_blank" rel="noreferrer">CSME</a> stands for the CARICOM Single Market and Economy.</p>',
     `    <p class="listing-count">${renderCommunityCount(communities.length)} listed</p>`,
+    '    <a class="back-link" href="../index.html">Back to directory</a>',
     "  </section>",
     ...contentSections,
     "</main>"
@@ -303,7 +370,13 @@ function renderStyles() {
     "}",
     ".country-card-active { background: #eef8f1; border-color: #9ec8ad; }",
     ".country-card-empty { background: #fbf7ee; border-color: #d7ccb7; }",
-    ".country-card h3 a { text-decoration: none; }",
+    ".country-card h3 a { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; }",
+    ".country-hero h1 { display: flex; align-items: flex-start; gap: 14px; }",
+    ".country-flag { width: 26px; height: 18px; border-radius: 3px; object-fit: cover; box-shadow: 0 0 0 1px rgba(2, 48, 71, 0.12); flex: 0 0 auto; }",
+    ".country-flag-hero { width: 34px; height: 24px; border-radius: 4px; margin-top: 0.18em; }",
+    ".country-flag-fallback { display: inline-flex; align-items: center; justify-content: center; color: var(--accent-strong); background: rgba(255, 255, 255, 0.55); }",
+    ".country-flag-fallback svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }",
+    ".back-link { display: inline-block; margin-top: 10px; }",
     ".community-meta { padding-left: 18px; margin-bottom: 16px; }",
     ".community-links { display: flex; flex-wrap: wrap; gap: 10px; }",
     ".community-link {",
