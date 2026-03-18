@@ -207,8 +207,8 @@ const REGIONAL_STATUS = {
 
 const COUNTRIES = DIRECTORY_SECTIONS.flatMap((section) => section.countries);
 const DISPLAY_NAMES = {
-  Curacao: "Curaçao",
-  "Saint Barthelemy": "Saint Barthélemy"
+  Curacao: "Cura\u00e7ao",
+  "Saint Barthelemy": "Saint Barth\u00e9lemy"
 };
 
 function getDisplayName(country) {

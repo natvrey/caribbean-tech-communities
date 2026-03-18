@@ -6,6 +6,48 @@ const ROOT = process.cwd();
 const DATA_PATH = path.join(ROOT, "data", "communities.json");
 const COUNTRIES_DIR = path.join(ROOT, "countries");
 const README_PATH = path.join(ROOT, "README.md");
+const COUNTRY_FLAGS = {
+  Regional: { kind: "globe", label: "Regional" },
+  "Antigua and Barbuda": { kind: "flag", code: "ag" },
+  Anguilla: { kind: "flag", code: "ai" },
+  Aruba: { kind: "flag", code: "aw" },
+  Bahamas: { kind: "flag", code: "bs" },
+  Barbados: { kind: "flag", code: "bb" },
+  Belize: { kind: "flag", code: "bz" },
+  Bonaire: { kind: "flag", code: "bq" },
+  "British Virgin Islands": { kind: "flag", code: "vg" },
+  "Cayman Islands": { kind: "flag", code: "ky" },
+  Cuba: { kind: "flag", code: "cu" },
+  Curacao: { kind: "flag", code: "cw" },
+  Dominica: { kind: "flag", code: "dm" },
+  "Dominican Republic": { kind: "flag", code: "do" },
+  Grenada: { kind: "flag", code: "gd" },
+  Guadeloupe: { kind: "flag", code: "gp" },
+  Guyana: { kind: "flag", code: "gy" },
+  Haiti: { kind: "flag", code: "ht" },
+  Jamaica: { kind: "flag", code: "jm" },
+  Martinique: { kind: "flag", code: "mq" },
+  Montserrat: { kind: "flag", code: "ms" },
+  "Puerto Rico": { kind: "flag", code: "pr" },
+  Saba: {
+    kind: "flag",
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Saba.svg"
+  },
+  "Saint Barthelemy": { kind: "flag", code: "bl" },
+  "Saint Eustatius": {
+    kind: "flag",
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Sint_Eustatius.svg"
+  },
+  "Saint Kitts and Nevis": { kind: "flag", code: "kn" },
+  "Saint Lucia": { kind: "flag", code: "lc" },
+  "Saint Martin": { kind: "flag", code: "mf" },
+  "Saint Vincent and the Grenadines": { kind: "flag", code: "vc" },
+  "Sint Maarten": { kind: "flag", code: "sx" },
+  Suriname: { kind: "flag", code: "sr" },
+  "Trinidad and Tobago": { kind: "flag", code: "tt" },
+  "Turks and Caicos Islands": { kind: "flag", code: "tc" },
+  "U.S. Virgin Islands": { kind: "flag", code: "vi" }
+};
 
 function slugify(value) {
   return value
@@ -59,6 +101,28 @@ function renderPlatformLabels(community) {
   return labels.join(", ");
 }
 
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function renderReadmeCountryCell(country) {
+  const flag = COUNTRY_FLAGS[country];
+  const displayCountry = getDisplayName(country);
+
+  if (!flag || flag.kind === "globe") {
+    return displayCountry;
+  }
+
+  const src = flag.src || `https://flagcdn.com/w40/${flag.code}.png`;
+  const image = `<img src="${src}" alt="${escapeHtml(displayCountry)} flag" width="26" height="18">`;
+  return `${image} ${displayCountry}`;
+}
+
 function renderCountryPage(country, communities) {
   const status = REGIONAL_STATUS[country] || { caricom: "No", csme: "No" };
   const displayCountry = getDisplayName(country);
@@ -95,7 +159,7 @@ function renderReadme() {
       .map((country) => {
         const slug = slugify(country);
         const status = REGIONAL_STATUS[country] || { caricom: "No", csme: "No" };
-        return `| ${getDisplayName(country)} | [countries/${slug}.md](countries/${slug}.md) | ${status.caricom} | ${status.csme} |`;
+        return `| ${renderReadmeCountryCell(country)} | [countries/${slug}.md](countries/${slug}.md) | ${status.caricom} | ${status.csme} |`;
       })
       .join("\n");
 
