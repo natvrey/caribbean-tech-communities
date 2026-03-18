@@ -52,12 +52,12 @@ const DIRECTORY_SECTIONS = [
   {
     title: "French Overseas Collectivities",
     description: "French Caribbean collectivities with a different constitutional status from the overseas departments.",
-    countries: ["Saint Barthélemy", "Saint Martin"]
+    countries: ["Saint Barthelemy", "Saint Martin"]
   },
   {
     title: "Autonomous Countries Within the Kingdom of the Netherlands",
     description: "Self-governing Caribbean countries within the Kingdom of the Netherlands.",
-    countries: ["Aruba", "Curaçao", "Sint Maarten"]
+    countries: ["Aruba", "Curacao", "Sint Maarten"]
   },
   {
     title: "Caribbean Municipalities of the Netherlands",
@@ -111,7 +111,7 @@ const REGIONAL_STATUS = {
     caricom: "No",
     csme: "No"
   },
-  "Curaçao": {
+  Curacao: {
     caricom: "Associate Member",
     csme: "No"
   },
@@ -159,7 +159,7 @@ const REGIONAL_STATUS = {
     caricom: "No",
     csme: "No"
   },
-  "Saint Barthélemy": {
+  "Saint Barthelemy": {
     caricom: "No",
     csme: "No"
   },
@@ -206,9 +206,19 @@ const REGIONAL_STATUS = {
 };
 
 const COUNTRIES = DIRECTORY_SECTIONS.flatMap((section) => section.countries);
+const DISPLAY_NAMES = {
+  Curacao: "Curaçao",
+  "Saint Barthelemy": "Saint Barthélemy"
+};
+
+function getDisplayName(country) {
+  return DISPLAY_NAMES[country] || country;
+}
 
 module.exports = {
   COUNTRIES,
   DIRECTORY_SECTIONS,
-  REGIONAL_STATUS
+  DISPLAY_NAMES,
+  REGIONAL_STATUS,
+  getDisplayName
 };

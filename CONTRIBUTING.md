@@ -81,7 +81,7 @@ Use one of the supported directory scopes:
 - British Virgin Islands
 - Cayman Islands
 - Cuba
-- Curaçao
+- Curacao
 - Dominica
 - Dominican Republic
 - Grenada
@@ -93,7 +93,7 @@ Use one of the supported directory scopes:
 - Montserrat
 - Puerto Rico
 - Saba
-- Saint Barthélemy
+- Saint Barthelemy
 - Saint Eustatius
 - Saint Kitts and Nevis
 - Saint Lucia

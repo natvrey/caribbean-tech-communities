@@ -5,6 +5,7 @@
   "description": "A structured directory of Caribbean tech communities.",
   "scripts": {
     "generate": "node scripts/generate-readme.js",
-    "validate": "node scripts/validate-data.js"
+    "validate": "node scripts/validate-data.js",
+    "build:site": "node scripts/generate-site.js"
   }
 }

@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const { COUNTRIES, DIRECTORY_SECTIONS, REGIONAL_STATUS } = require("./directory-config");
+const { COUNTRIES, DIRECTORY_SECTIONS, REGIONAL_STATUS, getDisplayName } = require("./directory-config");
 
 const ROOT = process.cwd();
 const DATA_PATH = path.join(ROOT, "data", "communities.json");
@@ -61,6 +61,7 @@ function renderPlatformLabels(community) {
 
 function renderCountryPage(country, communities) {
   const status = REGIONAL_STATUS[country] || { caricom: "No", csme: "No" };
+  const displayCountry = getDisplayName(country);
   const rows = communities.length
     ? communities
         .map(
@@ -77,7 +78,7 @@ function renderCountryPage(country, communities) {
     : "| No listings yet | - | Submit the first listing for this area. | - |";
 
   return [
-    `# ${country} Tech Communities`,
+    `# ${displayCountry} Tech Communities`,
     "",
     `Regional status: CARICOM ${status.caricom} | CSME ${status.csme}`,
     "",
@@ -94,7 +95,7 @@ function renderReadme() {
       .map((country) => {
         const slug = slugify(country);
         const status = REGIONAL_STATUS[country] || { caricom: "No", csme: "No" };
-        return `| ${country} | [countries/${slug}.md](countries/${slug}.md) | ${status.caricom} | ${status.csme} |`;
+        return `| ${getDisplayName(country)} | [countries/${slug}.md](countries/${slug}.md) | ${status.caricom} | ${status.csme} |`;
       })
       .join("\n");
 
@@ -119,17 +120,7 @@ function renderReadme() {
     "",
     "`data/communities.json` -> generated pages -> `README.md` and `countries/*.md`",
     "",
-    "Platforms can include:",
-    "",
-    "- Websites",
-    "- WhatsApp",
-    "- Discord",
-    "- Slack",
-    "- Telegram",
-    "- Meetup",
-    "- Forums",
-    "- Mailing lists",
-    "- Social media sites such as Instagram, LinkedIn, X, and Facebook",
+    "Platforms can include websites, WhatsApp, Discord, Slack, Telegram, Meetup, forums, mailing lists, and social media.",
     "",
     "## Directory",
     "",
@@ -154,20 +145,18 @@ function renderReadme() {
     "",
     "Don't want to open a pull request? Use the [community submission form](https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml).",
     "",
-    "See `CONTRIBUTING.md`.",
+    "See [CONTRIBUTING.md](CONTRIBUTING.md).",
     "",
-    "## Data Model",
+    "## Website",
     "",
-    "Each community record should use these fields:",
+    "To build the static site locally:",
     "",
-    "- `name`",
-    "- `country`",
-    "- `city` (optional)",
-    "- `language`",
-    "- `focus`",
-    "- `member_count` (optional)",
-    "- `links`",
-    "- `description`",
+    "1. Run `npm run validate`",
+    "2. Run `npm run build:site`",
+    "3. Open `dist/index.html`",
+    "",
+    "The GitHub Pages deploy workflow is defined in `.github/workflows/deploy-pages.yml`.",
+    "After GitHub Pages is configured to use GitHub Actions, every push to `main` that updates the dataset or site scripts will rebuild and redeploy the site automatically.",
     "",
     "## Automation",
     "",
