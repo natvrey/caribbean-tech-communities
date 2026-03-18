@@ -223,7 +223,7 @@ function renderCountryPage(country, communities) {
     '    <a class="back-link" href="../index.html">Back to directory</a>',
     `    <h1>${escapeHtml(displayCountry)}</h1>`,
     `    <p class="country-status">CARICOM: ${escapeHtml(status.caricom)} | CSME: ${escapeHtml(status.csme)}</p>`,
-    '    <p class="status-note">CARICOM stands for the Caribbean Community, and CSME stands for the CARICOM Single Market and Economy.</p>',
+    '    <p class="status-note"><a href="https://caricom.org/our-community/who-we-are/" target="_blank" rel="noreferrer">CARICOM</a> stands for the Caribbean Community, and <a href="https://csme.me/" target="_blank" rel="noreferrer">CSME</a> stands for the CARICOM Single Market and Economy.</p>',
     `    <p class="listing-count">${renderCommunityCount(communities.length)} listed</p>`,
     "  </section>",
     ...contentSections,
