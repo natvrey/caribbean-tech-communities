@@ -10,6 +10,12 @@ on:
       - "README.md"
       - "CONTRIBUTING.md"
       - "package.json"
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branch, tag, or commit to check"
+        required: false
+        type: string
   push:
     branches:
       - main
@@ -34,11 +40,14 @@ permissions:
 
 jobs:
   build:
+    if: ${{ github.event_name != 'pull_request' || !startsWith(github.head_ref, 'automation/community-submission-') }}
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.ref || github.event.pull_request.head.sha || github.sha }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v5

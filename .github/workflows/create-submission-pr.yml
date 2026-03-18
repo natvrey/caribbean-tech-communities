@@ -1,0 +1,85 @@
+name: Create Submission PR
+
+on:
+  issues:
+    types:
+      - opened
+      - edited
+      - reopened
+      - labeled
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  create-pr:
+    if: ${{ !github.event.issue.pull_request && contains(github.event.issue.labels.*.name, 'community-submission') }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Apply issue submission to dataset
+        id: submission
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+        run: node scripts/process-community-submission.js
+
+      - name: Validate dataset
+        run: npm run validate
+
+      - name: Generate markdown files
+        run: npm run generate
+
+      - name: Create or update pull request
+        id: cpr
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: ${{ steps.submission.outputs.branch_name }}
+          delete-branch: true
+          commit-message: ${{ steps.submission.outputs.pr_title }}
+          title: ${{ steps.submission.outputs.pr_title }}
+          body: |
+            Automated community submission PR for #${{ github.event.issue.number }}.
+
+            Submitted community: `${{ steps.submission.outputs.community_name }}`
+            Country or scope: `${{ steps.submission.outputs.country }}`
+
+            Source issue: ${{ steps.submission.outputs.issue_url }}
+          labels: |
+            community-submission
+
+      - name: Comment with pull request link
+        if: ${{ steps.cpr.outputs.pull-request-operation == 'created' }}
+        uses: actions/github-script@v8
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `Created review PR: ${process.env.PR_URL}`
+            });
+        env:
+          PR_URL: ${{ steps.cpr.outputs.pull-request-url }}
