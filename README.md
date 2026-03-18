@@ -6,17 +6,7 @@ This repository is managed as a dataset first and a directory second:
 
 `data/communities.json` -> generated pages -> `README.md` and `countries/*.md`
 
-Platforms can include:
-
-- Websites
-- WhatsApp
-- Discord
-- Slack
-- Telegram
-- Meetup
-- Forums
-- Mailing lists
-- Social media sites such as Instagram, LinkedIn, X, and Facebook
+Platforms can include websites, WhatsApp, Discord, Slack, Telegram, Meetup, forums, mailing lists, and social media.
 
 ## Directory
 
@@ -137,20 +127,7 @@ To add a community:
 
 Don't want to open a pull request? Use the [community submission form](https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml).
 
-See `CONTRIBUTING.md`.
-
-## Data Model
-
-Each community record should use these fields:
-
-- `name`
-- `country`
-- `city` (optional)
-- `language`
-- `focus`
-- `member_count` (optional)
-- `links`
-- `description`
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Automation
 
