@@ -49,6 +49,41 @@ const COUNTRY_FLAGS = {
   "Turks and Caicos Islands": { kind: "flag", code: "tc" },
   "U.S. Virgin Islands": { kind: "flag", code: "vi" }
 };
+const COUNTRY_COORDINATES = {
+  "Antigua and Barbuda": [17.1175, -61.8468],
+  Anguilla: [18.2206, -63.0517],
+  Aruba: [12.5211, -69.9683],
+  Bahamas: [25.0443, -77.3504],
+  Barbados: [13.1132, -59.5988],
+  Belize: [17.2514, -88.759],
+  Bonaire: [12.1784, -68.2385],
+  "British Virgin Islands": [18.4207, -64.6399],
+  "Cayman Islands": [19.3133, -81.2546],
+  Cuba: [23.1136, -82.3666],
+  Curacao: [12.1696, -68.99],
+  Dominica: [15.414, -61.3709],
+  "Dominican Republic": [18.4861, -69.9312],
+  Grenada: [12.0561, -61.7488],
+  Guadeloupe: [16.2412, -61.535],
+  Guyana: [6.8013, -58.1551],
+  Haiti: [18.5392, -72.3364],
+  Jamaica: [17.9712, -76.7936],
+  Martinique: [14.6104, -61.0801],
+  Montserrat: [16.7425, -62.1874],
+  "Puerto Rico": [18.2208, -66.5901],
+  Saba: [17.635, -63.2327],
+  "Saint Barthelemy": [17.9001, -62.8336],
+  "Saint Eustatius": [17.4904, -62.9736],
+  "Saint Kitts and Nevis": [17.3578, -62.7829],
+  "Saint Lucia": [13.9094, -60.9789],
+  "Saint Martin": [18.0804, -63.0523],
+  "Saint Vincent and the Grenadines": [13.154, -61.2248],
+  "Sint Maarten": [18.0425, -63.0548],
+  Suriname: [5.852, -55.2038],
+  "Trinidad and Tobago": [10.6596, -61.5089],
+  "Turks and Caicos Islands": [21.7736, -72.2659],
+  "U.S. Virgin Islands": [18.3358, -64.8963]
+};
 
 function slugify(value) {
   return value
@@ -133,6 +168,22 @@ function renderLinkList(links) {
     .join("");
 }
 
+function renderPrintLinkList(links) {
+  if (!Array.isArray(links) || links.length === 0) {
+    return "";
+  }
+
+  return [
+    '<ul class="print-link-list">',
+    ...links.map((link) => {
+      const label = escapeHtml(link.label);
+      const url = escapeHtml(link.url);
+      return `  <li><span class="print-link-label">${label}:</span> <a href="${url}" target="_blank" rel="noreferrer">${url}</a></li>`;
+    }),
+    "</ul>"
+  ].join("\n");
+}
+
 function renderMetaList(community) {
   const items = [
     community.city ? `City: ${community.city}` : null,
@@ -159,6 +210,19 @@ function renderCommunityCard(community) {
   ].join("");
 }
 
+function renderPrintCommunityCard(community) {
+  return [
+    '<article class="print-community-card">',
+    `  <h4>${escapeHtml(community.name)}</h4>`,
+    `  <p class="community-description">${escapeHtml(community.description)}</p>`,
+    '  <ul class="community-meta">',
+    renderMetaList(community),
+    "  </ul>",
+    renderPrintLinkList(community.links || []),
+    "</article>"
+  ].join("\n");
+}
+
 function renderCountryCards(countries, communitiesByCountry) {
   return countries
     .map((country) => {
@@ -168,14 +232,21 @@ function renderCountryCards(countries, communitiesByCountry) {
       const cardClass = count > 0 ? "country-card country-card-active" : "country-card country-card-empty";
       const displayCountry = getDisplayName(country);
       const flag = renderCountryFlag(country);
+      const cardHref =
+        count > 0
+          ? `./countries/${slug}.html`
+          : "https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml";
+      const cardLabel = count > 0 ? "View communities" : "Add listing";
+      const cardLabelClass = count > 0 ? "text-link" : "text-link country-card-cta";
+      const cardRel = count > 0 ? "" : ' target="_blank" rel="noreferrer"';
 
       return [
         `<article class="${cardClass}">`,
-        `<a class="country-card-link" href="./countries/${slug}.html">`,
+        `<a class="country-card-link" href="${cardHref}"${cardRel}>`,
         `<h3>${flag}<span>${escapeHtml(displayCountry)}</span></h3>`,
-        `<p>${renderCommunityCount(count)}</p>`,
+        `<p class="country-count">${renderCommunityCount(count)}</p>`,
         `<p class="country-status">CARICOM: ${escapeHtml(status.caricom)}<br>CSME: ${escapeHtml(status.csme)}</p>`,
-        '<span class="text-link">View communities</span>',
+        `<span class="${cardLabelClass}">${cardLabel}</span>`,
         "</a>",
         "</article>"
       ].join("");
@@ -192,20 +263,79 @@ function renderSection(section, communitiesByCountry) {
   ].join("");
 }
 
-function renderContributionPanel() {
+function renderMapSectionList(communitiesByCountry) {
+  return DIRECTORY_SECTIONS.filter((section) => section.title !== "Regional")
+    .map((section) => {
+      const items = section.countries
+        .map((country) => {
+          const count = communitiesByCountry.get(country)?.length || 0;
+          return `<li><span>${escapeHtml(getDisplayName(country))}</span><strong>${renderCommunityCount(count)}</strong></li>`;
+        })
+        .join("");
+
+      return [
+        '<section class="map-list-section">',
+        `  <h3>${escapeHtml(section.title)}</h3>`,
+        `  <ul class="map-country-list">${items}</ul>`,
+        "</section>"
+      ].join("\n");
+    })
+    .join("\n");
+}
+
+function renderPrintSection(section, communitiesByCountry) {
+  const countries = section.countries
+    .map((country) => {
+      const communities = communitiesByCountry.get(country) || [];
+      if (communities.length === 0) {
+        return "";
+      }
+
+      return [
+        '<section class="print-country-group">',
+        `  <h3>${renderCountryFlag(country)}<span>${escapeHtml(getDisplayName(country))}</span></h3>`,
+        `  <p class="listing-count">${renderCommunityCount(communities.length)}</p>`,
+        '  <div class="print-community-list">',
+        communities.map((community) => renderPrintCommunityCard(community)).join("\n"),
+        "  </div>",
+        "</section>"
+      ].join("\n");
+    })
+    .filter(Boolean)
+    .join("\n");
+
+  if (!countries) {
+    return "";
+  }
+
   return [
-    '<section class="contribution-panel">',
-    "  <h2>Add a listing</h2>",
-    "  <p>Know a Caribbean tech community that should be here? Send it in for review, and we'll add it once the details are confirmed.</p>",
-    '  <div class="contribution-actions">',
-    '    <a class="button" href="https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml" target="_blank" rel="noreferrer">Add a listing</a>',
-    "  </div>",
+    '<section class="print-section">',
+    `  <div class="section-heading"><h2>${escapeHtml(section.title)}</h2><p>${escapeHtml(section.description)}</p></div>`,
+    countries,
     "</section>"
   ].join("\n");
 }
 
-function renderLayout({ title, description, body, relativeRoot }) {
+function renderContributionPanel({ showUpdate = false } = {}) {
+  return [
+    '<section class="contribution-panel">',
+    showUpdate ? "  <h2>Add or Update a listing</h2>" : "  <h2>Add a listing</h2>",
+    showUpdate
+      ? "  <p>Know a Caribbean tech community that should be here, or one that needs to be updated? Send it in for review, and we'll add it once the details are confirmed.</p>"
+      : "  <p>Know a Caribbean tech community that should be here? Send it in for review, and we'll add it once the details are confirmed.</p>",
+    '  <div class="contribution-actions">',
+    '    <a class="button" href="https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml" target="_blank" rel="noreferrer">Add listing</a>',
+    showUpdate
+      ? '    <a class="button button-update" href="https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml" target="_blank" rel="noreferrer">Update listing</a>'
+      : "",
+    "  </div>",
+    "</section>"
+  ].filter(Boolean).join("\n");
+}
+
+function renderLayout({ title, description, body, relativeRoot, script, headExtra = "", bodyEnd = "" }) {
   const rootHref = relativeRoot || ".";
+  const currentYear = new Date().getFullYear();
 
   return [
     "<!doctype html>",
@@ -216,19 +346,26 @@ function renderLayout({ title, description, body, relativeRoot }) {
     `  <title>${escapeHtml(title)}</title>`,
     `  <meta name="description" content="${escapeHtml(description)}">`,
     `  <link rel="stylesheet" href="${rootHref}/styles.css">`,
+    headExtra,
     "</head>",
     "<body>",
     '  <div class="page-shell">',
     '    <header class="site-header">',
     '      <a class="site-brand" href="' + rootHref + '/index.html">Caribbean Tech Communities</a>',
     "      <nav>",
-    '        <a class="site-nav-link" href="' + rootHref + '/index.html#directory">Directory</a>',
+    '        <a class="site-nav-link" href="' + rootHref + '/map.html">Map</a>',
+    '        <a class="site-nav-link" href="' + rootHref + '/print.html">Print Directory</a>',
+    '        <a class="site-nav-link" href="' + rootHref + '/print.html?download=pdf">Download PDF</a>',
+    // '        <a class="site-nav-link" href="' + rootHref + '/index.html#directory">Directory</a>',
     '        <a class="site-nav-link" href="https://github.com/natvrey/caribbean-tech-communities" target="_blank" rel="noreferrer">GitHub</a>',
-    '        <a class="site-nav-link" href="https://github.com/natvrey/caribbean-tech-communities/blob/main/CONTRIBUTING.md" target="_blank" rel="noreferrer">Contributor docs</a>',
+    // '        <a class="site-nav-link" href="https://github.com/natvrey/caribbean-tech-communities/blob/main/CONTRIBUTING.md" target="_blank" rel="noreferrer">Contributor docs</a>',
     "      </nav>",
     "    </header>",
     body,
+    `    <footer class="site-footer">Copyright &copy; ${currentYear} Natalie Reynolds</footer>`,
     "  </div>",
+    bodyEnd,
+    script ? `  <script>${script}</script>` : "",
     "</body>",
     "</html>",
     ""
@@ -243,8 +380,7 @@ function renderHomePage(communities, communitiesByCountry) {
   const body = [
     '<main class="main-content">',
     '  <section class="hero">',
-    "    <p class=\"eyebrow\">Directory</p>",
-    "    <h1>Caribbean tech communities in one place.</h1>",
+    "    <h1>A directory of all Caribbean tech communities.</h1>",
     "    <p class=\"hero-copy\">Browse tech communities across sovereign Caribbean states, mainland Caribbean countries, and territories.</p>",
     '    <div class="hero-stats">',
     `      <div class="stat"><strong>${totalCountries}</strong><span>countries covered</span></div>`,
@@ -281,7 +417,7 @@ function renderCountryPage(country, communities) {
         `  <p>No communities are listed for ${escapeHtml(displayCountry)} yet. Add one to help make the directory more useful.</p>`,
         "</section>"
       ].join("\n");
-  const contributionPanel = renderContributionPanel();
+  const contributionPanel = renderContributionPanel({ showUpdate: communities.length > 0 });
   const contentSections = communities.length
     ? [contributionPanel, `<section class="community-grid">${cards}</section>`]
     : [`<section class="community-grid">${cards}</section>`, contributionPanel];
@@ -307,25 +443,170 @@ function renderCountryPage(country, communities) {
   });
 }
 
+function renderPrintPage(communities, communitiesByCountry) {
+  const printDate = new Date().toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  });
+  const sections = DIRECTORY_SECTIONS.map((section) => renderPrintSection(section, communitiesByCountry))
+    .filter(Boolean)
+    .join("\n");
+  const printSummary = `A grouped list of all ${communities.length} Caribbean tech communities as at ${printDate}. This list is organized by regional category and country. This list is updated as new communities are added.`;
+
+  const body = [
+    '<main class="main-content">',
+    '  <section class="hero print-hero">',
+    "    <h1>Printable Caribbean Tech Communities Directory.</h1>",
+    `    <p class="hero-copy">${printSummary}</p>`,
+    '    <div class="hero-actions print-actions">',
+    '      <button class="button button-reset" type="button" onclick="window.print()">Print / Save as PDF</button>',
+    '      <a class="button" href="./index.html">Back to directory</a>',
+    "    </div>",
+    "  </section>",
+    '  <section class="print-summary">',
+    '    <div class="section-heading">',
+    "      <h2>Caribbean Tech Communities Directory</h2>",
+    `      <p class="print-intro">${printSummary}</p>`,
+    "    </div>",
+    "  </section>",
+    `  <div class="print-shell">${sections}</div>`,
+    "</main>"
+  ].join("\n");
+
+  const script = [
+    "const params = new URLSearchParams(window.location.search);",
+    "if (params.get('download') === 'pdf') {",
+    "  window.addEventListener('load', () => window.print(), { once: true });",
+    "}"
+  ].join("\n");
+
+  return renderLayout({
+    title: "Print Caribbean Tech Communities Directory",
+    description: "Printable list of Caribbean tech communities grouped by region and country.",
+    body,
+    relativeRoot: ".",
+    script
+  });
+}
+
+function renderMapPage(communitiesByCountry) {
+  const mapCountries = DIRECTORY_SECTIONS.filter((section) => section.title !== "Regional")
+    .flatMap((section) =>
+      section.countries.map((country) => {
+        const count = communitiesByCountry.get(country)?.length || 0;
+        return {
+          country,
+          displayName: getDisplayName(country),
+          section: section.title,
+          count,
+          coordinates: COUNTRY_COORDINATES[country],
+          href: `./countries/${slugify(country)}.html`
+        };
+      })
+    )
+    .filter((entry) => Array.isArray(entry.coordinates));
+
+  const body = [
+    '<main class="main-content">',
+    '  <section class="hero map-hero">',
+    "    <h1>Caribbean tech communities on the map.</h1>",
+    '    <p class="hero-copy">Explore every country and territory currently listed in the directory on an interactive Caribbean map. Select a marker to jump to its directory page or see whether listings are still needed.</p>',
+    '    <div class="map-legend" aria-label="Map legend">',
+    '      <span class="map-legend-item"><span class="map-dot map-dot-active"></span>Has listings</span>',
+    '      <span class="map-legend-item"><span class="map-dot map-dot-empty"></span>No listings yet</span>',
+    "    </div>",
+    "  </section>",
+    '  <section class="map-section">',
+    '    <div id="directory-map" class="directory-map" aria-label="Interactive map of Caribbean countries and territories"></div>',
+    '    <div class="map-sidepanel">',
+    '      <h2>Countries In The Directory</h2>',
+    '      <p class="hero-copy">Every country and territory listed in the directory is shown on the map and summarized below by regional grouping.</p>',
+    renderMapSectionList(communitiesByCountry),
+    "    </div>",
+    "  </section>",
+    "</main>"
+  ].join("\n");
+
+  const headExtra =
+    '  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">';
+  const bodyEnd =
+    '  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>';
+  const script = [
+    `const mapCountries = ${JSON.stringify(mapCountries)};`,
+    "const map = L.map('directory-map', { scrollWheelZoom: false });",
+    "L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {",
+    "  maxZoom: 18,",
+    "  attribution: '&copy; OpenStreetMap contributors'",
+    "}).addTo(map);",
+    "const bounds = [];",
+    "for (const entry of mapCountries) {",
+    "  const hasListings = entry.count > 0;",
+    "  const action = hasListings",
+    "    ? `<a href=\"${entry.href}\">View communities</a>`",
+    "    : '<a href=\"https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml\" target=\"_blank\" rel=\"noreferrer\">Add listing</a>';",
+    "  const marker = L.circleMarker(entry.coordinates, {",
+    "    radius: hasListings ? 8 : 7,",
+    "    color: hasListings ? '#014040' : '#731702',",
+    "    fillColor: hasListings ? '#03A678' : '#F27405',",
+    "    fillOpacity: hasListings ? 0.82 : 0.72,",
+    "    weight: hasListings ? 2.5 : 2",
+    "  }).addTo(map);",
+    "  marker.bindPopup(`",
+    "    <strong>${entry.displayName}</strong><br>",
+    "    ${entry.section}<br>",
+    "    ${entry.count} ${entry.count === 1 ? 'community' : 'communities'}<br>",
+    "    ${action}",
+    "  `);",
+    "  marker.bindTooltip(entry.displayName, { direction: 'top', offset: [0, -8] });",
+    "  bounds.push(entry.coordinates);",
+    "}",
+    "if (bounds.length) {",
+    "  map.fitBounds(bounds, { padding: [24, 24] });",
+    "}"
+  ].join("\n");
+
+  return renderLayout({
+    title: "Caribbean Tech Communities Map",
+    description: "Interactive map of Caribbean countries and territories included in the tech communities directory.",
+    body,
+    relativeRoot: ".",
+    script,
+    headExtra,
+    bodyEnd
+  });
+}
+
 function renderStyles() {
   return [
     ":root {",
-    "  --bg: #8ecae6;",
+    // "  --bg: #8ecae6;",
+    // "  --bg: #04C4D9;",
+    // "  --bg: #A0D3F2;",
+    // "  --bg: #03A678;",
+    // "  --bg: #76ffca;",
+    // "  --bg: #64f3bb;",
+    "  --bg: #8bfba5;",
     "  --surface: #fffdf8;",
     "  --surface-strong: #f8f2e2;",
     "  --text: #1a1814;",
-    "  --muted: #5e5649;",
+    // "  --muted: #5e5649;",
+    "  --muted: #4d4b49;",
     "  --border: #d7ccb7;",
-    "  --accent: #0d6b5d;",
-    "  --accent-strong: #094b41;",
-    "  --shadow: 0 18px 50px rgba(31, 28, 21, 0.08);",
+    "  --accent: #02735E;",
+    "  --accent-strong: #014040;",
+    "  --accent-bright: #03A678;",
+    "  --accent-highlight: #F27405;",
+    "  --accent-warm: #731702;",
+    "  --accent-warm-strong: #5c1201;",
+    "  --shadow: 0 18px 50px rgba(1, 64, 64, 0.14);",
     "}",
     "* { box-sizing: border-box; }",
     "html { scroll-behavior: smooth; }",
     "body {",
     "  margin: 0;",
     "  font-family: Georgia, 'Times New Roman', serif;",
-    "  background: radial-gradient(circle at top, #dff4ff 0%, var(--bg) 52%, #5db8d4 100%);",
+    "  background: var(--bg);",
     "  color: var(--text);",
     "}",
     "a { color: inherit; }",
@@ -334,8 +615,9 @@ function renderStyles() {
     ".site-brand { font-size: 1.15rem; font-weight: 700; text-decoration: none; }",
     "nav { display: flex; gap: 16px; }",
     ".site-nav-link, .text-link, .back-link { color: var(--accent-strong); text-decoration: none; }",
-    ".site-nav-link:hover, .text-link:hover, .back-link:hover, .community-link:hover { text-decoration: underline; }",
+    ".site-nav-link:hover, .text-link:hover, .back-link:hover, .community-link:hover { color: var(--accent-warm); text-decoration: none; }",
     ".main-content { display: grid; gap: 28px; }",
+    ".site-footer { margin-top: 28px; padding: 18px 0 8px; color: var(--accent-strong); font-size: 0.95rem; text-align: center; }",
     ".hero, .country-hero, .contribution-panel {",
     "  background: var(--surface);",
     "  border: 1px solid var(--border);",
@@ -344,27 +626,37 @@ function renderStyles() {
     "  box-shadow: var(--shadow);",
     "}",
     ".hero { padding: 40px 28px; }",
-    ".eyebrow { margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); font-size: 0.8rem; }",
+    ".eyebrow { margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent-strong); font-size: 0.8rem; }",
     "h1, h2, h3, p { margin-top: 0; }",
-    "h1 { font-size: clamp(2.1rem, 5vw, 4.6rem); line-height: 0.95; max-width: 12ch; margin-bottom: 16px; }",
+    "h1 { font-size: clamp(2.1rem, 5vw, 4.6rem); line-height: 0.95; max-width: 24ch; margin-bottom: 16px; }",
     "h2 { font-size: 1.7rem; margin-bottom: 10px; }",
     "h3 { font-size: 1.2rem; margin-bottom: 10px; }",
     ".hero-copy, .section-heading p, .summary-panel p, .country-status, .community-description, .community-meta { color: var(--muted); }",
     ".status-note { color: var(--muted); font-size: 0.95rem; margin-top: -6px; margin-bottom: 0; }",
-    ".listing-count { display: block; margin-top: 10px; margin-bottom: 0; color: var(--accent-strong); font-weight: 700; font-size: 1.15rem; letter-spacing: 0.01em; }",
+    ".status-note a { color: var(--accent-warm); }",
+    ".listing-count { display: block; margin-top: 10px; margin-bottom: 0; color: var(--accent-warm); font-weight: 700; font-size: 1.15rem; letter-spacing: 0.01em; }",
     ".hero-stats { display: flex; flex-wrap: wrap; gap: 12px; margin: 24px 0; }",
-    ".stat { min-width: 140px; padding: 14px 16px; border-radius: 16px; background: var(--surface-strong); border: 1px solid var(--border); transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background-color 160ms ease; }",
-    ".stat:hover { transform: translateY(-2px); background: #ffffff; border-color: #a8bfcb; box-shadow: 0 14px 28px rgba(2, 48, 71, 0.1); }",
+    ".stat { min-width: 140px; padding: 14px 16px; border-radius: 16px; background: #ddf3ee; border: 1px solid #8ecabf; transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background-color 160ms ease; }",
+    ".stat:hover { transform: translateY(-2px); background: #ffffff; border-color: var(--accent-bright); box-shadow: 0 14px 28px rgba(1, 64, 64, 0.14); }",
     ".stat strong { display: block; font-size: 1.7rem; color: var(--accent-strong); }",
     ".hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }",
-    ".button { display: inline-block; padding: 12px 18px; border-radius: 999px; background: var(--accent); color: #fff; text-decoration: none; transition: transform 140ms ease, box-shadow 140ms ease, background-color 140ms ease; }",
-    ".button:hover, .button:focus-visible { background: var(--accent-strong); box-shadow: 0 14px 28px rgba(26, 95, 122, 0.22); transform: translateY(-1px); }",
-    ".button:focus-visible { outline: 3px solid rgba(26, 95, 122, 0.25); outline-offset: 3px; }",
+    ".button-reset { border: 0; cursor: pointer; font: inherit; }",
+    ".button, .country-card-cta { display: inline-flex; align-items: center; justify-content: center; width: fit-content; padding: 12px 18px; border-radius: 999px; background: var(--accent); color: #fff; text-decoration: none; font-weight: 700; transition: transform 140ms ease, box-shadow 140ms ease, background-color 140ms ease; }",
+    ".button:hover, .button:focus-visible, .country-card-cta:hover, .country-card-cta:focus-visible { background: var(--accent-strong); color: #fff; text-decoration: none; box-shadow: 0 14px 28px rgba(1, 64, 64, 0.22); transform: translateY(-1px); }",
+    ".button:focus-visible, .country-card-cta:focus-visible { outline: 3px solid rgba(242, 116, 5, 0.45); outline-offset: 3px; }",
+    ".button-update { background: var(--accent-warm); }",
+    ".button-update:hover, .button-update:focus-visible { background: var(--accent-warm-strong); color: #fff; text-decoration: none; box-shadow: 0 14px 28px rgba(115, 23, 2, 0.24); }",
+    ".contribution-panel {",
+    "  border-color: rgba(115, 23, 2, 0.42);",
+    "  border-radius: 30px;",
+    "  box-shadow: 0 10px 24px rgba(1, 64, 64, 0.08), 0 3px 10px rgba(115, 23, 2, 0.08);",
+    "}",
     ".contribution-panel p { color: var(--muted); max-width: 96ch; }",
     ".contribution-actions { display: flex; flex-wrap: wrap; gap: 12px; }",
     ".section-stack { display: grid; gap: 20px; }",
     ".directory-section { display: grid; gap: 16px; }",
     ".section-heading { max-width: 96ch; }",
+    ".country-count, .country-status { padding-bottom: 20px; }",
     ".country-grid, .community-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }",
     ".country-card, .community-card {",
     "  background: var(--surface);",
@@ -373,17 +665,19 @@ function renderStyles() {
     "  padding: 20px;",
     "  box-shadow: var(--shadow);",
     "}",
-    ".country-card-active { background: #eef8f1; border-color: #9ec8ad; }",
-    ".country-card-empty { background: #fbf7ee; border-color: #d7ccb7; }",
+    ".country-card-active { background: #ddf3ee; border-color: #8ecabf; }",
+    ".country-card-empty { background: #f4e6e1; border-color: #c8a096; }",
     ".country-card { transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease, background-color 140ms ease; }",
-    ".country-card-link { display: grid; gap: 14px; color: inherit; text-decoration: none; min-height: 100%; }",
+    ".country-card-link { display: grid; gap: 0px; color: inherit; text-decoration: none; min-height: 100%; }",
     ".country-card h3 { display: inline-flex; align-items: center; gap: 12px; margin-bottom: 0; }",
-    ".country-card:hover, .country-card:focus-within { transform: translateY(-3px); box-shadow: 0 18px 36px rgba(2, 48, 71, 0.12); }",
-    ".country-card-active:hover, .country-card-active:focus-within { background: #e5f3ea; border-color: #6ea486; }",
-    ".country-card-empty:hover, .country-card-empty:focus-within { background: #f6efdf; border-color: #c4b38f; }",
-    ".country-card-link:focus-visible { outline: 3px solid rgba(26, 95, 122, 0.35); outline-offset: 6px; border-radius: 14px; }",
+    ".country-card-cta { margin-top: 8px; }",
+    ".country-card:hover, .country-card:focus-within { transform: translateY(-3px); box-shadow: 0 18px 36px rgba(1, 64, 64, 0.14); }",
+    ".country-card-active:hover, .country-card-active:focus-within { background: #d3eee7; border-color: var(--accent); }",
+    ".country-card-empty:hover, .country-card-empty:focus-within { background: #efddd7; border-color: var(--accent-warm); }",
+    ".country-card-link:focus-visible { outline: 3px solid rgba(242, 116, 5, 0.45); outline-offset: 6px; border-radius: 14px; }",
     ".country-hero h1 { display: flex; align-items: flex-start; gap: 14px; }",
-    ".country-flag { width: 26px; height: 18px; border-radius: 3px; object-fit: cover; box-shadow: 0 0 0 1px rgba(2, 48, 71, 0.12); flex: 0 0 auto; }",
+    ".country-flag { width: 26px; height: 18px; border-radius: 3px; object-fit: cover; box-shadow: 0 0 0 1px rgba(1, 64, 64, 0.16); flex: 0 0 auto; }",
+    ".country-card-empty .country-flag, .country-card-empty .country-flag-fallback { filter: grayscale(1); opacity: 0.6; }",
     ".country-flag-hero { width: 34px; height: 24px; border-radius: 4px; margin-top: 0.18em; }",
     ".country-flag-fallback { display: inline-flex; align-items: center; justify-content: center; color: var(--accent-strong); background: rgba(255, 255, 255, 0.55); }",
     ".country-flag-fallback svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }",
@@ -398,18 +692,75 @@ function renderStyles() {
     "  border: 1px solid var(--border);",
     "  transition: transform 140ms ease, background-color 140ms ease, border-color 140ms ease, box-shadow 140ms ease;",
     "}",
-    ".community-link:hover, .community-link:focus-visible { background: #ffffff; border-color: #a8bfcb; box-shadow: 0 10px 20px rgba(2, 48, 71, 0.08); transform: translateY(-1px); text-decoration: none; }",
-    ".community-link:focus-visible { outline: 3px solid rgba(26, 95, 122, 0.18); outline-offset: 2px; }",
+    ".community-link:hover, .community-link:focus-visible { background: #ffffff; border-color: var(--accent-bright); box-shadow: 0 10px 20px rgba(1, 64, 64, 0.1); transform: translateY(-1px); text-decoration: none; }",
+    ".community-link:focus-visible { outline: 3px solid rgba(242, 116, 5, 0.35); outline-offset: 2px; }",
     ".empty-state { padding: 24px; border-radius: 18px; background: var(--surface); border: 1px dashed var(--border); box-shadow: var(--shadow); }",
     ".empty-state h2 { margin-bottom: 10px; }",
     ".empty-state p { margin-bottom: 18px; color: var(--muted); max-width: 88ch; }",
+    ".print-shell { display: grid; gap: 28px; }",
+    ".print-intro { margin: -4px 0 8px; color: var(--muted); font-size: 1rem; }",
+    ".print-section { display: grid; gap: 18px; }",
+    ".print-country-group { display: grid; gap: 12px; padding: 0 0 18px; border-bottom: 1px solid var(--border); }",
+    ".print-country-group h3 { display: inline-flex; align-items: center; gap: 12px; margin-bottom: 0; }",
+    ".print-community-list { display: grid; gap: 18px; }",
+    ".print-community-card { display: grid; gap: 8px; padding-left: 0; }",
+    ".print-community-card h4 { margin: 0; font-size: 1.1rem; }",
+    ".print-community-card .community-description { margin-bottom: 0; }",
+    ".print-community-card .community-meta { margin: 0; }",
+    ".print-link-list { margin: 0; padding-left: 18px; }",
+    ".print-link-list li { margin-bottom: 6px; overflow-wrap: anywhere; }",
+    ".print-link-label { font-weight: 700; }",
+    ".map-legend { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 22px; }",
+    ".map-legend-item { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-weight: 600; }",
+    ".map-dot { width: 14px; height: 14px; border-radius: 999px; border: 2px solid var(--accent-strong); display: inline-block; }",
+    ".map-dot-active { background: var(--accent-bright); border-color: var(--accent-strong); }",
+    ".map-dot-empty { background: var(--accent-highlight); border-color: var(--accent-warm); }",
+    ".map-section { display: grid; gap: 20px; grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.9fr); align-items: start; }",
+    ".directory-map { min-height: 620px; border-radius: 24px; overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow); }",
+    ".map-sidepanel { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 24px; box-shadow: var(--shadow); display: grid; gap: 18px; }",
+    ".map-list-section { display: grid; gap: 10px; padding-bottom: 16px; border-bottom: 1px solid rgba(1, 64, 64, 0.12); }",
+    ".map-list-section:last-child { border-bottom: 0; padding-bottom: 0; }",
+    ".map-country-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }",
+    ".map-country-list li { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); }",
+    ".map-country-list strong { color: var(--accent-strong); font-size: 0.95rem; }",
+    ".leaflet-popup-content-wrapper, .leaflet-popup-tip { box-shadow: 0 12px 24px rgba(1, 64, 64, 0.18); }",
+    ".leaflet-popup-content { margin: 14px 16px; color: var(--text); }",
+    ".leaflet-popup-content a { color: var(--accent-strong); text-decoration: none; }",
+    ".leaflet-popup-content a:hover { color: var(--accent-warm); text-decoration: none; }",
     "@media (max-width: 720px) {",
     "  .page-shell { padding: 16px; }",
     "  .site-header { align-items: flex-start; flex-direction: column; }",
     "  nav { flex-wrap: wrap; }",
     "  .hero, .summary-panel, .country-hero { padding: 20px; }",
+    "  .map-section { grid-template-columns: 1fr; }",
+    "  .directory-map { min-height: 460px; }",
     "}",
-    ""
+    "@media print {",
+    "  @page { margin: 0.5in; }",
+    "  body { background: #ffffff; }",
+    "  .page-shell { max-width: none; padding: 0; }",
+    "  .site-header, .site-footer, .print-actions, .back-link, .print-hero { display: none !important; }",
+    "  .print-intro { display: block; margin: 0 0 14px; color: #333333; font-size: 0.95rem; }",
+    "  .hero, .country-hero, .contribution-panel, .community-card, .empty-state { box-shadow: none; }",
+    "  .hero, .country-hero, .contribution-panel, .community-card, .empty-state { border-color: #999999; }",
+    "  .main-content, .print-shell, .print-section, .print-community-list, .print-community-card { display: block; }",
+    "  .main-content { gap: 0; }",
+    "  .print-shell { margin: 0; }",
+    "  .print-section { margin-bottom: 18px; }",
+    "  .print-section .section-heading { margin-bottom: 10px; }",
+    "  .print-section .section-heading h2 { font-size: 1.3rem; margin-bottom: 4px; }",
+    "  .print-section .section-heading p { margin-bottom: 0; }",
+    "  .print-country-group { display: block; padding: 0 0 12px; margin-bottom: 12px; break-inside: auto; page-break-inside: auto; }",
+    "  .print-country-group h3 { display: flex; margin-bottom: 2px; }",
+    "  .print-country-group .listing-count { margin: 0 0 8px; font-size: 1rem; }",
+    "  .print-community-card { margin-bottom: 12px; break-inside: avoid; page-break-inside: avoid; }",
+    "  .print-community-card h4 { font-size: 1rem; }",
+    "  .print-community-card .community-meta { padding-left: 16px; margin-bottom: 8px; }",
+    "  .print-link-list { padding-left: 16px; }",
+    "  .print-link-list li { margin-bottom: 4px; }",
+    "  .print-link-list a { overflow-wrap: anywhere; word-break: break-word; }",
+    "}",
+    "",
   ].join("\n");
 }
 
@@ -431,6 +782,8 @@ function main() {
   resetOutputDir();
   fs.writeFileSync(STYLES_PATH, renderStyles(), "utf8");
   writeFile("index.html", renderHomePage(communities, communitiesByCountry));
+  writeFile("map.html", renderMapPage(communitiesByCountry));
+  writeFile("print.html", renderPrintPage(communities, communitiesByCountry));
 
   for (const section of DIRECTORY_SECTIONS) {
     for (const country of section.countries) {

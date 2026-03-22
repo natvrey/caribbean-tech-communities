@@ -7,13 +7,13 @@ This repository uses a structured dataset as the source of truth.
 To contribute:
 
 1. Edit `data/communities.json`
-2. Add or update one or more community records
+2. Add a new community record or update existing record(s) with current information
 3. Run `npm run validate`
 4. Run `npm run generate`
 5. Commit the updated data and generated markdown files
 6. Open a pull request
 
-If you do not want to open a pull request, use the [community submission form](https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml) to submit a community.
+If you do not want to open a pull request, use the [community submission form](https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml) to either submit a new community or update outdated information in an existing listing.
 
 ## Record Schema
 

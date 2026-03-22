@@ -1,5 +1,5 @@
 name: Community submission
-description: Suggest a new Caribbean tech community for the directory
+description: Submit a new Caribbean tech community or update an existing listing.
 title: "[Community] "
 labels:
   - community-submission
@@ -7,13 +7,24 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for submitting a community. After you send this form, the submission will be reviewed and validated. If validation succeeds, it will be added to the repository.
+        Use this form to submit a new Caribbean tech community or to update an existing listing if any information is outdated. After you send this form, the submission will be reviewed and validated. If validation succeeds, the repository will be updated.
 
   - type: input
     id: community_name
     attributes:
       label: Community name
       placeholder: Caribbean AI Builders
+    validations:
+      required: true
+
+  - type: dropdown
+    id: submission_type
+    attributes:
+      label: Submission type
+      description: Choose whether you are submitting a new listing or updating information that is outdated.
+      options:
+        - Add a new listing
+        - Update outdated information
     validations:
       required: true
 
