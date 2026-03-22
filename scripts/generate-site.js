@@ -319,13 +319,15 @@ function renderPrintSection(section, communitiesByCountry) {
 function renderContributionPanel({ showUpdate = false } = {}) {
   return [
     '<section class="contribution-panel">',
-    "  <h2>Add or Update a listing</h2>",
-    "  <p>Know a Caribbean tech community that should be here, or one that needs to be updated? Send it in for review, and we'll add it once the details are confirmed.</p>",
+    showUpdate ? "  <h2>Add or Update a listing</h2>" : "  <h2>Add a listing</h2>",
+    showUpdate
+      ? "  <p>Know a Caribbean tech community that should be here, or one that needs to be updated? Send it in for review, and we'll add it once the details are confirmed.</p>"
+      : "  <p>Know a Caribbean tech community that should be here? Send it in for review, and we'll add it once the details are confirmed.</p>",
     '  <div class="contribution-actions">',
     '    <a class="button" href="https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml" target="_blank" rel="noreferrer">Add listing</a>',
     showUpdate
       ? '    <a class="button button-update" href="https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml" target="_blank" rel="noreferrer">Update listing</a>'
-      : '    <a class="button button-update" href="https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml" target="_blank" rel="noreferrer">Update listing</a>',
+      : "",
     "  </div>",
     "</section>"
   ].filter(Boolean).join("\n");
@@ -455,14 +457,19 @@ function renderPrintPage(communities, communitiesByCountry) {
   const body = [
     '<main class="main-content">',
     '  <section class="hero print-hero">',
-    "    <h1>Printable Caribbean tech communities list.</h1>",
+    "    <h1>Printable Caribbean Tech Communities Directory.</h1>",
     `    <p class="hero-copy">${printSummary}</p>`,
     '    <div class="hero-actions print-actions">',
     '      <button class="button button-reset" type="button" onclick="window.print()">Print / Save as PDF</button>',
     '      <a class="button" href="./index.html">Back to directory</a>',
     "    </div>",
     "  </section>",
-    `  <div class="print-intro">${printSummary}</div>`,
+    '  <section class="print-summary">',
+    '    <div class="section-heading">',
+    "      <h2>Caribbean Tech Communities Directory</h2>",
+    `      <p class="print-intro">${printSummary}</p>`,
+    "    </div>",
+    "  </section>",
     `  <div class="print-shell">${sections}</div>`,
     "</main>"
   ].join("\n");
@@ -576,7 +583,10 @@ function renderStyles() {
     // "  --bg: #8ecae6;",
     // "  --bg: #04C4D9;",
     // "  --bg: #A0D3F2;",
-    "  --bg: #03A678;",
+    // "  --bg: #03A678;",
+    // "  --bg: #76ffca;",
+    // "  --bg: #64f3bb;",
+    "  --bg: #62ffc2;",
     "  --surface: #fffdf8;",
     "  --surface-strong: #f8f2e2;",
     "  --text: #1a1814;",
