@@ -482,7 +482,7 @@ function renderPrintPage(communities, communitiesByCountry) {
   ].join("\n");
 
   return renderLayout({
-    title: "Print Caribbean Tech Communities",
+    title: "Print Caribbean Tech Communities Directory",
     description: "Printable list of Caribbean tech communities grouped by region and country.",
     body,
     relativeRoot: ".",
