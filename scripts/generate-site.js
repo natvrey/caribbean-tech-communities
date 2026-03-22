@@ -352,7 +352,7 @@ function renderLayout({ title, description, body, relativeRoot, script, headExtr
     '      <a class="site-brand" href="' + rootHref + '/index.html">Caribbean Tech Communities</a>',
     "      <nav>",
     '        <a class="site-nav-link" href="' + rootHref + '/map.html">Map</a>',
-    '        <a class="site-nav-link" href="' + rootHref + '/print.html">Print Directorys</a>',
+    '        <a class="site-nav-link" href="' + rootHref + '/print.html">Print Directory</a>',
     '        <a class="site-nav-link" href="' + rootHref + '/print.html?download=pdf">Download PDF</a>',
     // '        <a class="site-nav-link" href="' + rootHref + '/index.html#directory">Directory</a>',
     '        <a class="site-nav-link" href="https://github.com/natvrey/caribbean-tech-communities" target="_blank" rel="noreferrer">GitHub</a>',
