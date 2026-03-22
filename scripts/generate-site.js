@@ -49,6 +49,41 @@ const COUNTRY_FLAGS = {
   "Turks and Caicos Islands": { kind: "flag", code: "tc" },
   "U.S. Virgin Islands": { kind: "flag", code: "vi" }
 };
+const COUNTRY_COORDINATES = {
+  "Antigua and Barbuda": [17.1175, -61.8468],
+  Anguilla: [18.2206, -63.0517],
+  Aruba: [12.5211, -69.9683],
+  Bahamas: [25.0443, -77.3504],
+  Barbados: [13.1132, -59.5988],
+  Belize: [17.2514, -88.759],
+  Bonaire: [12.1784, -68.2385],
+  "British Virgin Islands": [18.4207, -64.6399],
+  "Cayman Islands": [19.3133, -81.2546],
+  Cuba: [23.1136, -82.3666],
+  Curacao: [12.1696, -68.99],
+  Dominica: [15.414, -61.3709],
+  "Dominican Republic": [18.4861, -69.9312],
+  Grenada: [12.0561, -61.7488],
+  Guadeloupe: [16.2412, -61.535],
+  Guyana: [6.8013, -58.1551],
+  Haiti: [18.5392, -72.3364],
+  Jamaica: [17.9712, -76.7936],
+  Martinique: [14.6104, -61.0801],
+  Montserrat: [16.7425, -62.1874],
+  "Puerto Rico": [18.2208, -66.5901],
+  Saba: [17.635, -63.2327],
+  "Saint Barthelemy": [17.9001, -62.8336],
+  "Saint Eustatius": [17.4904, -62.9736],
+  "Saint Kitts and Nevis": [17.3578, -62.7829],
+  "Saint Lucia": [13.9094, -60.9789],
+  "Saint Martin": [18.0804, -63.0523],
+  "Saint Vincent and the Grenadines": [13.154, -61.2248],
+  "Sint Maarten": [18.0425, -63.0548],
+  Suriname: [5.852, -55.2038],
+  "Trinidad and Tobago": [10.6596, -61.5089],
+  "Turks and Caicos Islands": [21.7736, -72.2659],
+  "U.S. Virgin Islands": [18.3358, -64.8963]
+};
 
 function slugify(value) {
   return value
@@ -228,6 +263,26 @@ function renderSection(section, communitiesByCountry) {
   ].join("");
 }
 
+function renderMapSectionList(communitiesByCountry) {
+  return DIRECTORY_SECTIONS.filter((section) => section.title !== "Regional")
+    .map((section) => {
+      const items = section.countries
+        .map((country) => {
+          const count = communitiesByCountry.get(country)?.length || 0;
+          return `<li><span>${escapeHtml(getDisplayName(country))}</span><strong>${renderCommunityCount(count)}</strong></li>`;
+        })
+        .join("");
+
+      return [
+        '<section class="map-list-section">',
+        `  <h3>${escapeHtml(section.title)}</h3>`,
+        `  <ul class="map-country-list">${items}</ul>`,
+        "</section>"
+      ].join("\n");
+    })
+    .join("\n");
+}
+
 function renderPrintSection(section, communitiesByCountry) {
   const countries = section.countries
     .map((country) => {
@@ -276,7 +331,7 @@ function renderContributionPanel({ showUpdate = false } = {}) {
   ].filter(Boolean).join("\n");
 }
 
-function renderLayout({ title, description, body, relativeRoot, script }) {
+function renderLayout({ title, description, body, relativeRoot, script, headExtra = "", bodyEnd = "" }) {
   const rootHref = relativeRoot || ".";
   const currentYear = new Date().getFullYear();
 
@@ -289,12 +344,14 @@ function renderLayout({ title, description, body, relativeRoot, script }) {
     `  <title>${escapeHtml(title)}</title>`,
     `  <meta name="description" content="${escapeHtml(description)}">`,
     `  <link rel="stylesheet" href="${rootHref}/styles.css">`,
+    headExtra,
     "</head>",
     "<body>",
     '  <div class="page-shell">',
     '    <header class="site-header">',
     '      <a class="site-brand" href="' + rootHref + '/index.html">Caribbean Tech Communities</a>',
     "      <nav>",
+    '        <a class="site-nav-link" href="' + rootHref + '/map.html">Map</a>',
     '        <a class="site-nav-link" href="' + rootHref + '/print.html">Print communities</a>',
     '        <a class="site-nav-link" href="' + rootHref + '/print.html?download=pdf">Download PDF</a>',
     // '        <a class="site-nav-link" href="' + rootHref + '/index.html#directory">Directory</a>',
@@ -305,6 +362,7 @@ function renderLayout({ title, description, body, relativeRoot, script }) {
     body,
     `    <footer class="site-footer">Copyright &copy; ${currentYear} NV Creations</footer>`,
     "  </div>",
+    bodyEnd,
     script ? `  <script>${script}</script>` : "",
     "</body>",
     "</html>",
@@ -422,6 +480,93 @@ function renderPrintPage(communities, communitiesByCountry) {
     body,
     relativeRoot: ".",
     script
+  });
+}
+
+function renderMapPage(communitiesByCountry) {
+  const mapCountries = DIRECTORY_SECTIONS.filter((section) => section.title !== "Regional")
+    .flatMap((section) =>
+      section.countries.map((country) => {
+        const count = communitiesByCountry.get(country)?.length || 0;
+        return {
+          country,
+          displayName: getDisplayName(country),
+          section: section.title,
+          count,
+          coordinates: COUNTRY_COORDINATES[country],
+          href: `./countries/${slugify(country)}.html`
+        };
+      })
+    )
+    .filter((entry) => Array.isArray(entry.coordinates));
+
+  const body = [
+    '<main class="main-content">',
+    '  <section class="hero map-hero">',
+    "    <h1>Caribbean tech communities on the map.</h1>",
+    '    <p class="hero-copy">Explore every country and territory currently listed in the directory on an interactive Caribbean map. Select a marker to jump to its directory page or see whether listings are still needed.</p>',
+    '    <div class="map-legend" aria-label="Map legend">',
+    '      <span class="map-legend-item"><span class="map-dot map-dot-active"></span>Has listings</span>',
+    '      <span class="map-legend-item"><span class="map-dot map-dot-empty"></span>No listings yet</span>',
+    "    </div>",
+    "  </section>",
+    '  <section class="map-section">',
+    '    <div id="directory-map" class="directory-map" aria-label="Interactive map of Caribbean countries and territories"></div>',
+    '    <div class="map-sidepanel">',
+    '      <h2>Countries In The Directory</h2>',
+    '      <p class="hero-copy">Every country and territory listed in the directory is shown on the map and summarized below by regional grouping.</p>',
+    renderMapSectionList(communitiesByCountry),
+    "    </div>",
+    "  </section>",
+    "</main>"
+  ].join("\n");
+
+  const headExtra =
+    '  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">';
+  const bodyEnd =
+    '  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>';
+  const script = [
+    `const mapCountries = ${JSON.stringify(mapCountries)};`,
+    "const map = L.map('directory-map', { scrollWheelZoom: false });",
+    "L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {",
+    "  maxZoom: 18,",
+    "  attribution: '&copy; OpenStreetMap contributors'",
+    "}).addTo(map);",
+    "const bounds = [];",
+    "for (const entry of mapCountries) {",
+    "  const hasListings = entry.count > 0;",
+    "  const action = hasListings",
+    "    ? `<a href=\"${entry.href}\">View communities</a>`",
+    "    : '<a href=\"https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml\" target=\"_blank\" rel=\"noreferrer\">Add listing</a>';",
+    "  const marker = L.circleMarker(entry.coordinates, {",
+    "    radius: hasListings ? 8 : 7,",
+    "    color: hasListings ? '#014040' : '#731702',",
+    "    fillColor: hasListings ? '#03A678' : '#F27405',",
+    "    fillOpacity: hasListings ? 0.82 : 0.72,",
+    "    weight: hasListings ? 2.5 : 2",
+    "  }).addTo(map);",
+    "  marker.bindPopup(`",
+    "    <strong>${entry.displayName}</strong><br>",
+    "    ${entry.section}<br>",
+    "    ${entry.count} ${entry.count === 1 ? 'community' : 'communities'}<br>",
+    "    ${action}",
+    "  `);",
+    "  marker.bindTooltip(entry.displayName, { direction: 'top', offset: [0, -8] });",
+    "  bounds.push(entry.coordinates);",
+    "}",
+    "if (bounds.length) {",
+    "  map.fitBounds(bounds, { padding: [24, 24] });",
+    "}"
+  ].join("\n");
+
+  return renderLayout({
+    title: "Caribbean Tech Communities Map",
+    description: "Interactive map of Caribbean countries and territories included in the tech communities directory.",
+    body,
+    relativeRoot: ".",
+    script,
+    headExtra,
+    bodyEnd
   });
 }
 
@@ -551,11 +696,30 @@ function renderStyles() {
     ".print-link-list { margin: 0; padding-left: 18px; }",
     ".print-link-list li { margin-bottom: 6px; overflow-wrap: anywhere; }",
     ".print-link-label { font-weight: 700; }",
+    ".map-legend { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 22px; }",
+    ".map-legend-item { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-weight: 600; }",
+    ".map-dot { width: 14px; height: 14px; border-radius: 999px; border: 2px solid var(--accent-strong); display: inline-block; }",
+    ".map-dot-active { background: var(--accent-bright); border-color: var(--accent-strong); }",
+    ".map-dot-empty { background: var(--accent-highlight); border-color: var(--accent-warm); }",
+    ".map-section { display: grid; gap: 20px; grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.9fr); align-items: start; }",
+    ".directory-map { min-height: 620px; border-radius: 24px; overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow); }",
+    ".map-sidepanel { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 24px; box-shadow: var(--shadow); display: grid; gap: 18px; }",
+    ".map-list-section { display: grid; gap: 10px; padding-bottom: 16px; border-bottom: 1px solid rgba(1, 64, 64, 0.12); }",
+    ".map-list-section:last-child { border-bottom: 0; padding-bottom: 0; }",
+    ".map-country-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }",
+    ".map-country-list li { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); }",
+    ".map-country-list strong { color: var(--accent-strong); font-size: 0.95rem; }",
+    ".leaflet-popup-content-wrapper, .leaflet-popup-tip { box-shadow: 0 12px 24px rgba(1, 64, 64, 0.18); }",
+    ".leaflet-popup-content { margin: 14px 16px; color: var(--text); }",
+    ".leaflet-popup-content a { color: var(--accent-strong); text-decoration: none; }",
+    ".leaflet-popup-content a:hover { color: var(--accent-warm); text-decoration: none; }",
     "@media (max-width: 720px) {",
     "  .page-shell { padding: 16px; }",
     "  .site-header { align-items: flex-start; flex-direction: column; }",
     "  nav { flex-wrap: wrap; }",
     "  .hero, .summary-panel, .country-hero { padding: 20px; }",
+    "  .map-section { grid-template-columns: 1fr; }",
+    "  .directory-map { min-height: 460px; }",
     "}",
     "@media print {",
     "  @page { margin: 0.5in; }",
@@ -604,6 +768,7 @@ function main() {
   resetOutputDir();
   fs.writeFileSync(STYLES_PATH, renderStyles(), "utf8");
   writeFile("index.html", renderHomePage(communities, communitiesByCountry));
+  writeFile("map.html", renderMapPage(communitiesByCountry));
   writeFile("print.html", renderPrintPage(communities, communitiesByCountry));
 
   for (const section of DIRECTORY_SECTIONS) {
