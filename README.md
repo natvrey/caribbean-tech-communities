@@ -123,14 +123,14 @@ Caribbean special municipalities that are directly administered as part of the N
 
 ## Contributing
 
-To add a community:
+To add a new community or update outdated information for an existing one:
 
 1. Edit `data/communities.json`
 2. Run `npm run validate`
 3. Run `npm run generate`
 4. Submit a pull request
 
-Don't want to open a pull request? Use the [community submission form](https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml).
+Don't want to open a pull request? Use the [community submission form](https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml) and choose whether you're adding a new listing or updating outdated information.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 

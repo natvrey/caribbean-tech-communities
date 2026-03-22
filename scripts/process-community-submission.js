@@ -8,6 +8,7 @@ const ISSUE_URL = process.env.ISSUE_URL || "";
 
 const FIELD_LABELS = {
   community_name: "Community name",
+  submission_type: "Submission type",
   scope: "Country or scope",
   city: "City (optional)",
   language: "Primary language",
@@ -187,6 +188,10 @@ function buildRecord(values) {
   return record;
 }
 
+function getSubmissionType(values) {
+  return requireField(values, FIELD_LABELS.submission_type);
+}
+
 function sortCommunities(communities) {
   return [...communities].sort((a, b) => {
     const countryCompare = a.country.localeCompare(b.country);
@@ -214,17 +219,22 @@ function checkForDuplicates(existingRecords, record) {
   }
 }
 
-function writeOutputs(record) {
+function writeOutputs(record, submissionType) {
   if (!process.env.GITHUB_OUTPUT) {
     return;
   }
 
   const branchName = `automation/community-submission-${ISSUE_NUMBER || "manual"}`;
-  const prTitle = `Add community submission: ${record.name}`;
+  const prPrefix =
+    submissionType === "Update outdated information"
+      ? "Update community submission"
+      : "Add community submission";
+  const prTitle = `${prPrefix}: ${record.name}`;
   const lines = [
     `branch_name<<__EOF__\n${branchName}\n__EOF__`,
     `community_name<<__EOF__\n${record.name}\n__EOF__`,
     `country<<__EOF__\n${record.country}\n__EOF__`,
+    `submission_type<<__EOF__\n${submissionType}\n__EOF__`,
     `pr_title<<__EOF__\n${prTitle}\n__EOF__`,
     `issue_url<<__EOF__\n${ISSUE_URL}\n__EOF__`
   ];
@@ -239,6 +249,7 @@ function main() {
 
   const parsedIssue = parseIssueForm(ISSUE_BODY);
   requireField(parsedIssue, FIELD_LABELS.evidence);
+  const submissionType = getSubmissionType(parsedIssue);
 
   const raw = fs.readFileSync(DATA_PATH, "utf8");
   const data = JSON.parse(raw);
@@ -251,7 +262,7 @@ function main() {
 
   const nextData = sortCommunities([...data, record]);
   fs.writeFileSync(DATA_PATH, `${JSON.stringify(nextData, null, 2)}\n`, "utf8");
-  writeOutputs(record);
+  writeOutputs(record, submissionType);
 
   process.stdout.write(`${JSON.stringify(record, null, 2)}\n`);
 }

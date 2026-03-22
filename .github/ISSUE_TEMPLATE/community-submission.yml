@@ -18,6 +18,17 @@ body:
       required: true
 
   - type: dropdown
+    id: submission_type
+    attributes:
+      label: Submission type
+      description: Choose whether you are submitting a new listing or updating information that is outdated.
+      options:
+        - Add a new listing
+        - Update outdated information
+    validations:
+      required: true
+
+  - type: dropdown
     id: scope
     attributes:
       label: Country or scope
