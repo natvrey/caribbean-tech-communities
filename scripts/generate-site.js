@@ -458,7 +458,7 @@ function renderPrintPage(communities, communitiesByCountry) {
     '<main class="main-content">',
     '  <section class="hero print-hero">',
     "    <h1>Printable Caribbean Tech Communities Directory.</h1>",
-    `    <p class="hero-copy">${printSummary}</p>`,
+    '    <p class="hero-copy">This page lists all communities currently in the directory and is formatted for printing or saving as a PDF.</p>',
     '    <div class="hero-actions print-actions">',
     '      <button class="button button-reset" type="button" onclick="window.print()">Print / Save as PDF</button>',
     '      <a class="button" href="./index.html">Back to directory</a>',
