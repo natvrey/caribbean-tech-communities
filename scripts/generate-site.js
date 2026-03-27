@@ -263,6 +263,50 @@ function renderSection(section, communitiesByCountry) {
   ].join("");
 }
 
+function renderTopCountriesTracker(communitiesByCountry) {
+  const trackerLabels = {
+    "Trinidad and Tobago": "T&T"
+  };
+  const topCountries = [...communitiesByCountry.entries()]
+    .filter(([country, communities]) => country !== "Regional" && communities.length > 0)
+    .sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]))
+    .slice(0, 5);
+
+  if (topCountries.length === 0) {
+    return "";
+  }
+
+  const items = topCountries
+    .map(([country, communities], index) => {
+      const displayCountry = getDisplayName(country);
+      const trackerLabel = trackerLabels[country] || displayCountry;
+      const count = communities.length;
+
+      return [
+        '<li class="top-country-item">',
+        `  <span class="top-country-rank">#${index + 1}</span>`,
+        `  <a class="top-country-link" href="./countries/${slugify(country)}.html">`,
+        `    ${renderCountryFlag(country)}`,
+        '    <span class="top-country-copy">',
+        `      <strong>${escapeHtml(trackerLabel)}</strong>`,
+        `      <span>${renderCommunityCount(count)}</span>`,
+        "    </span>",
+        "  </a>",
+        "</li>"
+      ].join("\n");
+    })
+    .join("\n");
+
+  return [
+    '<section class="top-countries-panel" aria-labelledby="top-countries-title">',
+    '  <div class="top-countries-heading">',
+    '    <p class="eyebrow">Leaderboard</p>',
+    "  </div>",
+    `  <ol class="top-country-list">${items}</ol>`,
+    "</section>"
+  ].join("\n");
+}
+
 function renderMapSectionList(communitiesByCountry) {
   return DIRECTORY_SECTIONS.filter((section) => section.title !== "Regional")
     .map((section) => {
@@ -333,7 +377,62 @@ function renderContributionPanel({ showUpdate = false } = {}) {
   ].filter(Boolean).join("\n");
 }
 
-function renderLayout({ title, description, body, relativeRoot, script, headExtra = "", bodyEnd = "" }) {
+function renderCountrySearch(rootHref = ".") {
+  const countries = DIRECTORY_SECTIONS.flatMap((section) => section.countries)
+    .filter((country) => country !== "Regional")
+    .map((country) => ({
+      name: getDisplayName(country),
+      href: `${rootHref}/countries/${slugify(country)}.html`
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const options = countries
+    .map((country) => `      <option value="${escapeHtml(country.name)}"></option>`)
+    .join("\n");
+
+  const script = [
+    "(() => {",
+    "  const form = document.querySelector('[data-country-search]');",
+    "  if (!form) return;",
+    "  const input = form.querySelector('input');",
+    `  const countries = ${JSON.stringify(countries)};`,
+    "  const normalize = (value) => value.toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();",
+    "  form.addEventListener('submit', (event) => {",
+    "    event.preventDefault();",
+    "    const query = normalize(input.value);",
+    "    if (!query) return;",
+    "    const exactMatch = countries.find((country) => normalize(country.name) === query);",
+    "    const prefixMatch = countries.find((country) => normalize(country.name).startsWith(query));",
+    "    const partialMatches = countries.filter((country) => normalize(country.name).includes(query));",
+    "    const match = exactMatch || prefixMatch || (partialMatches.length === 1 ? partialMatches[0] : null);",
+    "    if (match) {",
+    "      window.location.href = match.href;",
+    "      return;",
+    "    }",
+    "    input.setCustomValidity('Choose a country from the directory list.');",
+    "    input.reportValidity();",
+    "  });",
+    "  input.addEventListener('input', () => input.setCustomValidity(''));",
+    "})();"
+  ].join("");
+
+  const markup = [
+    '        <form class="country-search" data-country-search role="search" aria-label="Search for a country">',
+    '          <label class="sr-only" for="country-search-input">Search for a country</label>',
+    '          <div class="country-search-field">',
+    '            <input id="country-search-input" name="country" type="search" placeholder="Search country" list="country-search-list" autocomplete="off">',
+    '            <button class="button-reset country-search-button" type="submit">Search</button>',
+    "          </div>",
+    '          <datalist id="country-search-list">',
+    options,
+    "          </datalist>",
+    "        </form>"
+  ].join("\n");
+
+  return { markup, script };
+}
+
+function renderLayout({ title, description, body, relativeRoot, script, headExtra = "", bodyEnd = "", headerControls = "" }) {
   const rootHref = relativeRoot || ".";
   const currentYear = new Date().getFullYear();
 
@@ -352,14 +451,17 @@ function renderLayout({ title, description, body, relativeRoot, script, headExtr
     '  <div class="page-shell">',
     '    <header class="site-header">',
     '      <a class="site-brand" href="' + rootHref + '/index.html">Caribbean Tech Communities</a>',
-    "      <nav>",
-    '        <a class="site-nav-link" href="' + rootHref + '/map.html">Map</a>',
-    '        <a class="site-nav-link" href="' + rootHref + '/print.html">Print Directory</a>',
-    '        <a class="site-nav-link" href="' + rootHref + '/print.html?download=pdf">Download PDF</a>',
-    // '        <a class="site-nav-link" href="' + rootHref + '/index.html#directory">Directory</a>',
-    '        <a class="site-nav-link" href="https://github.com/natvrey/caribbean-tech-communities" target="_blank" rel="noreferrer">GitHub</a>',
-    // '        <a class="site-nav-link" href="https://github.com/natvrey/caribbean-tech-communities/blob/main/CONTRIBUTING.md" target="_blank" rel="noreferrer">Contributor docs</a>',
-    "      </nav>",
+    '      <div class="site-header-actions">',
+    "        <nav>",
+    '          <a class="site-nav-link" href="' + rootHref + '/map.html">Map</a>',
+    '          <a class="site-nav-link" href="' + rootHref + '/print.html">Print Directory</a>',
+    '          <a class="site-nav-link" href="' + rootHref + '/print.html?download=pdf">Download PDF</a>',
+    // '          <a class="site-nav-link" href="' + rootHref + '/index.html#directory">Directory</a>',
+    '          <a class="site-nav-link" href="https://github.com/natvrey/caribbean-tech-communities" target="_blank" rel="noreferrer">GitHub</a>',
+    // '          <a class="site-nav-link" href="https://github.com/natvrey/caribbean-tech-communities/blob/main/CONTRIBUTING.md" target="_blank" rel="noreferrer">Contributor docs</a>',
+    "        </nav>",
+    headerControls,
+    "      </div>",
     "    </header>",
     body,
     `    <footer class="site-footer">Copyright &copy; ${currentYear} Natalie Reynolds</footer>`,
@@ -376,6 +478,8 @@ function renderHomePage(communities, communitiesByCountry) {
   const totalCommunities = communities.length;
   const totalCountries = DIRECTORY_SECTIONS.flatMap((section) => section.countries).filter((country) => country !== "Regional").length;
   const sections = DIRECTORY_SECTIONS.map((section) => renderSection(section, communitiesByCountry)).join("\n");
+  const topCountriesTracker = renderTopCountriesTracker(communitiesByCountry);
+  const countrySearch = renderCountrySearch(".");
 
   const body = [
     '<main class="main-content">',
@@ -390,6 +494,7 @@ function renderHomePage(communities, communitiesByCountry) {
       '      <a class="button" href="#directory">Browse directory</a>',
     "    </div>",
     "  </section>",
+    topCountriesTracker,
     renderContributionPanel(),
     '  <div id="directory" class="section-stack">',
     sections,
@@ -401,6 +506,8 @@ function renderHomePage(communities, communitiesByCountry) {
     title: "Caribbean Tech Communities",
     description: "A directory of tech communities across the Caribbean.",
     body,
+    headerControls: countrySearch.markup,
+    script: countrySearch.script,
     relativeRoot: "."
   });
 }
@@ -612,10 +719,21 @@ function renderStyles() {
     "a { color: inherit; }",
     ".page-shell { max-width: 1180px; margin: 0 auto; padding: 24px; }",
     ".site-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 32px; }",
+    ".site-header-actions { display: flex; align-items: center; justify-content: flex-end; gap: 16px; flex-wrap: wrap; }",
     ".site-brand { font-size: 1.15rem; font-weight: 700; text-decoration: none; }",
     "nav { display: flex; gap: 16px; }",
     ".site-nav-link, .text-link, .back-link { color: var(--accent-strong); text-decoration: none; }",
     ".site-nav-link:hover, .text-link:hover, .back-link:hover, .community-link:hover { color: var(--accent-warm); text-decoration: none; }",
+    ".sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }",
+    ".country-search { min-width: min(100%, 320px); }",
+    ".country-search-field { display: flex; align-items: center; gap: 8px; padding: 6px; border-radius: 999px; background: rgba(255, 255, 255, 0.82); border: 1px solid rgba(1, 64, 64, 0.12); box-shadow: 0 10px 24px rgba(1, 64, 64, 0.08); }",
+    ".country-search input { width: min(100%, 220px); border: 0; background: transparent; padding: 8px 12px; font: inherit; color: var(--text); }",
+    ".country-search input::placeholder { color: var(--muted); }",
+    ".country-search input:focus { outline: none; }",
+    ".country-search-field:focus-within { border-color: var(--accent-bright); box-shadow: 0 12px 28px rgba(1, 64, 64, 0.12); }",
+    ".country-search-button { padding: 10px 14px; border-radius: 999px; background: var(--accent-strong); color: #ffffff; font-weight: 700; transition: background-color 140ms ease, transform 140ms ease, box-shadow 140ms ease; }",
+    ".country-search-button:hover, .country-search-button:focus-visible { background: var(--accent-warm); transform: translateY(-1px); box-shadow: 0 10px 18px rgba(115, 23, 2, 0.18); }",
+    ".country-search-button:focus-visible { outline: 3px solid rgba(242, 116, 5, 0.35); outline-offset: 2px; }",
     ".main-content { display: grid; gap: 28px; }",
     ".site-footer { margin-top: 28px; padding: 18px 0 8px; color: var(--accent-strong); font-size: 0.95rem; text-align: center; }",
     ".hero, .country-hero, .contribution-panel {",
@@ -640,6 +758,21 @@ function renderStyles() {
     ".stat:hover { transform: translateY(-2px); background: #ffffff; border-color: var(--accent-bright); box-shadow: 0 14px 28px rgba(1, 64, 64, 0.14); }",
     ".stat strong { display: block; font-size: 1.7rem; color: var(--accent-strong); }",
     ".hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }",
+    ".top-countries-panel { background: linear-gradient(135deg, #d65e00, #f27405 58%, #ea7b1e); border: 1px solid rgba(115, 23, 2, 0.24); border-radius: 24px; padding: 24px 28px; box-shadow: 0 20px 40px rgba(115, 23, 2, 0.18); display: grid; gap: 18px; }",
+    ".top-countries-heading { max-width: 70ch; }",
+    ".top-countries-heading h2 { margin-bottom: 8px; }",
+    ".top-countries-panel .eyebrow { color: #fff6ea; }",
+    ".top-countries-heading h2, .top-countries-heading p { color: #ffffff; }",
+    ".top-countries-heading p:last-child { margin-bottom: 0; color: rgba(255, 246, 234, 0.92); }",
+    ".top-country-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); align-items: start; }",
+    ".top-country-item { min-width: 0; display: grid; gap: 8px; align-content: start; }",
+    ".top-country-rank { display: inline-flex; align-items: center; justify-content: center; width: fit-content; min-width: 0; padding: 6px 10px; border-radius: 999px; background: rgba(255, 247, 239, 0.96); border: 1px solid rgba(115, 23, 2, 0.14); color: var(--accent-strong); font-weight: 700; box-shadow: 0 8px 16px rgba(115, 23, 2, 0.1); }",
+    ".top-country-link { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 10px; padding: 12px 14px; min-height: 100%; border-radius: 18px; text-decoration: none; background: linear-gradient(180deg, #f7eadf, #f4e5d7); border: 1px solid rgba(115, 23, 2, 0.12); box-shadow: 0 12px 24px rgba(115, 23, 2, 0.12); transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease, background-color 140ms ease; }",
+    ".top-country-link:hover, .top-country-link:focus-visible { transform: translateY(-2px); border-color: rgba(255, 255, 255, 0.72); background: linear-gradient(180deg, #fbf1e8, #f7eadf); box-shadow: 0 16px 30px rgba(115, 23, 2, 0.18); text-decoration: none; }",
+    ".top-country-link:focus-visible { outline: 3px solid rgba(255, 246, 234, 0.8); outline-offset: 3px; }",
+    ".top-country-copy { display: grid; gap: 4px; min-width: 0; }",
+    ".top-country-copy strong { font-size: 0.95rem; line-height: 1.15; color: var(--accent-strong); overflow-wrap: anywhere; }",
+    ".top-country-copy span { color: var(--muted); font-size: 0.92rem; }",
     ".button-reset { border: 0; cursor: pointer; font: inherit; }",
     ".button, .country-card-cta { display: inline-flex; align-items: center; justify-content: center; width: fit-content; padding: 12px 18px; border-radius: 999px; background: var(--accent); color: #fff; text-decoration: none; font-weight: 700; transition: transform 140ms ease, box-shadow 140ms ease, background-color 140ms ease; }",
     ".button:hover, .button:focus-visible, .country-card-cta:hover, .country-card-cta:focus-visible { background: var(--accent-strong); color: #fff; text-decoration: none; box-shadow: 0 14px 28px rgba(1, 64, 64, 0.22); transform: translateY(-1px); }",
@@ -730,7 +863,11 @@ function renderStyles() {
     "@media (max-width: 720px) {",
     "  .page-shell { padding: 16px; }",
     "  .site-header { align-items: flex-start; flex-direction: column; }",
+    "  .site-header-actions { width: 100%; justify-content: flex-start; }",
     "  nav { flex-wrap: wrap; }",
+    "  .country-search { width: 100%; }",
+    "  .country-search-field { width: 100%; }",
+    "  .country-search input { width: 100%; min-width: 0; }",
     "  .hero, .summary-panel, .country-hero { padding: 20px; }",
     "  .map-section { grid-template-columns: 1fr; }",
     "  .directory-map { min-height: 460px; }",
