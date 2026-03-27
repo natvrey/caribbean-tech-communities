@@ -1,5 +1,25 @@
 [
   {
+    "name": "Bahamian Developers Association",
+    "country": "Bahamas",
+    "language": "English",
+    "focus": [
+      "software engineering",
+      "networking"
+    ],
+    "links": [
+      {
+        "label": "Facebook",
+        "url": "https://www.facebook.com/bahadevsassociation/"
+      },
+      {
+        "label": "LinkedIn",
+        "url": "https://www.linkedin.com/company/bahamian-developers-association/"
+      }
+    ],
+    "description": "A Bahamian meetup for people interested in tech to collaborate on ideas."
+  },
+  {
     "name": "Barbados Gaming Alliance (BGA)",
     "country": "Barbados",
     "language": "English",
