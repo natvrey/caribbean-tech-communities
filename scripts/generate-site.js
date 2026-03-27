@@ -377,7 +377,62 @@ function renderContributionPanel({ showUpdate = false } = {}) {
   ].filter(Boolean).join("\n");
 }
 
-function renderLayout({ title, description, body, relativeRoot, script, headExtra = "", bodyEnd = "" }) {
+function renderCountrySearch(rootHref = ".") {
+  const countries = DIRECTORY_SECTIONS.flatMap((section) => section.countries)
+    .filter((country) => country !== "Regional")
+    .map((country) => ({
+      name: getDisplayName(country),
+      href: `${rootHref}/countries/${slugify(country)}.html`
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const options = countries
+    .map((country) => `      <option value="${escapeHtml(country.name)}"></option>`)
+    .join("\n");
+
+  const script = [
+    "(() => {",
+    "  const form = document.querySelector('[data-country-search]');",
+    "  if (!form) return;",
+    "  const input = form.querySelector('input');",
+    `  const countries = ${JSON.stringify(countries)};`,
+    "  const normalize = (value) => value.toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();",
+    "  form.addEventListener('submit', (event) => {",
+    "    event.preventDefault();",
+    "    const query = normalize(input.value);",
+    "    if (!query) return;",
+    "    const exactMatch = countries.find((country) => normalize(country.name) === query);",
+    "    const prefixMatch = countries.find((country) => normalize(country.name).startsWith(query));",
+    "    const partialMatches = countries.filter((country) => normalize(country.name).includes(query));",
+    "    const match = exactMatch || prefixMatch || (partialMatches.length === 1 ? partialMatches[0] : null);",
+    "    if (match) {",
+    "      window.location.href = match.href;",
+    "      return;",
+    "    }",
+    "    input.setCustomValidity('Choose a country from the directory list.');",
+    "    input.reportValidity();",
+    "  });",
+    "  input.addEventListener('input', () => input.setCustomValidity(''));",
+    "})();"
+  ].join("");
+
+  const markup = [
+    '        <form class="country-search" data-country-search role="search" aria-label="Search for a country">',
+    '          <label class="sr-only" for="country-search-input">Search for a country</label>',
+    '          <div class="country-search-field">',
+    '            <input id="country-search-input" name="country" type="search" placeholder="Search country" list="country-search-list" autocomplete="off">',
+    '            <button class="button-reset country-search-button" type="submit">Search</button>',
+    "          </div>",
+    '          <datalist id="country-search-list">',
+    options,
+    "          </datalist>",
+    "        </form>"
+  ].join("\n");
+
+  return { markup, script };
+}
+
+function renderLayout({ title, description, body, relativeRoot, script, headExtra = "", bodyEnd = "", headerControls = "" }) {
   const rootHref = relativeRoot || ".";
   const currentYear = new Date().getFullYear();
 
@@ -396,14 +451,17 @@ function renderLayout({ title, description, body, relativeRoot, script, headExtr
     '  <div class="page-shell">',
     '    <header class="site-header">',
     '      <a class="site-brand" href="' + rootHref + '/index.html">Caribbean Tech Communities</a>',
-    "      <nav>",
-    '        <a class="site-nav-link" href="' + rootHref + '/map.html">Map</a>',
-    '        <a class="site-nav-link" href="' + rootHref + '/print.html">Print Directory</a>',
-    '        <a class="site-nav-link" href="' + rootHref + '/print.html?download=pdf">Download PDF</a>',
-    // '        <a class="site-nav-link" href="' + rootHref + '/index.html#directory">Directory</a>',
-    '        <a class="site-nav-link" href="https://github.com/natvrey/caribbean-tech-communities" target="_blank" rel="noreferrer">GitHub</a>',
-    // '        <a class="site-nav-link" href="https://github.com/natvrey/caribbean-tech-communities/blob/main/CONTRIBUTING.md" target="_blank" rel="noreferrer">Contributor docs</a>',
-    "      </nav>",
+    '      <div class="site-header-actions">',
+    "        <nav>",
+    '          <a class="site-nav-link" href="' + rootHref + '/map.html">Map</a>',
+    '          <a class="site-nav-link" href="' + rootHref + '/print.html">Print Directory</a>',
+    '          <a class="site-nav-link" href="' + rootHref + '/print.html?download=pdf">Download PDF</a>',
+    // '          <a class="site-nav-link" href="' + rootHref + '/index.html#directory">Directory</a>',
+    '          <a class="site-nav-link" href="https://github.com/natvrey/caribbean-tech-communities" target="_blank" rel="noreferrer">GitHub</a>',
+    // '          <a class="site-nav-link" href="https://github.com/natvrey/caribbean-tech-communities/blob/main/CONTRIBUTING.md" target="_blank" rel="noreferrer">Contributor docs</a>',
+    "        </nav>",
+    headerControls,
+    "      </div>",
     "    </header>",
     body,
     `    <footer class="site-footer">Copyright &copy; ${currentYear} Natalie Reynolds</footer>`,
@@ -421,6 +479,7 @@ function renderHomePage(communities, communitiesByCountry) {
   const totalCountries = DIRECTORY_SECTIONS.flatMap((section) => section.countries).filter((country) => country !== "Regional").length;
   const sections = DIRECTORY_SECTIONS.map((section) => renderSection(section, communitiesByCountry)).join("\n");
   const topCountriesTracker = renderTopCountriesTracker(communitiesByCountry);
+  const countrySearch = renderCountrySearch(".");
 
   const body = [
     '<main class="main-content">',
@@ -447,6 +506,8 @@ function renderHomePage(communities, communitiesByCountry) {
     title: "Caribbean Tech Communities",
     description: "A directory of tech communities across the Caribbean.",
     body,
+    headerControls: countrySearch.markup,
+    script: countrySearch.script,
     relativeRoot: "."
   });
 }
@@ -658,10 +719,21 @@ function renderStyles() {
     "a { color: inherit; }",
     ".page-shell { max-width: 1180px; margin: 0 auto; padding: 24px; }",
     ".site-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 32px; }",
+    ".site-header-actions { display: flex; align-items: center; justify-content: flex-end; gap: 16px; flex-wrap: wrap; }",
     ".site-brand { font-size: 1.15rem; font-weight: 700; text-decoration: none; }",
     "nav { display: flex; gap: 16px; }",
     ".site-nav-link, .text-link, .back-link { color: var(--accent-strong); text-decoration: none; }",
     ".site-nav-link:hover, .text-link:hover, .back-link:hover, .community-link:hover { color: var(--accent-warm); text-decoration: none; }",
+    ".sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }",
+    ".country-search { min-width: min(100%, 320px); }",
+    ".country-search-field { display: flex; align-items: center; gap: 8px; padding: 6px; border-radius: 999px; background: rgba(255, 255, 255, 0.82); border: 1px solid rgba(1, 64, 64, 0.12); box-shadow: 0 10px 24px rgba(1, 64, 64, 0.08); }",
+    ".country-search input { width: min(100%, 220px); border: 0; background: transparent; padding: 8px 12px; font: inherit; color: var(--text); }",
+    ".country-search input::placeholder { color: var(--muted); }",
+    ".country-search input:focus { outline: none; }",
+    ".country-search-field:focus-within { border-color: var(--accent-bright); box-shadow: 0 12px 28px rgba(1, 64, 64, 0.12); }",
+    ".country-search-button { padding: 10px 14px; border-radius: 999px; background: var(--accent-strong); color: #ffffff; font-weight: 700; transition: background-color 140ms ease, transform 140ms ease, box-shadow 140ms ease; }",
+    ".country-search-button:hover, .country-search-button:focus-visible { background: var(--accent-warm); transform: translateY(-1px); box-shadow: 0 10px 18px rgba(115, 23, 2, 0.18); }",
+    ".country-search-button:focus-visible { outline: 3px solid rgba(242, 116, 5, 0.35); outline-offset: 2px; }",
     ".main-content { display: grid; gap: 28px; }",
     ".site-footer { margin-top: 28px; padding: 18px 0 8px; color: var(--accent-strong); font-size: 0.95rem; text-align: center; }",
     ".hero, .country-hero, .contribution-panel {",
@@ -791,7 +863,11 @@ function renderStyles() {
     "@media (max-width: 720px) {",
     "  .page-shell { padding: 16px; }",
     "  .site-header { align-items: flex-start; flex-direction: column; }",
+    "  .site-header-actions { width: 100%; justify-content: flex-start; }",
     "  nav { flex-wrap: wrap; }",
+    "  .country-search { width: 100%; }",
+    "  .country-search-field { width: 100%; }",
+    "  .country-search input { width: 100%; min-width: 0; }",
     "  .hero, .summary-panel, .country-hero { padding: 20px; }",
     "  .map-section { grid-template-columns: 1fr; }",
     "  .directory-map { min-height: 460px; }",
