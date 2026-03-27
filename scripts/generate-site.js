@@ -263,6 +263,50 @@ function renderSection(section, communitiesByCountry) {
   ].join("");
 }
 
+function renderTopCountriesTracker(communitiesByCountry) {
+  const trackerLabels = {
+    "Trinidad and Tobago": "T&T"
+  };
+  const topCountries = [...communitiesByCountry.entries()]
+    .filter(([country, communities]) => country !== "Regional" && communities.length > 0)
+    .sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]))
+    .slice(0, 5);
+
+  if (topCountries.length === 0) {
+    return "";
+  }
+
+  const items = topCountries
+    .map(([country, communities], index) => {
+      const displayCountry = getDisplayName(country);
+      const trackerLabel = trackerLabels[country] || displayCountry;
+      const count = communities.length;
+
+      return [
+        '<li class="top-country-item">',
+        `  <span class="top-country-rank">#${index + 1}</span>`,
+        `  <a class="top-country-link" href="./countries/${slugify(country)}.html">`,
+        `    ${renderCountryFlag(country)}`,
+        '    <span class="top-country-copy">',
+        `      <strong>${escapeHtml(trackerLabel)}</strong>`,
+        `      <span>${renderCommunityCount(count)}</span>`,
+        "    </span>",
+        "  </a>",
+        "</li>"
+      ].join("\n");
+    })
+    .join("\n");
+
+  return [
+    '<section class="top-countries-panel" aria-labelledby="top-countries-title">',
+    '  <div class="top-countries-heading">',
+    '    <p class="eyebrow">Leaderboard</p>',
+    "  </div>",
+    `  <ol class="top-country-list">${items}</ol>`,
+    "</section>"
+  ].join("\n");
+}
+
 function renderMapSectionList(communitiesByCountry) {
   return DIRECTORY_SECTIONS.filter((section) => section.title !== "Regional")
     .map((section) => {
@@ -376,6 +420,7 @@ function renderHomePage(communities, communitiesByCountry) {
   const totalCommunities = communities.length;
   const totalCountries = DIRECTORY_SECTIONS.flatMap((section) => section.countries).filter((country) => country !== "Regional").length;
   const sections = DIRECTORY_SECTIONS.map((section) => renderSection(section, communitiesByCountry)).join("\n");
+  const topCountriesTracker = renderTopCountriesTracker(communitiesByCountry);
 
   const body = [
     '<main class="main-content">',
@@ -390,6 +435,7 @@ function renderHomePage(communities, communitiesByCountry) {
       '      <a class="button" href="#directory">Browse directory</a>',
     "    </div>",
     "  </section>",
+    topCountriesTracker,
     renderContributionPanel(),
     '  <div id="directory" class="section-stack">',
     sections,
@@ -640,6 +686,21 @@ function renderStyles() {
     ".stat:hover { transform: translateY(-2px); background: #ffffff; border-color: var(--accent-bright); box-shadow: 0 14px 28px rgba(1, 64, 64, 0.14); }",
     ".stat strong { display: block; font-size: 1.7rem; color: var(--accent-strong); }",
     ".hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }",
+    ".top-countries-panel { background: linear-gradient(135deg, #d65e00, #f27405 58%, #ea7b1e); border: 1px solid rgba(115, 23, 2, 0.24); border-radius: 24px; padding: 24px 28px; box-shadow: 0 20px 40px rgba(115, 23, 2, 0.18); display: grid; gap: 18px; }",
+    ".top-countries-heading { max-width: 70ch; }",
+    ".top-countries-heading h2 { margin-bottom: 8px; }",
+    ".top-countries-panel .eyebrow { color: #fff6ea; }",
+    ".top-countries-heading h2, .top-countries-heading p { color: #ffffff; }",
+    ".top-countries-heading p:last-child { margin-bottom: 0; color: rgba(255, 246, 234, 0.92); }",
+    ".top-country-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); align-items: start; }",
+    ".top-country-item { min-width: 0; display: grid; gap: 8px; align-content: start; }",
+    ".top-country-rank { display: inline-flex; align-items: center; justify-content: center; width: fit-content; min-width: 0; padding: 6px 10px; border-radius: 999px; background: rgba(255, 247, 239, 0.96); border: 1px solid rgba(115, 23, 2, 0.14); color: var(--accent-strong); font-weight: 700; box-shadow: 0 8px 16px rgba(115, 23, 2, 0.1); }",
+    ".top-country-link { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 10px; padding: 12px 14px; min-height: 100%; border-radius: 18px; text-decoration: none; background: linear-gradient(180deg, #f7eadf, #f4e5d7); border: 1px solid rgba(115, 23, 2, 0.12); box-shadow: 0 12px 24px rgba(115, 23, 2, 0.12); transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease, background-color 140ms ease; }",
+    ".top-country-link:hover, .top-country-link:focus-visible { transform: translateY(-2px); border-color: rgba(255, 255, 255, 0.72); background: linear-gradient(180deg, #fbf1e8, #f7eadf); box-shadow: 0 16px 30px rgba(115, 23, 2, 0.18); text-decoration: none; }",
+    ".top-country-link:focus-visible { outline: 3px solid rgba(255, 246, 234, 0.8); outline-offset: 3px; }",
+    ".top-country-copy { display: grid; gap: 4px; min-width: 0; }",
+    ".top-country-copy strong { font-size: 0.95rem; line-height: 1.15; color: var(--accent-strong); overflow-wrap: anywhere; }",
+    ".top-country-copy span { color: var(--muted); font-size: 0.92rem; }",
     ".button-reset { border: 0; cursor: pointer; font: inherit; }",
     ".button, .country-card-cta { display: inline-flex; align-items: center; justify-content: center; width: fit-content; padding: 12px 18px; border-radius: 999px; background: var(--accent); color: #fff; text-decoration: none; font-weight: 700; transition: transform 140ms ease, box-shadow 140ms ease, background-color 140ms ease; }",
     ".button:hover, .button:focus-visible, .country-card-cta:hover, .country-card-cta:focus-visible { background: var(--accent-strong); color: #fff; text-decoration: none; box-shadow: 0 14px 28px rgba(1, 64, 64, 0.22); transform: translateY(-1px); }",
