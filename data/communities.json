@@ -91,6 +91,26 @@
     "description": "Guyana-based STEM organization providing clubs, AI programs, robotics, and technology education for youth across the country."
   },
   {
+    "name": "Ekosistèm Fintèk Ayiti",
+    "country": "Haiti",
+    "language": "English",
+    "focus": [
+      "fintech",
+      "networking"
+    ],
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://www.fintekayiti.com/membership"
+      },
+      {
+        "label": "LinkedIn",
+        "url": "https://www.linkedin.com/company/ekosist%C3%A8m-fint%C3%A8k-ayiti/"
+      }
+    ],
+    "description": "Where Haitian FinTech Builds, Grows, and Leads.\n\nEkosistèm Fintek Ayiti is the beating heart of Haiti’s FinTech movement—a powerful network of professionals, startups, investors, entrepreneurs, and policymakers reshaping the future of finance in the Caribbean.\n\nWe exist to:\n•\tAccelerate FinTech adoption across the region\n•\tShine a spotlight on bold, Haitian-led innovation\n•\tAdvocate for smart, inclusive, and sustainable policies\n•\tEmpower our members with mentorship, education, and real support.\n\nWhether you're here to connect, grow, or discover FinTech built by Haitians—this is where it all starts.\n\n\nKote Fintèk Ayiti Ap Bati, Devlope, epi Dirije.\n\nEkosistèm Fintèk Ayiti se kè mouvman Fintèk Ayisyen an — yon rezo solid pwofesyonèl, startup, antreprenè, envestisè, ak desizyonè k ap reimajine avni finans lan nan Karayib la.\n\nNou la pou:\n\t•\tAkselere adopsyon Fintèk atravè rejyon an\n\t•\tMete limyè sou inovasyon brav ak ayisyen\n\t•\tDefann politik ki dirab, enkliziv, e entèlijan\n\t•\tBay manm nou yo zouti pou grandi: mentor, fòmasyon, ak sipò solid.\n\nSi w ap chèche konekte, aprann, oswa dekouvri solisyon Fintèk ki fèt pa Ayisyen — se isit la tout bagay kòmanse."
+  },
+  {
     "name": "Haiti Tech Summit Community",
     "country": "Haiti",
     "language": "English",
