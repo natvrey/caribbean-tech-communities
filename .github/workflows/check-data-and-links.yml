@@ -29,7 +29,7 @@ permissions:
 
 jobs:
   validate:
-    if: ${{ github.event_name == 'workflow_dispatch' || !startsWith(github.head_ref, 'automation/community-submission-') }}
+    if: ${{ github.event_name == 'workflow_dispatch' || !startsWith(github.head_ref, 'automation/directory-submission-') }}
     runs-on: ubuntu-latest
 
     steps:

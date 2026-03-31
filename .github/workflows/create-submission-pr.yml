@@ -22,7 +22,7 @@ permissions:
 
 jobs:
   create-pr:
-    if: ${{ !github.event.issue.pull_request && contains(github.event.issue.labels.*.name, 'community-submission') }}
+    if: ${{ !github.event.issue.pull_request && contains(github.event.issue.labels.*.name, 'directory-submission') }}
     runs-on: ubuntu-latest
 
     steps:
@@ -44,7 +44,7 @@ jobs:
           ISSUE_BODY: ${{ github.event.issue.body }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           ISSUE_URL: ${{ github.event.issue.html_url }}
-        run: node scripts/process-community-submission.js
+        run: node scripts/process-directory-submission.js
 
       - name: Validate dataset
         run: npm run validate
@@ -69,7 +69,7 @@ jobs:
 
             Source issue: ${{ steps.submission.outputs.issue_url }}
           labels: |
-            community-submission
+            directory-submission
 
       - name: Comment with pull request link
         if: ${{ steps.cpr.outputs.pull-request-operation == 'created' }}

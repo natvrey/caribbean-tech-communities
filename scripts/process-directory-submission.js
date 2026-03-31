@@ -266,7 +266,7 @@ function writeOutputs(record, submissionType, listingType) {
     return;
   }
 
-  const branchName = `automation/community-submission-${ISSUE_NUMBER || "manual"}`;
+  const branchName = `automation/directory-submission-${ISSUE_NUMBER || "manual"}`;
   const prPrefix =
     submissionType === "Update outdated information"
       ? `Update ${listingType.toLowerCase()} submission`

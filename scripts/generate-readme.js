@@ -239,7 +239,7 @@ function renderReadme() {
     "3. Run `npm run generate`",
     "4. Submit a pull request",
     "",
-    "Don't want to open a pull request? Use the [directory submission form](https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml) and choose whether you're adding a community, adding an event, or updating outdated information.",
+    "Don't want to open a pull request? Use the [directory submission form](https://github.com/natvrey/caribbean-tech-communities/issues/new?template=directory-submission.yml) and choose whether you're adding a community, adding an event, or updating outdated information.",
     "",
     "See [CONTRIBUTING.md](CONTRIBUTING.md).",
     "",
