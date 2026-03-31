@@ -7,7 +7,7 @@ This repository uses a structured dataset as the source of truth.
 To contribute:
 
 1. Edit `data/communities.json` and/or `data/events.json`
-2. Add a new community record or update existing record(s) with current information
+2. Add a new record or update existing record(s) with current information
 3. Run `npm run validate`
 4. Run `npm run generate`
 5. Commit the updated data and generated markdown files
