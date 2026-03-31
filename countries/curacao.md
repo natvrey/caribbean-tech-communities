@@ -10,6 +10,6 @@ Regional status: CARICOM Associate Member | CSME No
 
 ## Tech Events
 
-| Event | City | Schedule | Description | Attend |
-| --- | --- | --- | --- | --- |
-| No event listings yet | - | - | Submit the first event listing for this area. | - |
+| Event | City | Date | Frequency | Host Community | Description | Attend |
+| --- | --- | --- | --- | --- | --- | --- |
+| Curacao Tech Meetups | - | September 2 - 3, 2026 | Annual conference | - | Award-winning Curacao technology and AI conference featuring talks, masterclasses, networking, and community experiences for business leaders, technologists, students, and the wider public. | [Website](https://techmeetups.cw/) |

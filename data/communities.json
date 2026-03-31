@@ -421,6 +421,23 @@
     "description": "Community for Jamaica-based UX and product designers to collaborate, learn, and discover project or job opportunities."
   },
   {
+    "name": "CANTO",
+    "country": "Regional",
+    "language": "English",
+    "focus": [
+      "telecommunications",
+      "ICT",
+      "regional collaboration"
+    ],
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://canto.org/"
+      }
+    ],
+    "description": "Regional telecommunications and ICT association connecting Caribbean operators, companies, stakeholders, and professionals through collaboration, advocacy, events, and knowledge sharing."
+  },
+  {
     "name": "Caribbean Developers",
     "country": "Regional",
     "language": "English",

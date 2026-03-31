@@ -16,6 +16,6 @@ Regional status: CARICOM Member State | CSME Participant
 
 ## Tech Events
 
-| Event | City | Schedule | Description | Attend |
-| --- | --- | --- | --- | --- |
-| No event listings yet | - | - | Submit the first event listing for this area. | - |
+| Event | City | Date | Frequency | Host Community | Description | Attend |
+| --- | --- | --- | --- | --- | --- | --- |
+| No event listings yet | - | - | - | - | Submit the first event listing for this area. | - |

@@ -21,6 +21,9 @@ Regional status: CARICOM Member State | CSME Participant
 
 ## Tech Events
 
-| Event | City | Schedule | Description | Attend |
-| --- | --- | --- | --- | --- |
-| No event listings yet | - | - | Submit the first event listing for this area. | - |
+| Event | City | Date | Frequency | Host Community | Description | Attend |
+| --- | --- | --- | --- | --- | --- | --- |
+| Beyond the Beach Summit | Kingston | April 23 - 25, 2026 | Annual summit | SiliconCaribe | Three-day impact investment summit in Kingston that connects investors, founders, business leaders, and ecosystem builders around Caribbean innovation, partnerships, and deal flow. | [Website](https://beyondthebeachconf.com/) |
+| BizTech Conference | - | Date varies | Recurring conference | Jamaica Technology & Digital Alliance (JTDA) | Business and technology conference by the Jamaica Technology & Digital Alliance bringing together industry experts, entrepreneurs, investors, and stakeholders to explore trends, innovation, and digital transformation across Jamaica and the wider Caribbean. | [Website](https://www.jtda.org/events) |
+| Kingston BETA | Kingston | Dates vary | Recurring series | SiliconCaribe | Long-running Jamaican tech event series and entrepreneur community from SiliconCaribe featuring meetups, startup stages, coworking pop-ups, office hours, and summits. | [Website](https://www.siliconcaribe.com/kingston-beta/) |
+| Kingston BETA House | Kingston | Dates vary | Recurring pop-up event | SiliconCaribe | SiliconCaribe coworking pop-up experience in Kingston that blends productivity, community, and curated programming for entrepreneurs, founders, and digital creatives. | [Website](https://www.siliconcaribe.com/our-events/) |

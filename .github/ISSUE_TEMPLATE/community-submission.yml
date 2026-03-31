@@ -117,9 +117,23 @@ body:
   - type: input
     id: schedule
     attributes:
-      label: Event date or schedule (required for events)
-      description: Use a specific date for one-time events or a short schedule for recurring events.
-      placeholder: April 24, 2026 or Monthly meetup
+      label: Event date (required for events)
+      description: Use the actual event date or date range.
+      placeholder: April 24, 2026 or April 24-26, 2026
+
+  - type: input
+    id: frequency
+    attributes:
+      label: Frequency (optional for recurring events)
+      description: Use this for recurrence information like annual, monthly, or recurring series.
+      placeholder: Annual conference or Monthly meetup
+
+  - type: input
+    id: host_community
+    attributes:
+      label: Host community (optional for events)
+      description: Add the community or organization most directly associated with the event.
+      placeholder: SiliconCaribe
 
   - type: textarea
     id: description

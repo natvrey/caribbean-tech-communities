@@ -147,11 +147,13 @@ function renderEventRows(events) {
         .map((event) => {
           const links = event.links ? event.links.map((link) => `[${link.label}](${link.url})`).join("<br>") : "";
           const eventCity = event.city || "-";
+          const eventFrequency = event.frequency || "-";
+          const hostCommunity = event.host_community || "-";
           const eventLinks = links || "-";
-          return `| ${event.name} | ${eventCity} | ${event.schedule} | ${event.description} | ${eventLinks} |`;
+          return `| ${event.name} | ${eventCity} | ${event.schedule} | ${eventFrequency} | ${hostCommunity} | ${event.description} | ${eventLinks} |`;
         })
         .join("\n")
-    : "| No event listings yet | - | - | Submit the first event listing for this area. | - |";
+    : "| No event listings yet | - | - | - | - | Submit the first event listing for this area. | - |";
 }
 
 function renderCountryPage(country, communities, events) {
@@ -171,8 +173,8 @@ function renderCountryPage(country, communities, events) {
     "",
     "## Tech Events",
     "",
-    "| Event | City | Schedule | Description | Attend |",
-    "| --- | --- | --- | --- | --- |",
+    "| Event | City | Date | Frequency | Host Community | Description | Attend |",
+    "| --- | --- | --- | --- | --- | --- | --- |",
     renderEventRows(events),
     ""
   ].join("\n");

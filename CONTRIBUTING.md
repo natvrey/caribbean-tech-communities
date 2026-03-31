@@ -53,6 +53,8 @@ Event objects in `data/events.json` should follow this shape:
   "country": "Regional",
   "city": "Bridgetown",
   "schedule": "April 24-26, 2026",
+  "frequency": "Annual conference",
+  "host_community": "Caribbean Dev Network",
   "links": [
     {
       "label": "Website",
@@ -81,6 +83,12 @@ Event records require:
 - `schedule`
 - `links`
 - `description`
+
+Event records may also include:
+
+- `frequency`
+- `host_community`
+- `city`
 
 Each record must include at least one public URL in `links`.
 

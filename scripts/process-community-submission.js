@@ -17,7 +17,9 @@ const FIELD_LABELS = {
   links: "Public links",
   focus: "Focus or audience (required for communities)",
   member_count: "Approximate member count (optional)",
-  schedule: "Event date or schedule (required for events)",
+  schedule: "Event date (required for events)",
+  frequency: "Frequency (optional for recurring events)",
+  host_community: "Host community (optional for events)",
   description: "Description",
   evidence: "Verification notes"
 };
@@ -198,6 +200,8 @@ function buildEventRecord(values) {
   const links = parseLinks(requireField(values, FIELD_LABELS.links));
   const city = normalizeFormValue(values[FIELD_LABELS.city]);
   const schedule = requireField(values, FIELD_LABELS.schedule);
+  const frequency = normalizeFormValue(values[FIELD_LABELS.frequency]);
+  const hostCommunity = normalizeFormValue(values[FIELD_LABELS.host_community]);
 
   const record = {
     name,
@@ -209,6 +213,14 @@ function buildEventRecord(values) {
 
   if (city) {
     record.city = city;
+  }
+
+  if (frequency) {
+    record.frequency = frequency;
+  }
+
+  if (hostCommunity) {
+    record.host_community = hostCommunity;
   }
 
   return record;

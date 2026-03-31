@@ -6,6 +6,7 @@ Regional status: CARICOM N/A | CSME N/A
 
 | Community | Platform | Description | Join |
 | --- | --- | --- | --- |
+| CANTO | Website | Regional telecommunications and ICT association connecting Caribbean operators, companies, stakeholders, and professionals through collaboration, advocacy, events, and knowledge sharing. | [Website](https://canto.org/) |
 | Caribbean Developers | Facebook | Private Facebook group for software developers who have a background or interest in the Caribbean region. | [Facebook](https://www.facebook.com/groups/devcarib/) |
 | Caribbean Girls Hack | Instagram | Regional initiative focused on bridging the gender digital divide by engaging and upskilling girls and young women. | [Instagram](https://www.instagram.com/cgirlzhack_/) |
 | Caribbean Network Operators Group (CaribNOG) | Website | Regional network operators community focused on exchanging technical knowledge, building capacity, and supporting Caribbean internet infrastructure. | [Website](https://www.caribnog.org/about) |
@@ -19,6 +20,14 @@ Regional status: CARICOM N/A | CSME N/A
 
 ## Tech Events
 
-| Event | City | Schedule | Description | Attend |
-| --- | --- | --- | --- | --- |
-| No event listings yet | - | - | Submit the first event listing for this area. | - |
+| Event | City | Date | Frequency | Host Community | Description | Attend |
+| --- | --- | --- | --- | --- | --- | --- |
+| Beyond the Beach Impact Tours | - | Dates vary | Recurring event | SiliconCaribe | Immersive cultural and investment tours from SiliconCaribe that connect international investors with Caribbean entrepreneurs and creatives through curated regional experiences. | [Website](https://www.siliconcaribe.com/flagship-events/) |
+| CANTO Conference | - | Date varies | Annual conference | CANTO | Flagship annual CANTO conference bringing together Caribbean telecom and ICT leaders for networking, industry dialogue, and regional collaboration. | [Website](https://canto.org/events/canto-conference) |
+| CANTO Connect | - | Date varies | Recurring event | CANTO | Regional CANTO networking and engagement event designed to connect Caribbean telecom and ICT professionals, partners, and stakeholders. | [Website](https://canto.org/events/canto-connect/2) |
+| CANTO Conversations | - | Date varies | Recurring series | CANTO | CANTO discussion series featuring conversations, insights, and knowledge sharing on current issues affecting the Caribbean technology and telecom sector. | [Website](https://canto.org/events/canto-conversations) |
+| CANTO Innovation Challenge | - | Date varies | Recurring program | CANTO | Regional CANTO innovation program highlighting new ideas, problem solving, and entrepreneurship across the Caribbean ICT and telecommunications ecosystem. | [Website](https://canto.org/events/innovation-challenge) |
+| Caribbean SEED Summit | Rockley | June 25 - 28, 2026 | Annual summit | Caribbean Science Foundation | Hybrid regional STEM summit by the Caribbean Science Foundation bringing together researchers, entrepreneurs, investors, educators, policymakers, and industry leaders, with the 2026 in-person venue at Accra Beach Hotel in Barbados. | [Website](https://caribbeanscience.org/stem-summit/) |
+| Caribbean Tech Week | - | February 23 - 28, 2026 | Annual festival | SiliconCaribe | Regional hybrid festival of events produced by SiliconCaribe that spotlights Caribbean tech entrepreneurship, innovation, and digital culture across multiple cities. | [Website](https://caribbeantechweek.com/) |
+| CARIBEquity Conecta Caribbean Summit | Bridgetown | March 3 - 5, 2026 | Annual summit | - | Regional summit for entrepreneurship support organizations, mentors, investors, and ecosystem partners across the Caribbean to collaborate on stronger, more connected innovation systems. | [Website](https://origin.cdn.conecta.bridgeforbillions.org/conecta-caribbean/) |
+| CaribNOG 31 | Kingston | April 14 - 16, 2026 | Annual regional meeting | Caribbean Network Operators Group (CaribNOG) | Thirty-first Caribbean Network Operators Group meeting focused on network resilience, cybersecurity, internet infrastructure, and technical collaboration, hosted at The Jamaica Pegasus Hotel in Kingston. | [Website](https://www.caribnog.org/) |

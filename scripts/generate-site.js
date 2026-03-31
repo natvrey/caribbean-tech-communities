@@ -210,7 +210,9 @@ function renderMetaList(community) {
 function renderEventMetaList(event) {
   const items = [
     event.city ? `City: ${event.city}` : null,
-    event.schedule ? `Schedule: ${event.schedule}` : null
+    event.schedule ? `Date: ${event.schedule}` : null,
+    event.frequency ? `Frequency: ${event.frequency}` : null,
+    event.host_community ? `Host community: ${event.host_community}` : null
   ].filter(Boolean);
 
   return items.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
@@ -311,28 +313,41 @@ function renderSection(section, communitiesByCountry, eventsByCountry) {
   ].join("");
 }
 
-function renderTopCountriesTracker(communitiesByCountry) {
+function renderTopCountriesTracker(communitiesByCountry, eventsByCountry) {
   const leaderboardSize = 10;
   const trackerLabels = {
     "Trinidad and Tobago": "T&T"
   };
-  const topCountries = [...communitiesByCountry.entries()]
-    .filter(([country, communities]) => country !== "Regional" && communities.length > 0)
-    .sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]))
+  const countries = new Set([
+    ...communitiesByCountry.keys(),
+    ...eventsByCountry.keys()
+  ]);
+  const topCountries = [...countries]
+    .filter((country) => country !== "Regional")
+    .map((country) => {
+      const communityCount = communitiesByCountry.get(country)?.length || 0;
+      const eventCount = eventsByCountry.get(country)?.length || 0;
+      return {
+        country,
+        communityCount,
+        eventCount,
+        totalCount: communityCount + eventCount
+      };
+    })
+    .filter((entry) => entry.totalCount > 0)
+    .sort((a, b) => b.totalCount - a.totalCount || a.country.localeCompare(b.country))
     .slice(0, leaderboardSize);
 
   if (topCountries.length === 0) {
     return "";
   }
 
-  const leaderboardLabelCount = Math.min(leaderboardSize, topCountries.length);
-
   const items = topCountries
-    .map(([country, communities], index) => {
+    .map((entry, index) => {
+      const { country, communityCount, eventCount, totalCount } = entry;
       const displayCountry = getDisplayName(country);
       const trackerLabel = trackerLabels[country] || displayCountry;
-      const count = communities.length;
-      const tooltip = `${trackerLabel}: ${renderCommunityCount(count)}`;
+      const tooltip = `${trackerLabel}: ${renderListingCount(communityCount, eventCount)} (${renderCommunityCount(communityCount)}, ${renderEventCount(eventCount)})`;
 
       return [
         '<li class="top-country-item">',
@@ -349,7 +364,7 @@ function renderTopCountriesTracker(communitiesByCountry) {
     '<section class="top-countries-panel" aria-labelledby="top-countries-title">',
     '  <div class="top-countries-heading">',
     '    <p class="eyebrow">Leaderboard</p>',
-    `    <h2 id="top-countries-title">Countries with the most communities</h2>`,
+    `    <h2 id="top-countries-title">Countries with the most listings</h2>`,
     "  </div>",
     `  <ol class="top-country-list">${items}</ol>`,
     "</section>"
@@ -414,6 +429,72 @@ function renderPrintSection(section, communitiesByCountry, eventsByCountry) {
         `  <p class="listing-count">${renderCommunityCount(communities.length)} | ${renderEventCount(events.length)}</p>`,
         communitySection,
         eventSection,
+        "</section>"
+      ].join("\n");
+    })
+    .filter(Boolean)
+    .join("\n");
+
+  if (!countries) {
+    return "";
+  }
+
+  return [
+    '<section class="print-section">',
+    `  <div class="section-heading"><h2>${escapeHtml(section.title)}</h2><p>${escapeHtml(section.description)}</p></div>`,
+    countries,
+    "</section>"
+  ].join("\n");
+}
+
+function renderPrintCommunitiesSection(section, communitiesByCountry) {
+  const countries = section.countries
+    .map((country) => {
+      const communities = communitiesByCountry.get(country) || [];
+      if (communities.length === 0) {
+        return "";
+      }
+
+      return [
+        '<section class="print-country-group">',
+        `  <h3>${renderCountryFlag(country)}<span>${escapeHtml(getDisplayName(country))}</span></h3>`,
+        `  <p class="listing-count">${renderCommunityCount(communities.length)}</p>`,
+        '  <div class="print-community-list">',
+        communities.map((community) => renderPrintCommunityCard(community)).join("\n"),
+        "  </div>",
+        "</section>"
+      ].join("\n");
+    })
+    .filter(Boolean)
+    .join("\n");
+
+  if (!countries) {
+    return "";
+  }
+
+  return [
+    '<section class="print-section">',
+    `  <div class="section-heading"><h2>${escapeHtml(section.title)}</h2><p>${escapeHtml(section.description)}</p></div>`,
+    countries,
+    "</section>"
+  ].join("\n");
+}
+
+function renderPrintEventsSection(section, eventsByCountry) {
+  const countries = section.countries
+    .map((country) => {
+      const events = eventsByCountry.get(country) || [];
+      if (events.length === 0) {
+        return "";
+      }
+
+      return [
+        '<section class="print-country-group">',
+        `  <h3>${renderCountryFlag(country)}<span>${escapeHtml(getDisplayName(country))}</span></h3>`,
+        `  <p class="listing-count">${renderEventCount(events.length)}</p>`,
+        '  <div class="print-community-list">',
+        events.map((event) => renderPrintEventCard(event)).join("\n"),
+        "  </div>",
         "</section>"
       ].join("\n");
     })
@@ -526,8 +607,8 @@ function renderLayout({ title, description, body, relativeRoot, script, headExtr
     '      <div class="site-header-actions">',
     "        <nav>",
     '          <a class="site-nav-link" href="' + rootHref + '/map.html">Map</a>',
-    '          <a class="site-nav-link" href="' + rootHref + '/print.html">Print Directory</a>',
-    '          <a class="site-nav-link" href="' + rootHref + '/print.html?download=pdf">Download PDF</a>',
+    '          <a class="site-nav-link" href="' + rootHref + '/print-communities.html">Print Communities</a>',
+    '          <a class="site-nav-link" href="' + rootHref + '/print-events.html">Print Events</a>',
     // '          <a class="site-nav-link" href="' + rootHref + '/index.html#directory">Directory</a>',
     '          <a class="site-nav-link" href="https://github.com/natvrey/caribbean-tech-communities" target="_blank" rel="noreferrer">GitHub</a>',
     // '          <a class="site-nav-link" href="https://github.com/natvrey/caribbean-tech-communities/blob/main/CONTRIBUTING.md" target="_blank" rel="noreferrer">Contributor docs</a>',
@@ -551,7 +632,7 @@ function renderHomePage(communities, events, communitiesByCountry, eventsByCount
   const totalEvents = events.length;
   const totalCountries = DIRECTORY_SECTIONS.flatMap((section) => section.countries).filter((country) => country !== "Regional").length;
   const sections = DIRECTORY_SECTIONS.map((section) => renderSection(section, communitiesByCountry, eventsByCountry)).join("\n");
-  const topCountriesTracker = renderTopCountriesTracker(communitiesByCountry);
+  const topCountriesTracker = renderTopCountriesTracker(communitiesByCountry, eventsByCountry);
   const countrySearch = renderCountrySearch(".");
 
   const body = [
@@ -647,30 +728,33 @@ function renderCountryPage(country, communities, events) {
   });
 }
 
-function renderPrintPage(communities, events, communitiesByCountry, eventsByCountry) {
+function renderPrintPage({ kind, items, sections }) {
   const printDate = new Date().toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric"
   });
-  const sections = DIRECTORY_SECTIONS.map((section) => renderPrintSection(section, communitiesByCountry, eventsByCountry))
-    .filter(Boolean)
-    .join("\n");
-  const printSummary = `A grouped list of all ${communities.length} Caribbean tech communities and ${events.length} events as at ${printDate}. This list is organized by regional category and country. This list is updated as new listings are added.`;
+  const pageTitle = kind === "communities" ? "Communities" : "Events";
+  const singular = kind === "communities" ? "community" : "event";
+  const totalLabel = `${items.length} ${items.length === 1 ? singular : kind}`;
+  const printSummary = `A grouped list of all ${totalLabel} in the Caribbean tech directory as at ${printDate}. This list is organized by regional category and country. This list is updated as new listings are added.`;
+  const otherPageHref = kind === "communities" ? "./print-events.html" : "./print-communities.html";
+  const otherPageLabel = kind === "communities" ? "View Events Print Page" : "View Communities Print Page";
 
   const body = [
     '<main class="main-content">',
     '  <section class="hero print-hero">',
-    "    <h1>Printable Caribbean Tech Communities and Events Directory.</h1>",
-    '    <p class="hero-copy">This page lists all communities and events currently in the directory and is formatted for printing or saving as a PDF.</p>',
+    `    <h1>Printable Caribbean Tech ${pageTitle} Directory.</h1>`,
+    `    <p class="hero-copy">This page lists all ${kind} currently in the directory and is formatted for printing or saving as a PDF.</p>`,
     '    <div class="hero-actions print-actions">',
     '      <button class="button button-reset" type="button" onclick="window.print()">Print / Save as PDF</button>',
+    `      <a class="button" href="${otherPageHref}">${otherPageLabel}</a>`,
     '      <a class="button" href="./index.html">Back to directory</a>',
     "    </div>",
     "  </section>",
     '  <section class="print-summary">',
     '    <div class="section-heading">',
-    "      <h2>Caribbean Tech Communities and Events Directory</h2>",
+    `      <h2>Caribbean Tech ${pageTitle} Directory</h2>`,
     `      <p class="print-intro">${printSummary}</p>`,
     "    </div>",
     "  </section>",
@@ -686,8 +770,8 @@ function renderPrintPage(communities, events, communitiesByCountry, eventsByCoun
   ].join("\n");
 
   return renderLayout({
-    title: "Print Caribbean Tech Communities and Events Directory",
-    description: "Printable list of Caribbean tech communities and events grouped by region and country.",
+    title: `Print Caribbean Tech ${pageTitle} Directory`,
+    description: `Printable list of Caribbean tech ${kind} grouped by region and country.`,
     body,
     relativeRoot: ".",
     script
@@ -1040,7 +1124,14 @@ function main() {
   fs.writeFileSync(STYLES_PATH, renderStyles(), "utf8");
   writeFile("index.html", renderHomePage(communities, events, communitiesByCountry, eventsByCountry));
   writeFile("map.html", renderMapPage(communitiesByCountry, eventsByCountry));
-  writeFile("print.html", renderPrintPage(communities, events, communitiesByCountry, eventsByCountry));
+  const printCommunitiesSections = DIRECTORY_SECTIONS.map((section) => renderPrintCommunitiesSection(section, communitiesByCountry))
+    .filter(Boolean)
+    .join("\n");
+  const printEventsSections = DIRECTORY_SECTIONS.map((section) => renderPrintEventsSection(section, eventsByCountry))
+    .filter(Boolean)
+    .join("\n");
+  writeFile("print-communities.html", renderPrintPage({ kind: "communities", items: communities, sections: printCommunitiesSections }));
+  writeFile("print-events.html", renderPrintPage({ kind: "events", items: events, sections: printEventsSections }));
 
   for (const section of DIRECTORY_SECTIONS) {
     for (const country of section.countries) {

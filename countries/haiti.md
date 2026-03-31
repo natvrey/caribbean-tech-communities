@@ -35,6 +35,6 @@ Si w ap chèche konekte, aprann, oswa dekouvri solisyon Fintèk ki fèt pa Ayisy
 
 ## Tech Events
 
-| Event | City | Schedule | Description | Attend |
-| --- | --- | --- | --- | --- |
-| No event listings yet | - | - | Submit the first event listing for this area. | - |
+| Event | City | Date | Frequency | Host Community | Description | Attend |
+| --- | --- | --- | --- | --- | --- | --- |
+| Haiti Tech Summit | - | October 30, 2025 | Annual summit | Haiti Tech Summit Community | Flagship Haiti technology summit and virtual gathering focused on entrepreneurship, innovation, investment, and building Haiti's tech ecosystem with regional and global participants. | [Website](https://haititechsummit.com/) |

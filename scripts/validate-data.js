@@ -170,6 +170,14 @@ function validateEventRecord(record, index, seenLinks) {
     fail(`${label}: 'schedule' must be a non-empty string.`);
   }
 
+  if (record.frequency !== undefined && !isNonEmptyString(record.frequency)) {
+    fail(`${label}: 'frequency' must be a non-empty string when provided.`);
+  }
+
+  if (record.host_community !== undefined && !isNonEmptyString(record.host_community)) {
+    fail(`${label}: 'host_community' must be a non-empty string when provided.`);
+  }
+
   if (!isNonEmptyString(record.description) || record.description.trim().length < 15) {
     fail(`${label}: 'description' must be a useful sentence of at least 15 characters.`);
   }
