@@ -13,11 +13,11 @@ To contribute:
 5. Commit the updated data and generated markdown files
 6. Open a pull request
 
-If you do not want to open a pull request, use the [community submission form](https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml) to either submit a new community or update outdated information in an existing listing.
+If you do not want to open a pull request, use the [directory submission form](https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml) to submit a new community, submit a new event, or update outdated information in an existing listing.
 
 ## Record Schema
 
-Each object in `data/communities.json` should follow this shape:
+Community objects in `data/communities.json` should follow this shape:
 
 ```json
 {
@@ -45,7 +45,29 @@ Each object in `data/communities.json` should follow this shape:
 }
 ```
 
+Event objects in `data/events.json` should follow this shape:
+
+```json
+{
+  "name": "Caribbean Dev Summit 2026",
+  "country": "Regional",
+  "city": "Bridgetown",
+  "schedule": "April 24-26, 2026",
+  "frequency": "Annual conference",
+  "host_community": "Caribbean Dev Network",
+  "links": [
+    {
+      "label": "Website",
+      "url": "https://example.com/event"
+    }
+  ],
+  "description": "Regional event for Caribbean developers, founders, and ecosystem builders."
+}
+```
+
 ## Required Fields
+
+Community records require:
 
 - `name`
 - `country`
@@ -54,13 +76,27 @@ Each object in `data/communities.json` should follow this shape:
 - `links`
 - `description`
 
+Event records require:
+
+- `name`
+- `country`
+- `schedule`
+- `links`
+- `description`
+
+Event records may also include:
+
+- `frequency`
+- `host_community`
+- `city`
+
 Each record must include at least one public URL in `links`.
 
 ## Validation Rules
 
 Submissions may be rejected if they:
 
-- Duplicate an existing URL inside `links`
+- Duplicate an existing URL inside `links` across communities or events
 - Use shortened URLs
 - Omit a useful description
 - Are not relevant to tech in the Caribbean
@@ -118,6 +154,6 @@ Use one of the supported directory scopes:
 
 Treat this repository as a dataset first, README second. Manual edits to generated markdown files are not the preferred contribution path.
 
-If a contributor updates `data/communities.json`, they should also run `npm run validate` and `npm run generate` before opening a pull request.
+If a contributor updates `data/communities.json` or `data/events.json`, they should also run `npm run validate` and `npm run generate` before opening a pull request.
 
 If you are contributing from Windows, this repository uses `.gitattributes` to keep generated files and documentation on consistent line endings. If Git shows many files as modified after generation, run `git add --renormalize .` once and review the diff before committing.

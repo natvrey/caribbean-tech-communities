@@ -1,6 +1,6 @@
-# Caribbean Tech Communities
+# Caribbean Tech Communities and Events
 
-A directory of tech communities across sovereign Caribbean states, mainland Caribbean countries, and non-sovereign Caribbean dependencies and territories, focused on strengthening visibility and communication across the region's tech ecosystem. Platforms can include websites, WhatsApp, Discord, Slack, Telegram, Meetup, forums, mailing lists, and social media.
+A directory of tech communities and events across sovereign Caribbean states, mainland Caribbean countries, and non-sovereign Caribbean dependencies and territories, focused on strengthening visibility and communication across the region's tech ecosystem. Platforms can include websites, WhatsApp, Discord, Slack, Telegram, Meetup, forums, mailing lists, and social media.
 
 Browse the directory:
 
@@ -9,13 +9,13 @@ Browse the directory:
 
 This repository is managed as a dataset first and a directory second.
 
-`data/communities.json` -> generated pages -> `README.md` and `countries/*.md`
+`data/communities.json` + `data/events.json` -> generated pages -> `README.md` and `countries/*.md`
 
 The dataset forms the basis of the public website. Each push to `main` autodeploys to the site.
 
 ## Directory
 
-Browse communities by sovereignty status and constitutional relationship. Each location page lists the community name, the platforms it uses, a short description, and direct links to join or learn more.
+Browse communities and events by sovereignty status and constitutional relationship. Each location page lists both sections for that country or regional scope.
 CARICOM and CSME status labels below are based on official CARICOM and CSME sources.
 
 ### Regional
@@ -123,14 +123,14 @@ Caribbean special municipalities that are directly administered as part of the N
 
 ## Contributing
 
-To add a new community or update outdated information for an existing one:
+To add a new community or event, or update outdated information for an existing listing:
 
-1. Edit `data/communities.json`
+1. Edit `data/communities.json` and/or `data/events.json`
 2. Run `npm run validate`
 3. Run `npm run generate`
 4. Submit a pull request
 
-Don't want to open a pull request? Use the [community submission form](https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml) and choose whether you're adding a new listing or updating outdated information.
+Don't want to open a pull request? Use the [directory submission form](https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml) and choose whether you're adding a community, adding an event, or updating outdated information.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 

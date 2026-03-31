@@ -1,6 +1,8 @@
-# Trinidad and Tobago Tech Communities
+# Trinidad and Tobago Tech Communities and Events
 
 Regional status: CARICOM Member State | CSME Participant
+
+## Communities
 
 | Community | Platform | Description | Join |
 | --- | --- | --- | --- |
@@ -11,3 +13,9 @@ Regional status: CARICOM Member State | CSME Participant
 | PyData T&T | Meetup | Trinidad and Tobago data community for people learning and practicing data science, analytics, machine learning, and Python. | [Meetup](https://www.meetup.com/pydata-t-t/) |
 | The Developers' Hub (D'Hub) | Website | Government-supported developer initiative in Trinidad and Tobago focused on digital skills, learning, and local ecosystem support. | [Website](https://dhub.mdt.gov.tt) |
 | Women in Data Science Trinidad and Tobago | Website, LinkedIn | Trinidad and Tobago initiative that supports women and girls in data science through workshops, networking, and skill-building. | [Website](https://widstt.com/)<br>[LinkedIn](https://www.linkedin.com/in/widstt/) |
+
+## Tech Events
+
+| Event | City | Date | Frequency | Host Community | Description | Attend |
+| --- | --- | --- | --- | --- | --- | --- |
+| No event listings yet | - | - | - | - | Submit the first event listing for this area. | - |

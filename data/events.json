@@ -1,0 +1,216 @@
+[
+  {
+    "name": "Curacao Tech Meetups",
+    "country": "Curacao",
+    "schedule": "September 2 - 3, 2026",
+    "frequency": "Annual conference",
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://techmeetups.cw/"
+      }
+    ],
+    "description": "Award-winning Curacao technology and AI conference featuring talks, masterclasses, networking, and community experiences for business leaders, technologists, students, and the wider public."
+  },
+  {
+    "name": "Haiti Tech Summit",
+    "country": "Haiti",
+    "schedule": "October 30, 2025",
+    "frequency": "Annual summit",
+    "host_community": "Haiti Tech Summit Community",
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://haititechsummit.com/"
+      }
+    ],
+    "description": "Flagship Haiti technology summit and virtual gathering focused on entrepreneurship, innovation, investment, and building Haiti's tech ecosystem with regional and global participants."
+  },
+  {
+    "name": "Beyond the Beach Summit",
+    "country": "Jamaica",
+    "city": "Kingston",
+    "schedule": "April 23 - 25, 2026",
+    "frequency": "Annual summit",
+    "host_community": "SiliconCaribe",
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://beyondthebeachconf.com/"
+      }
+    ],
+    "description": "Three-day impact investment summit in Kingston that connects investors, founders, business leaders, and ecosystem builders around Caribbean innovation, partnerships, and deal flow."
+  },
+  {
+    "name": "BizTech Conference",
+    "country": "Jamaica",
+    "schedule": "Date varies",
+    "frequency": "Recurring conference",
+    "host_community": "Jamaica Technology & Digital Alliance (JTDA)",
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://www.jtda.org/events"
+      }
+    ],
+    "description": "Business and technology conference by the Jamaica Technology & Digital Alliance bringing together industry experts, entrepreneurs, investors, and stakeholders to explore trends, innovation, and digital transformation across Jamaica and the wider Caribbean."
+  },
+  {
+    "name": "Kingston BETA",
+    "country": "Jamaica",
+    "city": "Kingston",
+    "schedule": "Dates vary",
+    "frequency": "Recurring series",
+    "host_community": "SiliconCaribe",
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://www.siliconcaribe.com/kingston-beta/"
+      }
+    ],
+    "description": "Long-running Jamaican tech event series and entrepreneur community from SiliconCaribe featuring meetups, startup stages, coworking pop-ups, office hours, and summits."
+  },
+  {
+    "name": "Kingston BETA House",
+    "country": "Jamaica",
+    "city": "Kingston",
+    "schedule": "Dates vary",
+    "frequency": "Recurring pop-up event",
+    "host_community": "SiliconCaribe",
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://www.siliconcaribe.com/our-events/"
+      }
+    ],
+    "description": "SiliconCaribe coworking pop-up experience in Kingston that blends productivity, community, and curated programming for entrepreneurs, founders, and digital creatives."
+  },
+  {
+    "name": "Beyond the Beach Impact Tours",
+    "country": "Regional",
+    "schedule": "Dates vary",
+    "frequency": "Recurring event",
+    "host_community": "SiliconCaribe",
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://www.siliconcaribe.com/flagship-events/"
+      }
+    ],
+    "description": "Immersive cultural and investment tours from SiliconCaribe that connect international investors with Caribbean entrepreneurs and creatives through curated regional experiences."
+  },
+  {
+    "name": "CANTO Conference",
+    "country": "Regional",
+    "schedule": "Date varies",
+    "frequency": "Annual conference",
+    "host_community": "CANTO",
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://canto.org/events/canto-conference"
+      }
+    ],
+    "description": "Flagship annual CANTO conference bringing together Caribbean telecom and ICT leaders for networking, industry dialogue, and regional collaboration."
+  },
+  {
+    "name": "CANTO Connect",
+    "country": "Regional",
+    "schedule": "Date varies",
+    "frequency": "Recurring event",
+    "host_community": "CANTO",
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://canto.org/events/canto-connect/2"
+      }
+    ],
+    "description": "Regional CANTO networking and engagement event designed to connect Caribbean telecom and ICT professionals, partners, and stakeholders."
+  },
+  {
+    "name": "CANTO Conversations",
+    "country": "Regional",
+    "schedule": "Date varies",
+    "frequency": "Recurring series",
+    "host_community": "CANTO",
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://canto.org/events/canto-conversations"
+      }
+    ],
+    "description": "CANTO discussion series featuring conversations, insights, and knowledge sharing on current issues affecting the Caribbean technology and telecom sector."
+  },
+  {
+    "name": "CANTO Innovation Challenge",
+    "country": "Regional",
+    "schedule": "Date varies",
+    "frequency": "Recurring program",
+    "host_community": "CANTO",
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://canto.org/events/innovation-challenge"
+      }
+    ],
+    "description": "Regional CANTO innovation program highlighting new ideas, problem solving, and entrepreneurship across the Caribbean ICT and telecommunications ecosystem."
+  },
+  {
+    "name": "Caribbean SEED Summit",
+    "country": "Regional",
+    "city": "Rockley",
+    "schedule": "June 25 - 28, 2026",
+    "frequency": "Annual summit",
+    "host_community": "Caribbean Science Foundation",
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://caribbeanscience.org/stem-summit/"
+      }
+    ],
+    "description": "Hybrid regional STEM summit by the Caribbean Science Foundation bringing together researchers, entrepreneurs, investors, educators, policymakers, and industry leaders, with the 2026 in-person venue at Accra Beach Hotel in Barbados."
+  },
+  {
+    "name": "Caribbean Tech Week",
+    "country": "Regional",
+    "schedule": "February 23 - 28, 2026",
+    "frequency": "Annual festival",
+    "host_community": "SiliconCaribe",
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://caribbeantechweek.com/"
+      }
+    ],
+    "description": "Regional hybrid festival of events produced by SiliconCaribe that spotlights Caribbean tech entrepreneurship, innovation, and digital culture across multiple cities."
+  },
+  {
+    "name": "CARIBEquity Conecta Caribbean Summit",
+    "country": "Regional",
+    "city": "Bridgetown",
+    "schedule": "March 3 - 5, 2026",
+    "frequency": "Annual summit",
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://conecta.bridgeforbillions.org/conecta-caribbean/"
+      }
+    ],
+    "description": "Regional summit for entrepreneurship support organizations, mentors, investors, and ecosystem partners across the Caribbean to collaborate on stronger, more connected innovation systems."
+  },
+  {
+    "name": "CaribNOG 31",
+    "country": "Regional",
+    "city": "Kingston",
+    "schedule": "April 14 - 16, 2026",
+    "frequency": "Annual regional meeting",
+    "host_community": "Caribbean Network Operators Group (CaribNOG)",
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://www.caribnog.org/"
+      }
+    ],
+    "description": "Thirty-first Caribbean Network Operators Group meeting focused on network resilience, cybersecurity, internet infrastructure, and technical collaboration, hosted at The Jamaica Pegasus Hotel in Kingston."
+  }
+]
