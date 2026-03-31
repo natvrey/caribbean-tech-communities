@@ -284,7 +284,7 @@ function renderCountryCards(countries, communitiesByCountry, eventsByCountry) {
       const cardHref =
         count > 0
           ? `./countries/${slug}.html`
-          : "https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml";
+          : "https://github.com/natvrey/caribbean-tech-communities/issues/new?template=directory-submission.yml";
       const cardLabel = count > 0 ? "View listings" : "Add listing";
       const cardLabelClass = count > 0 ? "text-link" : "text-link country-card-cta";
       const cardRel = count > 0 ? "" : ' target="_blank" rel="noreferrer"';
@@ -521,9 +521,9 @@ function renderContributionPanel({ showUpdate = false } = {}) {
       ? "  <p>Know a Caribbean tech community or event that should be here, or one that needs to be updated? Send it in for review, and we'll add it once the details are confirmed.</p>"
       : "  <p>Know a Caribbean tech community or event that should be here? Send it in for review, and we'll add it once the details are confirmed.</p>",
     '  <div class="contribution-actions">',
-    '    <a class="button" href="https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml" target="_blank" rel="noreferrer">Add listing</a>',
+    '    <a class="button" href="https://github.com/natvrey/caribbean-tech-communities/issues/new?template=directory-submission.yml" target="_blank" rel="noreferrer">Add listing</a>',
     showUpdate
-      ? '    <a class="button button-update" href="https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml" target="_blank" rel="noreferrer">Update listing</a>'
+      ? '    <a class="button button-update" href="https://github.com/natvrey/caribbean-tech-communities/issues/new?template=directory-submission.yml" target="_blank" rel="noreferrer">Update listing</a>'
       : "",
     "  </div>",
     "</section>"
@@ -836,7 +836,7 @@ function renderMapPage(communitiesByCountry, eventsByCountry) {
     "  const hasListings = entry.count > 0;",
     "  const action = hasListings",
     "    ? `<a href=\"${entry.href}\">View listings</a>`",
-    "    : '<a href=\"https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml\" target=\"_blank\" rel=\"noreferrer\">Add listing</a>';",
+    "    : '<a href=\"https://github.com/natvrey/caribbean-tech-communities/issues/new?template=directory-submission.yml\" target=\"_blank\" rel=\"noreferrer\">Add listing</a>';",
     "  const marker = L.circleMarker(entry.coordinates, {",
     "    radius: hasListings ? 8 : 7,",
     "    color: hasListings ? '#014040' : '#731702',",

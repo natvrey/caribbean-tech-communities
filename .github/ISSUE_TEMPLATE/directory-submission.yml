@@ -1,8 +1,8 @@
 name: Directory submission
 description: Submit a new Caribbean tech community or event, or update an existing listing.
-title: "[Directory] "
+title: "New community or event submission"
 labels:
-  - community-submission
+  - directory-submission
 body:
   - type: markdown
     attributes:
@@ -124,14 +124,14 @@ body:
   - type: input
     id: frequency
     attributes:
-      label: Frequency (optional for recurring events)
+      label: Frequency (for recurring events)
       description: Use this for recurrence information like annual, monthly, or recurring series.
       placeholder: Annual conference or Monthly meetup
 
   - type: input
     id: host_community
     attributes:
-      label: Host community (optional for events)
+      label: Host community (if applicable)
       description: Add the community or organization most directly associated with the event.
       placeholder: SiliconCaribe
 
