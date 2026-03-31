@@ -1,6 +1,8 @@
-# Jamaica Tech Communities
+# Jamaica Tech Communities and Events
 
 Regional status: CARICOM Member State | CSME Participant
+
+## Communities
 
 | Community | Platform | Description | Join |
 | --- | --- | --- | --- |
@@ -16,3 +18,9 @@ Regional status: CARICOM Member State | CSME Participant
 | SiliconCaribe | Website, Facebook, Instagram | Jamaica-based platform focused on Caribbean startups, innovation, and the regional tech entrepreneurship ecosystem. | [Website](https://www.siliconcaribe.com/)<br>[Facebook](https://www.facebook.com/siliconcaribe)<br>[Instagram](https://www.instagram.com/siliconcaribe) |
 | Tech Chat Jamaica | Facebook | General Facebook community for people in Jamaica to discuss tech topics, opportunities, and local happenings. | [Facebook](https://www.facebook.com/groups/319257644759106) |
 | UX Designer Network Jamaica | LinkedIn | Community for Jamaica-based UX and product designers to collaborate, learn, and discover project or job opportunities. | [LinkedIn](https://www.linkedin.com/groups/9011923/) |
+
+## Tech Events
+
+| Event | City | Schedule | Description | Attend |
+| --- | --- | --- | --- | --- |
+| No event listings yet | - | - | Submit the first event listing for this area. | - |

@@ -61,9 +61,10 @@ jobs:
           commit-message: ${{ steps.submission.outputs.pr_title }}
           title: ${{ steps.submission.outputs.pr_title }}
           body: |
-            Automated community submission PR for #${{ github.event.issue.number }}.
+            Automated directory submission PR for #${{ github.event.issue.number }}.
 
-            Submitted community: `${{ steps.submission.outputs.community_name }}`
+            Submitted listing: `${{ steps.submission.outputs.listing_name }}`
+            Listing category: `${{ steps.submission.outputs.listing_type }}`
             Country or scope: `${{ steps.submission.outputs.country }}`
 
             Source issue: ${{ steps.submission.outputs.issue_url }}

@@ -3,7 +3,8 @@ const path = require("path");
 const { COUNTRIES, DIRECTORY_SECTIONS, REGIONAL_STATUS, getDisplayName } = require("./directory-config");
 
 const ROOT = process.cwd();
-const DATA_PATH = path.join(ROOT, "data", "communities.json");
+const COMMUNITIES_PATH = path.join(ROOT, "data", "communities.json");
+const EVENTS_PATH = path.join(ROOT, "data", "events.json");
 const COUNTRIES_DIR = path.join(ROOT, "countries");
 const README_PATH = path.join(ROOT, "README.md");
 const COUNTRY_FLAGS = {
@@ -60,8 +61,8 @@ function slugify(value) {
     .replace(/^-|-$/g, "");
 }
 
-function readCommunities() {
-  return JSON.parse(fs.readFileSync(DATA_PATH, "utf8"));
+function readJson(filePath) {
+  return JSON.parse(fs.readFileSync(filePath, "utf8"));
 }
 
 function writeIfChanged(filePath, content) {
@@ -83,8 +84,8 @@ function sortCommunities(communities) {
   });
 }
 
-function renderCommunitiesJson(communities) {
-  return `${JSON.stringify(communities, null, 2)}\n`;
+function renderJson(data) {
+  return `${JSON.stringify(data, null, 2)}\n`;
 }
 
 function renderPlatformLabels(community) {
@@ -123,10 +124,8 @@ function renderReadmeCountryCell(country) {
   return `${image} ${displayCountry}`;
 }
 
-function renderCountryPage(country, communities) {
-  const status = REGIONAL_STATUS[country] || { caricom: "No", csme: "No" };
-  const displayCountry = getDisplayName(country);
-  const rows = communities.length
+function renderCommunityRows(communities) {
+  return communities.length
     ? communities
         .map(
           (community) => {
@@ -139,16 +138,42 @@ function renderCountryPage(country, communities) {
           }
         )
         .join("\n")
-    : "| No listings yet | - | Submit the first listing for this area. | - |";
+    : "| No community listings yet | - | Submit the first community listing for this area. | - |";
+}
+
+function renderEventRows(events) {
+  return events.length
+    ? events
+        .map((event) => {
+          const links = event.links ? event.links.map((link) => `[${link.label}](${link.url})`).join("<br>") : "";
+          const eventCity = event.city || "-";
+          const eventLinks = links || "-";
+          return `| ${event.name} | ${eventCity} | ${event.schedule} | ${event.description} | ${eventLinks} |`;
+        })
+        .join("\n")
+    : "| No event listings yet | - | - | Submit the first event listing for this area. | - |";
+}
+
+function renderCountryPage(country, communities, events) {
+  const status = REGIONAL_STATUS[country] || { caricom: "No", csme: "No" };
+  const displayCountry = getDisplayName(country);
 
   return [
-    `# ${displayCountry} Tech Communities`,
+    `# ${displayCountry} Tech Communities and Events`,
     "",
     `Regional status: CARICOM ${status.caricom} | CSME ${status.csme}`,
     "",
+    "## Communities",
+    "",
     "| Community | Platform | Description | Join |",
     "| --- | --- | --- | --- |",
-    rows,
+    renderCommunityRows(communities),
+    "",
+    "## Tech Events",
+    "",
+    "| Event | City | Schedule | Description | Attend |",
+    "| --- | --- | --- | --- | --- |",
+    renderEventRows(events),
     ""
   ].join("\n");
 }
@@ -176,9 +201,9 @@ function renderReadme() {
   }).join("\n");
 
   return [
-    "# Caribbean Tech Communities",
+    "# Caribbean Tech Communities and Events",
     "",
-    "A directory of tech communities across sovereign Caribbean states, mainland Caribbean countries, and non-sovereign Caribbean dependencies and territories, focused on strengthening visibility and communication across the region's tech ecosystem. Platforms can include websites, WhatsApp, Discord, Slack, Telegram, Meetup, forums, mailing lists, and social media.",
+    "A directory of tech communities and events across sovereign Caribbean states, mainland Caribbean countries, and non-sovereign Caribbean dependencies and territories, focused on strengthening visibility and communication across the region's tech ecosystem. Platforms can include websites, WhatsApp, Discord, Slack, Telegram, Meetup, forums, mailing lists, and social media.",
     "",
     "Browse the directory:",
     "",
@@ -187,13 +212,13 @@ function renderReadme() {
     "",
     "This repository is managed as a dataset first and a directory second.",
     "",
-    "`data/communities.json` -> generated pages -> `README.md` and `countries/*.md`",
+    "`data/communities.json` + `data/events.json` -> generated pages -> `README.md` and `countries/*.md`",
     "",
     "The dataset forms the basis of the public website. Each push to `main` autodeploys to the site.",
     "",
     "## Directory",
     "",
-    "Browse communities by sovereignty status and constitutional relationship. Each location page lists the community name, the platforms it uses, a short description, and direct links to join or learn more.",
+    "Browse communities and events by sovereignty status and constitutional relationship. Each location page lists both sections for that country or regional scope.",
     "CARICOM and CSME status labels below are based on official CARICOM and CSME sources.",
     "",
     sections,
@@ -205,14 +230,14 @@ function renderReadme() {
     "",
     "## Contributing",
     "",
-    "To add a new community or update outdated information for an existing one:",
+    "To add a new community or event, or update outdated information for an existing listing:",
     "",
-    "1. Edit `data/communities.json`",
+    "1. Edit `data/communities.json` and/or `data/events.json`",
     "2. Run `npm run validate`",
     "3. Run `npm run generate`",
     "4. Submit a pull request",
     "",
-    "Don't want to open a pull request? Use the [community submission form](https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml) and choose whether you're adding a new listing or updating outdated information.",
+    "Don't want to open a pull request? Use the [directory submission form](https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml) and choose whether you're adding a community, adding an event, or updating outdated information.",
     "",
     "See [CONTRIBUTING.md](CONTRIBUTING.md).",
     "",
@@ -224,15 +249,18 @@ function renderReadme() {
 }
 
 function main() {
-  const communities = sortCommunities(readCommunities());
+  const communities = sortCommunities(readJson(COMMUNITIES_PATH));
+  const events = sortCommunities(readJson(EVENTS_PATH));
   fs.mkdirSync(COUNTRIES_DIR, { recursive: true });
 
-  writeIfChanged(DATA_PATH, renderCommunitiesJson(communities));
+  writeIfChanged(COMMUNITIES_PATH, renderJson(communities));
+  writeIfChanged(EVENTS_PATH, renderJson(events));
 
   for (const country of COUNTRIES) {
     const countryCommunities = communities.filter((community) => community.country === country);
+    const countryEvents = events.filter((event) => event.country === country);
     const outputPath = path.join(COUNTRIES_DIR, `${slugify(country)}.md`);
-    const outputContent = renderCountryPage(country, countryCommunities);
+    const outputContent = renderCountryPage(country, countryCommunities, countryEvents);
 
     writeIfChanged(outputPath, outputContent);
   }

@@ -1,19 +1,30 @@
-name: Community submission
-description: Submit a new Caribbean tech community or update an existing listing.
-title: "[Community] "
+name: Directory submission
+description: Submit a new Caribbean tech community or event, or update an existing listing.
+title: "[Directory] "
 labels:
   - community-submission
 body:
   - type: markdown
     attributes:
       value: |
-        Use this form to submit a new Caribbean tech community or to update an existing listing if any information is outdated. After you send this form, the submission will be reviewed and validated. If validation succeeds, the repository will be updated.
+        Use this form to submit a new Caribbean tech community or event, or to update an existing listing if any information is outdated. After you send this form, the submission will be reviewed and validated. If validation succeeds, the repository will be updated.
+
+  - type: dropdown
+    id: listing_type
+    attributes:
+      label: Listing category
+      description: Choose whether you are submitting a community or an event.
+      options:
+        - Community
+        - Event
+    validations:
+      required: true
 
   - type: input
-    id: community_name
+    id: listing_name
     attributes:
-      label: Community name
-      placeholder: Caribbean AI Builders
+      label: Listing name
+      placeholder: Caribbean AI Builders or Caribbean Dev Summit 2026
     validations:
       required: true
 
@@ -79,10 +90,9 @@ body:
   - type: input
     id: language
     attributes:
-      label: Primary language
+      label: Primary language (required for communities)
+      description: Communities should include a primary language. Events can leave this blank if not needed.
       placeholder: English
-    validations:
-      required: true
 
   - type: input
     id: links
@@ -94,11 +104,9 @@ body:
   - type: input
     id: focus
     attributes:
-      label: Focus or audience
-      description: Provide a comma-separated list of topics or audiences.
+      label: Focus or audience (required for communities)
+      description: Provide a comma-separated list of topics or audiences for communities.
       placeholder: software engineering, startups, students
-    validations:
-      required: true
 
   - type: input
     id: member_count
@@ -106,11 +114,18 @@ body:
       label: Approximate member count (optional)
       placeholder: "250"
 
+  - type: input
+    id: schedule
+    attributes:
+      label: Event date or schedule (required for events)
+      description: Use a specific date for one-time events or a short schedule for recurring events.
+      placeholder: April 24, 2026 or Monthly meetup
+
   - type: textarea
     id: description
     attributes:
       label: Description
-      placeholder: Community for Caribbean developers, founders, and students.
+      placeholder: Community for Caribbean developers, founders, and students, or an event description with enough detail to understand what it is.
     validations:
       required: true
 

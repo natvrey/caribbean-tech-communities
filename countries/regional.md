@@ -1,6 +1,8 @@
-# Regional Tech Communities
+# Regional Tech Communities and Events
 
 Regional status: CARICOM N/A | CSME N/A
+
+## Communities
 
 | Community | Platform | Description | Join |
 | --- | --- | --- | --- |
@@ -14,3 +16,9 @@ Regional status: CARICOM N/A | CSME N/A
 | Palisadoes | Website | Regional technology community centered on engineering leadership, knowledge sharing, and collaboration across the Caribbean. | [Website](https://www.palisadoes.org/) |
 | Women in InfoSec Caribbean | Website | Regional initiative supporting Caribbean women and girls who want to develop careers in information security. | [Website](https://wisc.g5cybersecurity.com/) |
 | Women in Tech Caribbean | Website, LinkedIn, X, Instagram | Regional community connecting Caribbean women in tech at home and in the diaspora for networking and growth. | [Website](https://www.womenintechcaribbean.com/)<br>[LinkedIn](https://www.linkedin.com/company/womencaribbean)<br>[X](https://x.com/womencaribbean)<br>[Instagram](https://www.instagram.com/womenintechcaribbean/) |
+
+## Tech Events
+
+| Event | City | Schedule | Description | Attend |
+| --- | --- | --- | --- | --- |
+| No event listings yet | - | - | Submit the first event listing for this area. | - |

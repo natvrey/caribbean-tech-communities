@@ -3,7 +3,8 @@ const path = require("path");
 const { DIRECTORY_SECTIONS, REGIONAL_STATUS, getDisplayName } = require("./directory-config");
 
 const ROOT = process.cwd();
-const DATA_PATH = path.join(ROOT, "data", "communities.json");
+const COMMUNITIES_PATH = path.join(ROOT, "data", "communities.json");
+const EVENTS_PATH = path.join(ROOT, "data", "events.json");
 const DIST_DIR = path.join(ROOT, "dist");
 const COUNTRIES_DIR = path.join(DIST_DIR, "countries");
 const STYLES_PATH = path.join(DIST_DIR, "styles.css");
@@ -96,8 +97,8 @@ function slugify(value) {
     .replace(/^-|-$/g, "");
 }
 
-function readCommunities() {
-  return JSON.parse(fs.readFileSync(DATA_PATH, "utf8"));
+function readJson(filePath) {
+  return JSON.parse(fs.readFileSync(filePath, "utf8"));
 }
 
 function sortCommunities(communities) {
@@ -133,6 +134,15 @@ function escapeHtml(value) {
 
 function renderCommunityCount(count) {
   return `${count} ${count === 1 ? "community" : "communities"}`;
+}
+
+function renderEventCount(count) {
+  return `${count} ${count === 1 ? "event" : "events"}`;
+}
+
+function renderListingCount(communityCount, eventCount) {
+  const total = communityCount + eventCount;
+  return `${total} ${total === 1 ? "listing" : "listings"}`;
 }
 
 function renderCountryFlag(country, className = "country-flag") {
@@ -197,6 +207,15 @@ function renderMetaList(community) {
   return items.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
 }
 
+function renderEventMetaList(event) {
+  const items = [
+    event.city ? `City: ${event.city}` : null,
+    event.schedule ? `Schedule: ${event.schedule}` : null
+  ].filter(Boolean);
+
+  return items.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+}
+
 function renderCommunityCard(community) {
   return [
     '<article class="community-card">',
@@ -223,11 +242,39 @@ function renderPrintCommunityCard(community) {
   ].join("\n");
 }
 
-function renderCountryCards(countries, communitiesByCountry) {
+function renderEventCard(event) {
+  return [
+    '<article class="community-card event-card">',
+    `<h3>${escapeHtml(event.name)}</h3>`,
+    `<p class="community-description">${escapeHtml(event.description)}</p>`,
+    '<ul class="community-meta">',
+    renderEventMetaList(event),
+    "</ul>",
+    `<div class="community-links">${renderLinkList(event.links || [])}</div>`,
+    "</article>"
+  ].join("");
+}
+
+function renderPrintEventCard(event) {
+  return [
+    '<article class="print-community-card print-event-card">',
+    `  <h4>${escapeHtml(event.name)}</h4>`,
+    `  <p class="community-description">${escapeHtml(event.description)}</p>`,
+    '  <ul class="community-meta">',
+    renderEventMetaList(event),
+    "  </ul>",
+    renderPrintLinkList(event.links || []),
+    "</article>"
+  ].join("\n");
+}
+
+function renderCountryCards(countries, communitiesByCountry, eventsByCountry) {
   return countries
     .map((country) => {
       const slug = slugify(country);
-      const count = communitiesByCountry.get(country)?.length || 0;
+      const communityCount = communitiesByCountry.get(country)?.length || 0;
+      const eventCount = eventsByCountry.get(country)?.length || 0;
+      const count = communityCount + eventCount;
       const status = REGIONAL_STATUS[country] || { caricom: "No", csme: "No" };
       const cardClass = count > 0 ? "country-card country-card-active" : "country-card country-card-empty";
       const displayCountry = getDisplayName(country);
@@ -236,7 +283,7 @@ function renderCountryCards(countries, communitiesByCountry) {
         count > 0
           ? `./countries/${slug}.html`
           : "https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml";
-      const cardLabel = count > 0 ? "View communities" : "Add listing";
+      const cardLabel = count > 0 ? "View listings" : "Add listing";
       const cardLabelClass = count > 0 ? "text-link" : "text-link country-card-cta";
       const cardRel = count > 0 ? "" : ' target="_blank" rel="noreferrer"';
 
@@ -244,7 +291,8 @@ function renderCountryCards(countries, communitiesByCountry) {
         `<article class="${cardClass}">`,
         `<a class="country-card-link" href="${cardHref}"${cardRel}>`,
         `<h3>${flag}<span>${escapeHtml(displayCountry)}</span></h3>`,
-        `<p class="country-count">${renderCommunityCount(count)}</p>`,
+        `<p class="country-count">${renderListingCount(communityCount, eventCount)}</p>`,
+        `<p class="country-breakdown">${escapeHtml(renderCommunityCount(communityCount))}<br>${escapeHtml(renderEventCount(eventCount))}</p>`,
         `<p class="country-status">CARICOM: ${escapeHtml(status.caricom)}<br>CSME: ${escapeHtml(status.csme)}</p>`,
         `<span class="${cardLabelClass}">${cardLabel}</span>`,
         "</a>",
@@ -254,11 +302,11 @@ function renderCountryCards(countries, communitiesByCountry) {
     .join("");
 }
 
-function renderSection(section, communitiesByCountry) {
+function renderSection(section, communitiesByCountry, eventsByCountry) {
   return [
     '<section class="directory-section">',
     `<div class="section-heading"><h2>${escapeHtml(section.title)}</h2><p>${escapeHtml(section.description)}</p></div>`,
-    `<div class="country-grid">${renderCountryCards(section.countries, communitiesByCountry)}</div>`,
+    `<div class="country-grid">${renderCountryCards(section.countries, communitiesByCountry, eventsByCountry)}</div>`,
     "</section>"
   ].join("");
 }
@@ -308,13 +356,14 @@ function renderTopCountriesTracker(communitiesByCountry) {
   ].join("\n");
 }
 
-function renderMapSectionList(communitiesByCountry) {
+function renderMapSectionList(communitiesByCountry, eventsByCountry) {
   return DIRECTORY_SECTIONS.filter((section) => section.title !== "Regional")
     .map((section) => {
       const items = section.countries
         .map((country) => {
-          const count = communitiesByCountry.get(country)?.length || 0;
-          return `<li><span>${escapeHtml(getDisplayName(country))}</span><strong>${renderCommunityCount(count)}</strong></li>`;
+          const communityCount = communitiesByCountry.get(country)?.length || 0;
+          const eventCount = eventsByCountry.get(country)?.length || 0;
+          return `<li><span>${escapeHtml(getDisplayName(country))}</span><strong>${renderListingCount(communityCount, eventCount)}</strong></li>`;
         })
         .join("");
 
@@ -328,21 +377,43 @@ function renderMapSectionList(communitiesByCountry) {
     .join("\n");
 }
 
-function renderPrintSection(section, communitiesByCountry) {
+function renderPrintSection(section, communitiesByCountry, eventsByCountry) {
   const countries = section.countries
     .map((country) => {
       const communities = communitiesByCountry.get(country) || [];
-      if (communities.length === 0) {
+      const events = eventsByCountry.get(country) || [];
+      if (communities.length === 0 && events.length === 0) {
         return "";
       }
+
+      const communitySection = communities.length
+        ? [
+            '  <div class="print-subsection">',
+            "    <h4>Communities</h4>",
+            '    <div class="print-community-list">',
+            communities.map((community) => renderPrintCommunityCard(community)).join("\n"),
+            "    </div>",
+            "  </div>"
+          ].join("\n")
+        : "";
+
+      const eventSection = events.length
+        ? [
+            '  <div class="print-subsection">',
+            "    <h4>Tech Events</h4>",
+            '    <div class="print-community-list">',
+            events.map((event) => renderPrintEventCard(event)).join("\n"),
+            "    </div>",
+            "  </div>"
+          ].join("\n")
+        : "";
 
       return [
         '<section class="print-country-group">',
         `  <h3>${renderCountryFlag(country)}<span>${escapeHtml(getDisplayName(country))}</span></h3>`,
-        `  <p class="listing-count">${renderCommunityCount(communities.length)}</p>`,
-        '  <div class="print-community-list">',
-        communities.map((community) => renderPrintCommunityCard(community)).join("\n"),
-        "  </div>",
+        `  <p class="listing-count">${renderCommunityCount(communities.length)} | ${renderEventCount(events.length)}</p>`,
+        communitySection,
+        eventSection,
         "</section>"
       ].join("\n");
     })
@@ -366,8 +437,8 @@ function renderContributionPanel({ showUpdate = false } = {}) {
     '<section class="contribution-panel">',
     showUpdate ? "  <h2>Add or Update a listing</h2>" : "  <h2>Add a listing</h2>",
     showUpdate
-      ? "  <p>Know a Caribbean tech community that should be here, or one that needs to be updated? Send it in for review, and we'll add it once the details are confirmed.</p>"
-      : "  <p>Know a Caribbean tech community that should be here? Send it in for review, and we'll add it once the details are confirmed.</p>",
+      ? "  <p>Know a Caribbean tech community or event that should be here, or one that needs to be updated? Send it in for review, and we'll add it once the details are confirmed.</p>"
+      : "  <p>Know a Caribbean tech community or event that should be here? Send it in for review, and we'll add it once the details are confirmed.</p>",
     '  <div class="contribution-actions">',
     '    <a class="button" href="https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml" target="_blank" rel="noreferrer">Add listing</a>',
     showUpdate
@@ -451,7 +522,7 @@ function renderLayout({ title, description, body, relativeRoot, script, headExtr
     "<body>",
     '  <div class="page-shell">',
     '    <header class="site-header">',
-    '      <a class="site-brand" href="' + rootHref + '/index.html">Caribbean Tech Communities</a>',
+    '      <a class="site-brand" href="' + rootHref + '/index.html">Caribbean Tech Communities and Events</a>',
     '      <div class="site-header-actions">',
     "        <nav>",
     '          <a class="site-nav-link" href="' + rootHref + '/map.html">Map</a>',
@@ -475,21 +546,23 @@ function renderLayout({ title, description, body, relativeRoot, script, headExtr
   ].join("\n");
 }
 
-function renderHomePage(communities, communitiesByCountry) {
+function renderHomePage(communities, events, communitiesByCountry, eventsByCountry) {
   const totalCommunities = communities.length;
+  const totalEvents = events.length;
   const totalCountries = DIRECTORY_SECTIONS.flatMap((section) => section.countries).filter((country) => country !== "Regional").length;
-  const sections = DIRECTORY_SECTIONS.map((section) => renderSection(section, communitiesByCountry)).join("\n");
+  const sections = DIRECTORY_SECTIONS.map((section) => renderSection(section, communitiesByCountry, eventsByCountry)).join("\n");
   const topCountriesTracker = renderTopCountriesTracker(communitiesByCountry);
   const countrySearch = renderCountrySearch(".");
 
   const body = [
     '<main class="main-content">',
     '  <section class="hero">',
-    "    <h1>A directory of all Caribbean tech communities.</h1>",
-    "    <p class=\"hero-copy\">Browse tech communities across sovereign Caribbean states, mainland Caribbean countries, and territories.</p>",
+    "    <h1>A directory of all Caribbean tech communities and events.</h1>",
+    "    <p class=\"hero-copy\">Browse tech communities and events across sovereign Caribbean states, mainland Caribbean countries, and territories.</p>",
     '    <div class="hero-stats">',
     `      <div class="stat"><strong>${totalCountries}</strong><span>countries covered</span></div>`,
-    `      <div class="stat"><strong>${totalCommunities}</strong><span>communities and counting</span></div>`,
+    `      <div class="stat"><strong>${totalCommunities}</strong><span>communities listed</span></div>`,
+    `      <div class="stat"><strong>${totalEvents}</strong><span>events listed</span></div>`,
     "    </div>",
     '    <div class="hero-actions">',
       '      <a class="button" href="#directory">Browse directory</a>',
@@ -504,8 +577,8 @@ function renderHomePage(communities, communitiesByCountry) {
   ].join("\n");
 
   return renderLayout({
-    title: "Caribbean Tech Communities",
-    description: "A directory of tech communities across the Caribbean.",
+    title: "Caribbean Tech Communities and Events",
+    description: "A directory of tech communities and events across the Caribbean.",
     body,
     headerControls: countrySearch.markup,
     script: countrySearch.script,
@@ -513,22 +586,43 @@ function renderHomePage(communities, communitiesByCountry) {
   });
 }
 
-function renderCountryPage(country, communities) {
+function renderListingSection({ title, emptyTitle, emptyDescription, cardsMarkup, hasItems }) {
+  const content = hasItems
+    ? `<section class="community-grid">${cardsMarkup}</section>`
+    : [
+        '<section class="empty-state">',
+        `  <h2>${escapeHtml(emptyTitle)}</h2>`,
+        `  <p>${escapeHtml(emptyDescription)}</p>`,
+        "</section>"
+      ].join("\n");
+
+  return [
+    '<section class="listing-section">',
+    `  <div class="section-heading"><h2>${escapeHtml(title)}</h2></div>`,
+    content,
+    "</section>"
+  ].join("\n");
+}
+
+function renderCountryPage(country, communities, events) {
   const status = REGIONAL_STATUS[country] || { caricom: "No", csme: "No" };
   const displayCountry = getDisplayName(country);
   const flag = renderCountryFlag(country, "country-flag country-flag-hero");
-  const cards = communities.length
-    ? communities.map((community) => renderCommunityCard(community)).join("\n")
-    : [
-        '<section class="empty-state">',
-        "  <h2>No listings yet</h2>",
-        `  <p>No communities are listed for ${escapeHtml(displayCountry)} yet. Add one to help make the directory more useful.</p>`,
-        "</section>"
-      ].join("\n");
-  const contributionPanel = renderContributionPanel({ showUpdate: communities.length > 0 });
-  const contentSections = communities.length
-    ? [contributionPanel, `<section class="community-grid">${cards}</section>`]
-    : [`<section class="community-grid">${cards}</section>`, contributionPanel];
+  const contributionPanel = renderContributionPanel({ showUpdate: communities.length > 0 || events.length > 0 });
+  const communitySection = renderListingSection({
+    title: "Communities",
+    emptyTitle: "No communities yet",
+    emptyDescription: `No communities are listed for ${displayCountry} yet. Add one to help make the directory more useful.`,
+    cardsMarkup: communities.map((community) => renderCommunityCard(community)).join("\n"),
+    hasItems: communities.length > 0
+  });
+  const eventSection = renderListingSection({
+    title: "Tech Events",
+    emptyTitle: "No events yet",
+    emptyDescription: `No tech events are listed for ${displayCountry} yet. Add one to help make the directory more useful.`,
+    cardsMarkup: events.map((event) => renderEventCard(event)).join("\n"),
+    hasItems: events.length > 0
+  });
 
   const body = [
     '<main class="main-content">',
@@ -536,37 +630,39 @@ function renderCountryPage(country, communities) {
     `    <h1>${flag}<span>${escapeHtml(displayCountry)}</span></h1>`,
     `    <p class="country-status">CARICOM: ${escapeHtml(status.caricom)} | CSME: ${escapeHtml(status.csme)}</p>`,
     '    <p class="status-note"><a href="https://caricom.org/our-community/who-we-are/" target="_blank" rel="noreferrer">CARICOM</a> stands for the Caribbean Community, and <a href="https://csme.me/" target="_blank" rel="noreferrer">CSME</a> stands for the CARICOM Single Market and Economy.</p>',
-    `    <p class="listing-count">${renderCommunityCount(communities.length)} listed</p>`,
+    `    <p class="listing-count">${renderCommunityCount(communities.length)} | ${renderEventCount(events.length)}</p>`,
     '    <a class="back-link" href="../index.html">Back to directory</a>',
     "  </section>",
-    ...contentSections,
+    contributionPanel,
+    communitySection,
+    eventSection,
     "</main>"
   ].join("\n");
 
   return renderLayout({
-    title: `${displayCountry} Tech Communities`,
-    description: `Tech communities in ${displayCountry}.`,
+    title: `${displayCountry} Tech Communities and Events`,
+    description: `Tech communities and events in ${displayCountry}.`,
     body,
     relativeRoot: ".."
   });
 }
 
-function renderPrintPage(communities, communitiesByCountry) {
+function renderPrintPage(communities, events, communitiesByCountry, eventsByCountry) {
   const printDate = new Date().toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric"
   });
-  const sections = DIRECTORY_SECTIONS.map((section) => renderPrintSection(section, communitiesByCountry))
+  const sections = DIRECTORY_SECTIONS.map((section) => renderPrintSection(section, communitiesByCountry, eventsByCountry))
     .filter(Boolean)
     .join("\n");
-  const printSummary = `A grouped list of all ${communities.length} Caribbean tech communities as at ${printDate}. This list is organized by regional category and country. This list is updated as new communities are added.`;
+  const printSummary = `A grouped list of all ${communities.length} Caribbean tech communities and ${events.length} events as at ${printDate}. This list is organized by regional category and country. This list is updated as new listings are added.`;
 
   const body = [
     '<main class="main-content">',
     '  <section class="hero print-hero">',
-    "    <h1>Printable Caribbean Tech Communities Directory.</h1>",
-    '    <p class="hero-copy">This page lists all communities currently in the directory and is formatted for printing or saving as a PDF.</p>',
+    "    <h1>Printable Caribbean Tech Communities and Events Directory.</h1>",
+    '    <p class="hero-copy">This page lists all communities and events currently in the directory and is formatted for printing or saving as a PDF.</p>',
     '    <div class="hero-actions print-actions">',
     '      <button class="button button-reset" type="button" onclick="window.print()">Print / Save as PDF</button>',
     '      <a class="button" href="./index.html">Back to directory</a>',
@@ -574,7 +670,7 @@ function renderPrintPage(communities, communitiesByCountry) {
     "  </section>",
     '  <section class="print-summary">',
     '    <div class="section-heading">',
-    "      <h2>Caribbean Tech Communities Directory</h2>",
+    "      <h2>Caribbean Tech Communities and Events Directory</h2>",
     `      <p class="print-intro">${printSummary}</p>`,
     "    </div>",
     "  </section>",
@@ -590,24 +686,28 @@ function renderPrintPage(communities, communitiesByCountry) {
   ].join("\n");
 
   return renderLayout({
-    title: "Print Caribbean Tech Communities Directory",
-    description: "Printable list of Caribbean tech communities grouped by region and country.",
+    title: "Print Caribbean Tech Communities and Events Directory",
+    description: "Printable list of Caribbean tech communities and events grouped by region and country.",
     body,
     relativeRoot: ".",
     script
   });
 }
 
-function renderMapPage(communitiesByCountry) {
+function renderMapPage(communitiesByCountry, eventsByCountry) {
   const mapCountries = DIRECTORY_SECTIONS.filter((section) => section.title !== "Regional")
     .flatMap((section) =>
       section.countries.map((country) => {
-        const count = communitiesByCountry.get(country)?.length || 0;
+        const communityCount = communitiesByCountry.get(country)?.length || 0;
+        const eventCount = eventsByCountry.get(country)?.length || 0;
+        const count = communityCount + eventCount;
         return {
           country,
           displayName: getDisplayName(country),
           section: section.title,
           count,
+          communityCount,
+          eventCount,
           coordinates: COUNTRY_COORDINATES[country],
           href: `./countries/${slugify(country)}.html`
         };
@@ -618,7 +718,7 @@ function renderMapPage(communitiesByCountry) {
   const body = [
     '<main class="main-content">',
     '  <section class="hero map-hero">',
-    "    <h1>Caribbean tech communities on the map.</h1>",
+    "    <h1>Caribbean tech communities and events on the map.</h1>",
     '    <p class="hero-copy">Explore every country and territory currently listed in the directory on an interactive Caribbean map. Select a marker to jump to its directory page or see whether listings are still needed.</p>',
     '    <div class="map-legend" aria-label="Map legend">',
     '      <span class="map-legend-item"><span class="map-dot map-dot-active"></span>Has listings</span>',
@@ -630,7 +730,7 @@ function renderMapPage(communitiesByCountry) {
     '    <div class="map-sidepanel">',
     '      <h2>Countries In The Directory</h2>',
     '      <p class="hero-copy">Every country and territory listed in the directory is shown on the map and summarized below by regional grouping.</p>',
-    renderMapSectionList(communitiesByCountry),
+    renderMapSectionList(communitiesByCountry, eventsByCountry),
     "    </div>",
     "  </section>",
     "</main>"
@@ -651,7 +751,7 @@ function renderMapPage(communitiesByCountry) {
     "for (const entry of mapCountries) {",
     "  const hasListings = entry.count > 0;",
     "  const action = hasListings",
-    "    ? `<a href=\"${entry.href}\">View communities</a>`",
+    "    ? `<a href=\"${entry.href}\">View listings</a>`",
     "    : '<a href=\"https://github.com/natvrey/caribbean-tech-communities/issues/new?template=community-submission.yml\" target=\"_blank\" rel=\"noreferrer\">Add listing</a>';",
     "  const marker = L.circleMarker(entry.coordinates, {",
     "    radius: hasListings ? 8 : 7,",
@@ -663,7 +763,8 @@ function renderMapPage(communitiesByCountry) {
     "  marker.bindPopup(`",
     "    <strong>${entry.displayName}</strong><br>",
     "    ${entry.section}<br>",
-    "    ${entry.count} ${entry.count === 1 ? 'community' : 'communities'}<br>",
+    "    ${entry.count} ${entry.count === 1 ? 'listing' : 'listings'}<br>",
+    "    ${entry.communityCount} ${entry.communityCount === 1 ? 'community' : 'communities'} | ${entry.eventCount} ${entry.eventCount === 1 ? 'event' : 'events'}<br>",
     "    ${action}",
     "  `);",
     "  marker.bindTooltip(entry.displayName, { direction: 'top', offset: [0, -8] });",
@@ -675,8 +776,8 @@ function renderMapPage(communitiesByCountry) {
   ].join("\n");
 
   return renderLayout({
-    title: "Caribbean Tech Communities Map",
-    description: "Interactive map of Caribbean countries and territories included in the tech communities directory.",
+    title: "Caribbean Tech Communities and Events Map",
+    description: "Interactive map of Caribbean countries and territories included in the tech communities and events directory.",
     body,
     relativeRoot: ".",
     script,
@@ -792,6 +893,7 @@ function renderStyles() {
     ".directory-section { display: grid; gap: 16px; }",
     ".section-heading { max-width: 96ch; }",
     ".country-count, .country-status { padding-bottom: 20px; }",
+    ".country-breakdown { color: var(--muted); margin-top: -12px; padding-bottom: 16px; }",
     ".country-grid, .community-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }",
     ".country-card, .community-card {",
     "  background: var(--surface);",
@@ -832,10 +934,13 @@ function renderStyles() {
     ".empty-state { padding: 24px; border-radius: 18px; background: var(--surface); border: 1px dashed var(--border); box-shadow: var(--shadow); }",
     ".empty-state h2 { margin-bottom: 10px; }",
     ".empty-state p { margin-bottom: 18px; color: var(--muted); max-width: 88ch; }",
+    ".listing-section { display: grid; gap: 14px; }",
     ".print-shell { display: grid; gap: 28px; }",
     ".print-intro { margin: -4px 0 8px; color: var(--muted); font-size: 1rem; }",
     ".print-section { display: grid; gap: 18px; }",
     ".print-country-group { display: grid; gap: 12px; padding: 0 0 18px; border-bottom: 1px solid var(--border); }",
+    ".print-subsection { display: grid; gap: 12px; }",
+    ".print-subsection h4 { margin: 0; font-size: 1rem; color: var(--accent-strong); }",
     ".print-country-group h3 { display: inline-flex; align-items: center; gap: 12px; margin-bottom: 0; }",
     ".print-community-list { display: grid; gap: 18px; }",
     ".print-community-card { display: grid; gap: 8px; padding-left: 0; }",
@@ -914,21 +1019,35 @@ function buildCommunitiesByCountry(communities) {
   }, new Map());
 }
 
+function buildEventsByCountry(events) {
+  return events.reduce((map, event) => {
+    if (!map.has(event.country)) {
+      map.set(event.country, []);
+    }
+
+    map.get(event.country).push(event);
+    return map;
+  }, new Map());
+}
+
 function main() {
-  const communities = sortCommunities(readCommunities());
+  const communities = sortCommunities(readJson(COMMUNITIES_PATH));
+  const events = sortCommunities(readJson(EVENTS_PATH));
   const communitiesByCountry = buildCommunitiesByCountry(communities);
+  const eventsByCountry = buildEventsByCountry(events);
 
   resetOutputDir();
   fs.writeFileSync(STYLES_PATH, renderStyles(), "utf8");
-  writeFile("index.html", renderHomePage(communities, communitiesByCountry));
-  writeFile("map.html", renderMapPage(communitiesByCountry));
-  writeFile("print.html", renderPrintPage(communities, communitiesByCountry));
+  writeFile("index.html", renderHomePage(communities, events, communitiesByCountry, eventsByCountry));
+  writeFile("map.html", renderMapPage(communitiesByCountry, eventsByCountry));
+  writeFile("print.html", renderPrintPage(communities, events, communitiesByCountry, eventsByCountry));
 
   for (const section of DIRECTORY_SECTIONS) {
     for (const country of section.countries) {
       const slug = slugify(country);
       const countryCommunities = communitiesByCountry.get(country) || [];
-      writeFile(path.join("countries", `${slug}.html`), renderCountryPage(country, countryCommunities));
+      const countryEvents = eventsByCountry.get(country) || [];
+      writeFile(path.join("countries", `${slug}.html`), renderCountryPage(country, countryCommunities, countryEvents));
     }
   }
 }

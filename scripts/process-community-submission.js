@@ -1,20 +1,23 @@
 const fs = require("fs");
 const path = require("path");
 
-const DATA_PATH = path.join(process.cwd(), "data", "communities.json");
+const COMMUNITIES_PATH = path.join(process.cwd(), "data", "communities.json");
+const EVENTS_PATH = path.join(process.cwd(), "data", "events.json");
 const ISSUE_BODY = process.env.ISSUE_BODY || "";
 const ISSUE_NUMBER = process.env.ISSUE_NUMBER || "";
 const ISSUE_URL = process.env.ISSUE_URL || "";
 
 const FIELD_LABELS = {
-  community_name: "Community name",
+  listing_type: "Listing category",
+  listing_name: "Listing name",
   submission_type: "Submission type",
   scope: "Country or scope",
   city: "City (optional)",
-  language: "Primary language",
+  language: "Primary language (required for communities)",
   links: "Public links",
-  focus: "Focus or audience",
+  focus: "Focus or audience (required for communities)",
   member_count: "Approximate member count (optional)",
+  schedule: "Event date or schedule (required for events)",
   description: "Description",
   evidence: "Verification notes"
 };
@@ -158,8 +161,8 @@ function parseOptionalInteger(rawValue) {
   return Number.parseInt(value, 10);
 }
 
-function buildRecord(values) {
-  const name = requireField(values, FIELD_LABELS.community_name);
+function buildCommunityRecord(values) {
+  const name = requireField(values, FIELD_LABELS.listing_name);
   const country = requireField(values, FIELD_LABELS.scope);
   const language = requireField(values, FIELD_LABELS.language);
   const description = requireField(values, FIELD_LABELS.description);
@@ -188,6 +191,33 @@ function buildRecord(values) {
   return record;
 }
 
+function buildEventRecord(values) {
+  const name = requireField(values, FIELD_LABELS.listing_name);
+  const country = requireField(values, FIELD_LABELS.scope);
+  const description = requireField(values, FIELD_LABELS.description);
+  const links = parseLinks(requireField(values, FIELD_LABELS.links));
+  const city = normalizeFormValue(values[FIELD_LABELS.city]);
+  const schedule = requireField(values, FIELD_LABELS.schedule);
+
+  const record = {
+    name,
+    country,
+    schedule,
+    links,
+    description
+  };
+
+  if (city) {
+    record.city = city;
+  }
+
+  return record;
+}
+
+function getListingType(values) {
+  return requireField(values, FIELD_LABELS.listing_type);
+}
+
 function getSubmissionType(values) {
   return requireField(values, FIELD_LABELS.submission_type);
 }
@@ -203,12 +233,12 @@ function sortCommunities(communities) {
   });
 }
 
-function checkForDuplicates(existingRecords, record) {
+function checkForDuplicates(existingRecords, record, listingTypeLabel) {
   const normalizedName = record.name.trim().toLowerCase();
 
   for (const existing of existingRecords) {
     if (existing.country === record.country && String(existing.name || "").trim().toLowerCase() === normalizedName) {
-      fail(`A community named '${record.name}' already exists for '${record.country}'.`);
+      fail(`A ${listingTypeLabel.toLowerCase()} named '${record.name}' already exists for '${record.country}'.`);
     }
 
     for (const link of existing.links || []) {
@@ -219,7 +249,7 @@ function checkForDuplicates(existingRecords, record) {
   }
 }
 
-function writeOutputs(record, submissionType) {
+function writeOutputs(record, submissionType, listingType) {
   if (!process.env.GITHUB_OUTPUT) {
     return;
   }
@@ -227,12 +257,13 @@ function writeOutputs(record, submissionType) {
   const branchName = `automation/community-submission-${ISSUE_NUMBER || "manual"}`;
   const prPrefix =
     submissionType === "Update outdated information"
-      ? "Update community submission"
-      : "Add community submission";
+      ? `Update ${listingType.toLowerCase()} submission`
+      : `Add ${listingType.toLowerCase()} submission`;
   const prTitle = `${prPrefix}: ${record.name}`;
   const lines = [
     `branch_name<<__EOF__\n${branchName}\n__EOF__`,
-    `community_name<<__EOF__\n${record.name}\n__EOF__`,
+    `listing_name<<__EOF__\n${record.name}\n__EOF__`,
+    `listing_type<<__EOF__\n${listingType}\n__EOF__`,
     `country<<__EOF__\n${record.country}\n__EOF__`,
     `submission_type<<__EOF__\n${submissionType}\n__EOF__`,
     `pr_title<<__EOF__\n${prTitle}\n__EOF__`,
@@ -249,20 +280,22 @@ function main() {
 
   const parsedIssue = parseIssueForm(ISSUE_BODY);
   requireField(parsedIssue, FIELD_LABELS.evidence);
+  const listingType = getListingType(parsedIssue);
   const submissionType = getSubmissionType(parsedIssue);
-
-  const raw = fs.readFileSync(DATA_PATH, "utf8");
+  const isCommunity = listingType === "Community";
+  const dataPath = isCommunity ? COMMUNITIES_PATH : EVENTS_PATH;
+  const raw = fs.readFileSync(dataPath, "utf8");
   const data = JSON.parse(raw);
   if (!Array.isArray(data)) {
-    fail("communities.json must contain a JSON array.");
+    fail(`${path.basename(dataPath)} must contain a JSON array.`);
   }
 
-  const record = buildRecord(parsedIssue);
-  checkForDuplicates(data, record);
+  const record = isCommunity ? buildCommunityRecord(parsedIssue) : buildEventRecord(parsedIssue);
+  checkForDuplicates(data, record, listingType);
 
   const nextData = sortCommunities([...data, record]);
-  fs.writeFileSync(DATA_PATH, `${JSON.stringify(nextData, null, 2)}\n`, "utf8");
-  writeOutputs(record, submissionType);
+  fs.writeFileSync(dataPath, `${JSON.stringify(nextData, null, 2)}\n`, "utf8");
+  writeOutputs(record, submissionType, listingType);
 
   process.stdout.write(`${JSON.stringify(record, null, 2)}\n`);
 }

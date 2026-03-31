@@ -1,6 +1,8 @@
-# Haiti Tech Communities
+# Haiti Tech Communities and Events
 
 Regional status: CARICOM Member State | CSME Signed on, limited participation
+
+## Communities
 
 | Community | Platform | Description | Join |
 | --- | --- | --- | --- |
@@ -30,3 +32,9 @@ Nou la pou:
 Si w ap chèche konekte, aprann, oswa dekouvri solisyon Fintèk ki fèt pa Ayisyen — se isit la tout bagay kòmanse. | [Website](https://www.fintekayiti.com/membership)<br>[LinkedIn](https://www.linkedin.com/company/ekosist%C3%A8m-fint%C3%A8k-ayiti/) |
 | Haiti Tech Summit Community | Facebook | Facebook community connected to Haiti Tech Summit for sharing updates, conversations, and networking across Haiti's tech ecosystem. | [Facebook](https://www.facebook.com/groups/haititechsummit/) |
 | Haitians in Tech | Website, Slack, LinkedIn, Instagram | Community for Haitians in technology to connect, join conversations, and access networking opportunities through public channels and Slack. | [Website](https://haitiansintech.com/join/)<br>[Slack](https://haitiansintech.slack.com/join/shared_invite/zt-fgnpda29-9ZwxDnnv2dHRfKzPFkqgVQ#/shared-invite/email)<br>[LinkedIn](https://www.linkedin.com/company/haitians-in-tech/)<br>[Instagram](https://www.instagram.com/haitiansintech/) |
+
+## Tech Events
+
+| Event | City | Schedule | Description | Attend |
+| --- | --- | --- | --- | --- |
+| No event listings yet | - | - | Submit the first event listing for this area. | - |
