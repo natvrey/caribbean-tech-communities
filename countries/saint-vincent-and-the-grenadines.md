@@ -12,4 +12,5 @@ Regional status: CARICOM Member State | CSME Participant
 
 | Event | City | Date | Frequency | Host Community | Description | Attend |
 | --- | --- | --- | --- | --- | --- | --- |
-| No event listings yet | - | - | - | - | Submit the first event listing for this area. | - |
+| NCTI ICT | - | Dates vary | - | - | ICT-focused event listing from the National Centre of Technological Innovation in Saint Vincent and the Grenadines, with current details and participation information published on the event page. | [Website](https://www.svgncti.org/ncti-ict) |
+| Virtual Robotics | - | Dates vary | - | - | Virtual robotics event listing from the National Centre of Technological Innovation in Saint Vincent and the Grenadines, with current details and participation information published on the event page. | [Website](https://www.svgncti.org/virtual-robotics) |

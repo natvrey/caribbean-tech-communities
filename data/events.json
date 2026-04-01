@@ -212,5 +212,29 @@
       }
     ],
     "description": "Thirty-first Caribbean Network Operators Group meeting focused on network resilience, cybersecurity, internet infrastructure, and technical collaboration, hosted at The Jamaica Pegasus Hotel in Kingston."
+  },
+  {
+    "name": "NCTI ICT",
+    "country": "Saint Vincent and the Grenadines",
+    "schedule": "Dates vary",
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://www.svgncti.org/ncti-ict"
+      }
+    ],
+    "description": "ICT-focused event listing from the National Centre of Technological Innovation in Saint Vincent and the Grenadines, with current details and participation information published on the event page."
+  },
+  {
+    "name": "Virtual Robotics",
+    "country": "Saint Vincent and the Grenadines",
+    "schedule": "Dates vary",
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://www.svgncti.org/virtual-robotics"
+      }
+    ],
+    "description": "Virtual robotics event listing from the National Centre of Technological Innovation in Saint Vincent and the Grenadines, with current details and participation information published on the event page."
   }
 ]
