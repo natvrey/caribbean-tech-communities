@@ -586,6 +586,43 @@ function renderCountrySearch(rootHref = ".") {
   return { markup, script };
 }
 
+function renderLeaderboardTooltipScript() {
+  return [
+    "(() => {",
+    "  const buttons = Array.from(document.querySelectorAll('.top-country-link'));",
+    "  if (!buttons.length) return;",
+    "  const edgePadding = 16;",
+    "  const getTooltipWidth = (button) => {",
+    "    const tooltip = window.getComputedStyle(button, '::after');",
+    "    const rawWidth = parseFloat(tooltip.width);",
+    "    return Number.isFinite(rawWidth) ? rawWidth : 220;",
+    "  };",
+    "  const updatePosition = (button) => {",
+    "    button.classList.remove('tooltip-left', 'tooltip-right', 'tooltip-center');",
+    "    const rect = button.getBoundingClientRect();",
+    "    const tooltipWidth = getTooltipWidth(button);",
+    "    const viewportWidth = window.innerWidth;",
+    "    const projectedLeft = rect.left + rect.width / 2 - tooltipWidth / 2;",
+    "    const projectedRight = rect.left + rect.width / 2 + tooltipWidth / 2;",
+    "    if (projectedLeft < edgePadding) {",
+    "      button.classList.add('tooltip-left');",
+    "      return;",
+    "    }",
+    "    if (projectedRight > viewportWidth - edgePadding) {",
+    "      button.classList.add('tooltip-right');",
+    "      return;",
+    "    }",
+    "    button.classList.add('tooltip-center');",
+    "  };",
+    "  buttons.forEach((button) => {",
+    "    ['pointerenter', 'focus', 'touchstart'].forEach((eventName) => button.addEventListener(eventName, () => updatePosition(button), { passive: true }));",
+    "  });",
+    "  window.addEventListener('resize', () => buttons.forEach(updatePosition), { passive: true });",
+    "  buttons.forEach(updatePosition);",
+    "})();"
+  ].join("");
+}
+
 function renderLayout({ title, description, body, relativeRoot, script, headExtra = "", bodyEnd = "", headerControls = "" }) {
   const rootHref = relativeRoot || ".";
   const currentYear = new Date().getFullYear();
@@ -663,7 +700,7 @@ function renderHomePage(communities, events, communitiesByCountry, eventsByCount
     description: "A directory of tech communities and events across the Caribbean.",
     body,
     headerControls: countrySearch.markup,
-    script: countrySearch.script,
+    script: [countrySearch.script, renderLeaderboardTooltipScript()].join(""),
     relativeRoot: "."
   });
 }
@@ -958,7 +995,9 @@ function renderStyles() {
     ".top-country-link:hover { transform: translateY(-3px) scale(1.02); border-color: rgba(255, 255, 255, 0.72); background: radial-gradient(circle at 30% 30%, #fff6ee, #f7eadf 72%); box-shadow: 0 18px 30px rgba(115, 23, 2, 0.18); }",
     ".top-country-link:focus-visible { outline: 3px solid rgba(255, 246, 234, 0.8); outline-offset: 3px; }",
     ".top-country-link::after { content: attr(data-tooltip); position: absolute; left: 50%; bottom: calc(100% + 12px); transform: translateX(-50%) translateY(6px); width: clamp(120px, 42vw, 220px); max-width: calc(100vw - 32px); padding: 8px 10px; border-radius: 12px; background: rgba(26, 24, 20, 0.92); color: #ffffff; font-size: 0.86rem; line-height: 1.35; text-align: center; white-space: normal; overflow-wrap: anywhere; word-break: break-word; box-shadow: 0 12px 24px rgba(26, 24, 20, 0.2); opacity: 0; pointer-events: none; transition: opacity 140ms ease, transform 140ms ease; z-index: 2; }",
-    ".top-country-link:hover::after { opacity: 1; transform: translateX(-50%) translateY(0); }",
+    ".top-country-link.tooltip-left::after { left: 0; transform: translateY(6px); }",
+    ".top-country-link.tooltip-right::after { left: auto; right: 0; transform: translateY(6px); }",
+    ".top-country-link.tooltip-center::after { left: 50%; right: auto; transform: translateX(-50%) translateY(6px); }",
     ".top-country-rank { display: inline-flex; align-items: center; justify-content: center; min-width: 0; padding: 2px 6px; border-radius: 999px; background: rgba(255, 255, 255, 0.92); color: var(--accent-strong); font-weight: 700; font-size: 0.78rem; line-height: 1; box-shadow: 0 6px 14px rgba(115, 23, 2, 0.1); }",
     ".top-country-flag-wrap { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; }",
     ".top-country-flag { width: 32px !important; height: 24px !important; border-radius: 4px; }",
@@ -1069,11 +1108,13 @@ function renderStyles() {
     "}",
     "@media (hover: hover) and (pointer: fine) {",
     "  .top-country-link:hover { transform: translateY(-3px) scale(1.02); border-color: rgba(255, 255, 255, 0.72); background: radial-gradient(circle at 30% 30%, #fff6ee, #f7eadf 72%); box-shadow: 0 18px 30px rgba(115, 23, 2, 0.18); }",
-    "  .top-country-link:hover::after { opacity: 1; transform: translateX(-50%) translateY(0); }",
+    "  .top-country-link.tooltip-left:hover::after, .top-country-link.tooltip-right:hover::after { opacity: 1; transform: translateY(0); }",
+    "  .top-country-link.tooltip-center:hover::after { opacity: 1; transform: translateX(-50%) translateY(0); }",
     "}",
     "@media (hover: none), (pointer: coarse) {",
     "  .top-country-link:focus, .top-country-link:focus-visible { transform: translateY(-3px) scale(1.02); border-color: rgba(255, 255, 255, 0.72); background: radial-gradient(circle at 30% 30%, #fff6ee, #f7eadf 72%); box-shadow: 0 18px 30px rgba(115, 23, 2, 0.18); }",
-    "  .top-country-link:focus::after, .top-country-link:focus-visible::after { opacity: 1; transform: translateX(-50%) translateY(0); }",
+    "  .top-country-link.tooltip-left:focus::after, .top-country-link.tooltip-left:focus-visible::after, .top-country-link.tooltip-right:focus::after, .top-country-link.tooltip-right:focus-visible::after { opacity: 1; transform: translateY(0); }",
+    "  .top-country-link.tooltip-center:focus::after, .top-country-link.tooltip-center:focus-visible::after { opacity: 1; transform: translateX(-50%) translateY(0); }",
     "}",
     "@media print {",
     "  @page { margin: 0.5in; }",
