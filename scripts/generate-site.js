@@ -678,6 +678,7 @@ function renderLayout({ title, description, body, relativeRoot, script, headExtr
     "    </header>",
     body,
     `    <footer class="site-footer">Copyright &copy; ${currentYear} Natalie Reynolds</footer>`,
+    '    <button class="back-to-top button-reset" type="button" aria-label="Back to top" hidden>Back to top</button>',
     "  </div>",
     bodyEnd,
     script ? `  <script>${script}</script>` : "",
@@ -685,6 +686,26 @@ function renderLayout({ title, description, body, relativeRoot, script, headExtr
     "</html>",
     ""
   ].join("\n");
+}
+
+function renderBackToTopScript() {
+  return [
+    "(() => {",
+    "  const button = document.querySelector('.back-to-top');",
+    "  if (!button) return;",
+    "  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');",
+    "  const toggleVisibility = () => {",
+    "    const isVisible = window.scrollY > 240;",
+    "    button.hidden = !isVisible;",
+    "    button.classList.toggle('is-visible', isVisible);",
+    "  };",
+    "  button.addEventListener('click', () => {",
+    "    window.scrollTo({ top: 0, behavior: reducedMotion.matches ? 'auto' : 'smooth' });",
+    "  });",
+    "  window.addEventListener('scroll', toggleVisibility, { passive: true });",
+    "  toggleVisibility();",
+    "})();"
+  ].join("");
 }
 
 function renderHomePage(communities, events, communitiesByCountry, eventsByCountry) {
@@ -722,7 +743,7 @@ function renderHomePage(communities, events, communitiesByCountry, eventsByCount
     description: "A directory of tech communities and events across the Caribbean.",
     body,
     headerControls: countrySearch.markup,
-    script: [countrySearch.script, renderLeaderboardTooltipScript()].join(""),
+    script: [countrySearch.script, renderLeaderboardTooltipScript(), renderBackToTopScript()].join(""),
     relativeRoot: "."
   });
 }
@@ -784,7 +805,8 @@ function renderCountryPage(country, communities, events) {
     title: `${displayCountry} Tech Communities and Events`,
     description: `Tech communities and events in ${displayCountry}.`,
     body,
-    relativeRoot: ".."
+    relativeRoot: "..",
+    script: renderBackToTopScript()
   });
 }
 
@@ -826,7 +848,8 @@ function renderPrintPage({ kind, items, sections }) {
     "const params = new URLSearchParams(window.location.search);",
     "if (params.get('download') === 'pdf') {",
     "  window.addEventListener('load', () => window.print(), { once: true });",
-    "}"
+    "}",
+    renderBackToTopScript()
   ].join("\n");
 
   return renderLayout({
@@ -916,7 +939,8 @@ function renderMapPage(communitiesByCountry, eventsByCountry) {
     "}",
     "if (bounds.length) {",
     "  map.fitBounds(bounds, { padding: [24, 24] });",
-    "}"
+    "}",
+    renderBackToTopScript()
   ].join("\n");
 
   return renderLayout({
@@ -983,6 +1007,10 @@ function renderStyles() {
     ".country-search-button:focus-visible { outline: 3px solid rgba(242, 116, 5, 0.35); outline-offset: 2px; }",
     ".main-content { display: grid; gap: 28px; }",
     ".site-footer { margin-top: 28px; padding: 18px 0 8px; color: var(--accent-strong); font-size: 0.95rem; text-align: center; }",
+    ".back-to-top { position: fixed; right: 24px; bottom: 24px; z-index: 20; padding: 12px 18px; border-radius: 999px; background: var(--accent-strong); color: #ffffff; font-weight: 700; box-shadow: 0 18px 36px rgba(1, 64, 64, 0.24); opacity: 0; pointer-events: none; transform: translateY(12px); transition: opacity 160ms ease, transform 160ms ease, background-color 140ms ease, box-shadow 140ms ease; }",
+    ".back-to-top.is-visible { opacity: 1; pointer-events: auto; transform: translateY(0); }",
+    ".back-to-top:hover, .back-to-top:focus-visible { background: var(--accent-warm); box-shadow: 0 20px 40px rgba(115, 23, 2, 0.26); transform: translateY(-2px); }",
+    ".back-to-top:focus-visible { outline: 3px solid rgba(242, 116, 5, 0.4); outline-offset: 3px; }",
     ".hero, .country-hero, .contribution-panel {",
     "  background: var(--surface);",
     "  border: 1px solid var(--border);",
@@ -1125,6 +1153,7 @@ function renderStyles() {
     "  .country-search-field { width: 100%; }",
     "  .country-search input { width: 100%; min-width: 0; }",
     "  .hero, .summary-panel, .country-hero { padding: 20px; }",
+    "  .back-to-top { right: 16px; bottom: 16px; }",
     "  .map-section { grid-template-columns: 1fr; }",
     "  .directory-map { min-height: 460px; }",
     "}",
@@ -1144,7 +1173,7 @@ function renderStyles() {
     "  @page { margin: 0.5in; }",
     "  body { background: #ffffff; }",
     "  .page-shell { max-width: none; padding: 0; }",
-    "  .site-header, .site-footer, .print-actions, .back-link, .print-hero { display: none !important; }",
+    "  .site-header, .site-footer, .print-actions, .back-link, .print-hero, .back-to-top { display: none !important; }",
     "  .print-intro { display: block; margin: 0 0 14px; color: #333333; font-size: 0.95rem; }",
     "  .hero, .country-hero, .contribution-panel, .community-card, .empty-state { box-shadow: none; }",
     "  .hero, .country-hero, .contribution-panel, .community-card, .empty-state { border-color: #999999; }",

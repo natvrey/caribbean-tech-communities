@@ -56,6 +56,20 @@
     "description": "Business and technology conference by the Jamaica Technology & Digital Alliance bringing together industry experts, entrepreneurs, investors, and stakeholders to explore trends, innovation, and digital transformation across Jamaica and the wider Caribbean."
   },
   {
+    "name": "JGDS Virtual Meetup",
+    "country": "Jamaica",
+    "schedule": "Every other Sunday",
+    "frequency": "Biweekly virtual meetup",
+    "host_community": "Jamaica Game Developer Society",
+    "links": [
+      {
+        "label": "Discord",
+        "url": "https://discord.com/events/534417363706052619/1393460573022191646"
+      }
+    ],
+    "description": "Biweekly virtual meetup hosted by the Jamaica Game Developer Society on Discord for game developers, creators, and community members to connect, share work, and discuss game development."
+  },
+  {
     "name": "Kingston BETA",
     "country": "Jamaica",
     "city": "Kingston",
@@ -212,6 +226,20 @@
       }
     ],
     "description": "Thirty-first Caribbean Network Operators Group meeting focused on network resilience, cybersecurity, internet infrastructure, and technical collaboration, hosted at The Jamaica Pegasus Hotel in Kingston."
+  },
+  {
+    "name": "WiTC Monthly Meetup",
+    "country": "Regional",
+    "schedule": "Last Saturday or Sunday of each month",
+    "frequency": "Monthly meetup",
+    "host_community": "Women in Tech Caribbean",
+    "links": [
+      {
+        "label": "Discord",
+        "url": "https://discord.gg/VTJHjnxDxW"
+      }
+    ],
+    "description": "Recurring regional meetup hosted by Women in Tech Caribbean for community building, networking, and conversations that support women in tech across the Caribbean and the diaspora."
   },
   {
     "name": "NCTI ICT Conference",
