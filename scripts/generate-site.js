@@ -263,18 +263,19 @@ function lastWeekdayOfMonth(year, monthIndex, weekday) {
 
 function buildCalendarLinkSet(relativeIcsPath, label) {
   const absoluteUrl = `${SITE_URL}/${relativeIcsPath}`;
-  const encodedUrl = encodeURIComponent(absoluteUrl);
+  const subscriptionUrl = absoluteUrl.replace(/^https/i, "webcal");
+  const encodedSubscriptionUrl = encodeURIComponent(subscriptionUrl);
   const encodedLabel = encodeURIComponent(label);
   return [
-    { label: "Google Calendar", url: `https://calendar.google.com/calendar/u/0/r?cid=${encodedUrl}` },
-    { label: "iCalendar", url: absoluteUrl },
+    { label: "Google Calendar", url: `https://calendar.google.com/calendar/u/0/r/settings/addbyurl?cid=${encodedSubscriptionUrl}` },
+    { label: "Apple Calendar / iCalendar", url: subscriptionUrl },
     {
       label: "Outlook 365",
-      url: `https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addsubscription&url=${encodedUrl}&name=${encodedLabel}`
+      url: `https://outlook.office.com/calendar/deeplink/subscribe?url=${encodedSubscriptionUrl}&name=${encodedLabel}`
     },
     {
       label: "Outlook Live",
-      url: `https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addsubscription&url=${encodedUrl}&name=${encodedLabel}`
+      url: `https://outlook.live.com/calendar/deeplink/subscribe?url=${encodedSubscriptionUrl}&name=${encodedLabel}`
     },
     { label: "Export .ics file", url: absoluteUrl, download: true },
     {
