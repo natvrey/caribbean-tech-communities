@@ -438,6 +438,27 @@
     "description": "Regional telecommunications and ICT association connecting Caribbean operators, companies, stakeholders, and professionals through collaboration, advocacy, events, and knowledge sharing."
   },
   {
+    "name": "Caribbean Cyber Support Team",
+    "country": "Regional",
+    "language": "English",
+    "focus": [
+      "it support",
+      "cybersecurity",
+      "professional networking"
+    ],
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://cct.g5cybersecurity.com/"
+      },
+      {
+        "label": "Discord",
+        "url": "https://discord.com/invite/jRA9cEt"
+      }
+    ],
+    "description": "Regional Discord community for Caribbean people in IT to collaborate, get support, explore multiple technical topics, and discover professional opportunities."
+  },
+  {
     "name": "Caribbean Data Center Association",
     "country": "Regional",
     "language": "English",
@@ -504,6 +525,23 @@
       }
     ],
     "description": "Regional network operators community focused on exchanging technical knowledge, building capacity, and supporting Caribbean internet infrastructure."
+  },
+  {
+    "name": "Caribbean Red Team",
+    "country": "Regional",
+    "language": "English",
+    "focus": [
+      "cybersecurity",
+      "penetration testing",
+      "education"
+    ],
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://credteam.com/about"
+      }
+    ],
+    "description": "Regional initiative focused on developing penetration testing skills, educational content, and professional collaboration across the Caribbean."
   },
   {
     "name": "Caribbean Science Foundation",
