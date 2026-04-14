@@ -7,6 +7,7 @@ Regional status: CARICOM N/A | CSME N/A
 | Community | Platform | Description | Join |
 | --- | --- | --- | --- |
 | CANTO | Website | Regional telecommunications and ICT association connecting Caribbean operators, companies, stakeholders, and professionals through collaboration, advocacy, events, and knowledge sharing. | [Website](https://canto.org/) |
+| Caribbean Data Center Association | Website | Regional association focused on strengthening Caribbean data center and digital infrastructure collaboration across the region. | [Website](https://caribbeandatacenters.com/) |
 | Caribbean Developers | Facebook | Private Facebook group for software developers who have a background or interest in the Caribbean region. | [Facebook](https://www.facebook.com/groups/devcarib/) |
 | Caribbean Girls Hack | Instagram | Regional initiative focused on bridging the gender digital divide by engaging and upskilling girls and young women. | [Instagram](https://www.instagram.com/cgirlzhack_/) |
 | Caribbean Network Operators Group (CaribNOG) | Website | Regional network operators community focused on exchanging technical knowledge, building capacity, and supporting Caribbean internet infrastructure. | [Website](https://www.caribnog.org/about) |

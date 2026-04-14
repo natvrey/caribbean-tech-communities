@@ -438,6 +438,23 @@
     "description": "Regional telecommunications and ICT association connecting Caribbean operators, companies, stakeholders, and professionals through collaboration, advocacy, events, and knowledge sharing."
   },
   {
+    "name": "Caribbean Data Center Association",
+    "country": "Regional",
+    "language": "English",
+    "focus": [
+      "data centers",
+      "digital infrastructure",
+      "industry collaboration"
+    ],
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://caribbeandatacenters.com/"
+      }
+    ],
+    "description": "Regional association focused on strengthening Caribbean data center and digital infrastructure collaboration across the region."
+  },
+  {
     "name": "Caribbean Developers",
     "country": "Regional",
     "language": "English",
