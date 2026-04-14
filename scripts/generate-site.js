@@ -8,6 +8,33 @@ const EVENTS_PATH = path.join(ROOT, "data", "events.json");
 const DIST_DIR = path.join(ROOT, "dist");
 const COUNTRIES_DIR = path.join(DIST_DIR, "countries");
 const STYLES_PATH = path.join(DIST_DIR, "styles.css");
+const SITE_URL = "https://natvrey.github.io/caribbean-tech-communities";
+const CALENDAR_PATH = "calendar.html";
+const CALENDAR_FEED_PATH = "calendar.ics";
+const CALENDAR_OUTLOOK_FEED_PATH = "calendar-outlook.ics";
+const MONTH_INDEX = {
+  january: 0,
+  february: 1,
+  march: 2,
+  april: 3,
+  may: 4,
+  june: 5,
+  july: 6,
+  august: 7,
+  september: 8,
+  october: 9,
+  november: 10,
+  december: 11
+};
+const WEEKDAY_INDEX = {
+  sunday: 0,
+  monday: 1,
+  tuesday: 2,
+  wednesday: 3,
+  thursday: 4,
+  friday: 5,
+  saturday: 6
+};
 const COUNTRY_FLAGS = {
   Regional: { kind: "globe", label: "Regional" },
   "Antigua and Barbuda": { kind: "flag", code: "ag" },
@@ -110,6 +137,391 @@ function sortCommunities(communities) {
 
     return a.name.localeCompare(b.name);
   });
+}
+
+function toUtcDate(year, monthIndex, day) {
+  return new Date(Date.UTC(year, monthIndex, day));
+}
+
+function addUtcDays(date, days) {
+  const result = new Date(date.getTime());
+  result.setUTCDate(result.getUTCDate() + days);
+  return result;
+}
+
+function toIsoDate(date) {
+  return date.toISOString().slice(0, 10);
+}
+
+function formatUtcDate(date, options = {}) {
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: "UTC",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    ...options
+  }).format(date);
+}
+
+function escapeIcsText(value) {
+  return String(value || "")
+    .replace(/\\/g, "\\\\")
+    .replace(/\r?\n/g, "\\n")
+    .replace(/;/g, "\\;")
+    .replace(/,/g, "\\,");
+}
+
+function foldIcsLine(line) {
+  const limit = 75;
+  if (line.length <= limit) {
+    return line;
+  }
+
+  const parts = [];
+  let remaining = line;
+  while (remaining.length > limit) {
+    parts.push(remaining.slice(0, limit));
+    remaining = ` ${remaining.slice(limit)}`;
+  }
+  parts.push(remaining);
+  return parts.join("\r\n");
+}
+
+function parseMonthName(value) {
+  return MONTH_INDEX[String(value || "").toLowerCase()] ?? null;
+}
+
+function parseExactSchedule(schedule) {
+  if (!schedule) {
+    return null;
+  }
+
+  const singleDateMatch = schedule.match(/^([A-Za-z]+) (\d{1,2}), (\d{4})$/);
+  if (singleDateMatch) {
+    const monthIndex = parseMonthName(singleDateMatch[1]);
+    if (monthIndex === null) {
+      return null;
+    }
+
+    const start = toUtcDate(Number(singleDateMatch[3]), monthIndex, Number(singleDateMatch[2]));
+    return {
+      startDate: toIsoDate(start),
+      endDate: toIsoDate(start),
+      displayDate: formatUtcDate(start)
+    };
+  }
+
+  const sameMonthRangeMatch = schedule.match(/^([A-Za-z]+) (\d{1,2}) - (\d{1,2}), (\d{4})$/);
+  if (sameMonthRangeMatch) {
+    const monthIndex = parseMonthName(sameMonthRangeMatch[1]);
+    if (monthIndex === null) {
+      return null;
+    }
+
+    const year = Number(sameMonthRangeMatch[4]);
+    const start = toUtcDate(year, monthIndex, Number(sameMonthRangeMatch[2]));
+    const end = toUtcDate(year, monthIndex, Number(sameMonthRangeMatch[3]));
+    return {
+      startDate: toIsoDate(start),
+      endDate: toIsoDate(end),
+      displayDate: `${sameMonthRangeMatch[1]} ${Number(sameMonthRangeMatch[2])} - ${Number(sameMonthRangeMatch[3])}, ${year}`
+    };
+  }
+
+  const crossMonthRangeMatch = schedule.match(/^([A-Za-z]+) (\d{1,2}) - ([A-Za-z]+) (\d{1,2}), (\d{4})$/);
+  if (crossMonthRangeMatch) {
+    const startMonthIndex = parseMonthName(crossMonthRangeMatch[1]);
+    const endMonthIndex = parseMonthName(crossMonthRangeMatch[3]);
+    if (startMonthIndex === null || endMonthIndex === null) {
+      return null;
+    }
+
+    const year = Number(crossMonthRangeMatch[5]);
+    const start = toUtcDate(year, startMonthIndex, Number(crossMonthRangeMatch[2]));
+    const end = toUtcDate(year, endMonthIndex, Number(crossMonthRangeMatch[4]));
+    return {
+      startDate: toIsoDate(start),
+      endDate: toIsoDate(end),
+      displayDate: `${sameMonthRangeMatch[1]} ${Number(sameMonthRangeMatch[2])} - ${Number(sameMonthRangeMatch[3])}, ${year}`
+    };
+  }
+
+  return null;
+}
+
+function nextWeekdayOnOrAfter(date, weekday) {
+  const currentWeekday = date.getUTCDay();
+  const offset = (weekday - currentWeekday + 7) % 7;
+  return addUtcDays(date, offset);
+}
+
+function lastWeekdayOfMonth(year, monthIndex, weekday) {
+  const lastDay = new Date(Date.UTC(year, monthIndex + 1, 0));
+  const offset = (lastDay.getUTCDay() - weekday + 7) % 7;
+  return addUtcDays(lastDay, -offset);
+}
+
+function buildCalendarLinkSet(relativeIcsPath, label) {
+  const absoluteUrl = `${SITE_URL}/${relativeIcsPath}`;
+  const encodedUrl = encodeURIComponent(absoluteUrl);
+  const encodedLabel = encodeURIComponent(label);
+  return [
+    { label: "Google Calendar", url: `https://calendar.google.com/calendar/u/0/r?cid=${encodedUrl}` },
+    { label: "iCalendar", url: absoluteUrl },
+    {
+      label: "Outlook 365",
+      url: `https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addsubscription&url=${encodedUrl}&name=${encodedLabel}`
+    },
+    {
+      label: "Outlook Live",
+      url: `https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addsubscription&url=${encodedUrl}&name=${encodedLabel}`
+    },
+    { label: "Export .ics file", url: absoluteUrl, download: true },
+    {
+      label: "Export Outlook .ics file",
+      url: `${SITE_URL}/${relativeIcsPath.replace(/\.ics$/, "-outlook.ics")}`,
+      download: true
+    }
+  ];
+}
+
+function normalizeCalendarDescription(parts) {
+  return parts.filter(Boolean).join("\n\n");
+}
+
+function buildCalendarCollections(events) {
+  const buildDate = new Date();
+  const buildDateUtc = toUtcDate(buildDate.getUTCFullYear(), buildDate.getUTCMonth(), buildDate.getUTCDate());
+  const mainItems = [];
+  const optionalFeeds = [];
+  const omittedEvents = [];
+
+  for (const event of events) {
+    const eventId = slugify(`${event.country}-${event.name}`);
+    const exactSchedule = parseExactSchedule(event.schedule);
+
+    if (exactSchedule) {
+      mainItems.push({
+        id: eventId,
+        sourceType: "exact",
+        name: event.name,
+        country: event.country,
+        city: event.city || "",
+        hostCommunity: event.host_community || "",
+        description: event.description,
+        scheduleLabel: event.schedule,
+        startDate: exactSchedule.startDate,
+        endDate: exactSchedule.endDate,
+        displayDate: exactSchedule.displayDate,
+        url: event.links?.[0]?.url || "",
+        links: event.links || []
+      });
+      continue;
+    }
+
+    if (/^Every other Sunday$/i.test(event.schedule || "")) {
+      const anchor = toUtcDate(2026, 3, 19);
+      mainItems.push({
+        id: eventId,
+        sourceType: "recurring",
+        recurrenceType: "biweekly_weekday",
+        weekday: WEEKDAY_INDEX.sunday,
+        interval: 2,
+        anchorDate: toIsoDate(anchor),
+        inferenceNote:
+          "Series anchor confirmed from the published JGDS event schedule shown on Discord: April 19, 2026, then every other Sunday.",
+        name: event.name,
+        country: event.country,
+        city: event.city || "",
+        hostCommunity: event.host_community || "",
+        description: event.description,
+        scheduleLabel: event.schedule,
+        displayDate: `Every other Sunday, starting ${formatUtcDate(anchor)}`,
+        url: event.links?.[0]?.url || "",
+        links: event.links || []
+      });
+      continue;
+    }
+
+    const monthlyLastWeekendMatch = (event.schedule || "").match(/^Last (Saturday|Sunday) or (Saturday|Sunday) of each month$/i);
+    if (monthlyLastWeekendMatch) {
+      const weekdays = [...new Set([monthlyLastWeekendMatch[1], monthlyLastWeekendMatch[2]].map((value) => value.toLowerCase()))];
+      for (const weekdayName of weekdays) {
+        const weekday = WEEKDAY_INDEX[weekdayName];
+        const labelSuffix = weekdayName === "saturday" ? "last Saturday" : "last Sunday";
+        mainItems.push({
+          id: `${eventId}-${slugify(labelSuffix)}`,
+          sourceType: "recurring",
+          recurrenceType: "monthly_last_weekday",
+          weekday,
+          anchorDate: toIsoDate(lastWeekdayOfMonth(buildDateUtc.getUTCFullYear(), buildDateUtc.getUTCMonth(), weekday)),
+          inferenceNote:
+            "This meetup can land on either the last Saturday or the last Sunday of the month depending on speaker availability, so both dates are included in the calendar as placeholders until the exact monthly date is announced.",
+          name: event.name,
+          country: event.country,
+          city: event.city || "",
+          hostCommunity: event.host_community || "",
+          description: event.description,
+          scheduleLabel: `${event.schedule} (${labelSuffix} placeholder)`,
+          displayDate: `Last ${weekdayName.charAt(0).toUpperCase()}${weekdayName.slice(1)} of each month`,
+          url: event.links?.[0]?.url || "",
+          links: event.links || []
+        });
+      }
+      continue;
+    }
+
+    omittedEvents.push({
+      name: event.name,
+      reason: `We do not have a clear date for this yet. Right now it is listed as "${event.schedule || "Date not provided"}".`
+    });
+  }
+
+  const mainFeed = {
+    title: "Caribbean Tech Events Calendar",
+    path: CALENDAR_FEED_PATH,
+    outlookPath: CALENDAR_OUTLOOK_FEED_PATH,
+    links: buildCalendarLinkSet(CALENDAR_FEED_PATH, "Caribbean Tech Events Calendar"),
+    items: mainItems
+  };
+
+  return {
+    buildDate: toIsoDate(buildDateUtc),
+    mainFeed,
+    optionalFeeds,
+    omittedEvents
+  };
+}
+
+function buildCalendarOccurrences(items, startDate, endDate, limit = 500) {
+  const occurrences = [];
+  const rangeStart = new Date(`${startDate}T00:00:00Z`);
+  const rangeEnd = new Date(`${endDate}T00:00:00Z`);
+
+  for (const item of items) {
+    if (item.sourceType === "exact") {
+      const itemStart = new Date(`${item.startDate}T00:00:00Z`);
+      const itemEnd = new Date(`${item.endDate}T00:00:00Z`);
+      if (itemEnd < rangeStart || itemStart > rangeEnd) {
+        continue;
+      }
+
+      occurrences.push({
+        ...item,
+        occurrenceStart: item.startDate,
+        occurrenceEnd: item.endDate
+      });
+      continue;
+    }
+
+    if (item.recurrenceType === "biweekly_weekday") {
+      let cursor = new Date(`${item.anchorDate}T00:00:00Z`);
+      while (cursor < rangeStart) {
+        cursor = addUtcDays(cursor, item.interval * 7);
+      }
+
+      while (cursor <= rangeEnd && occurrences.length < limit) {
+        occurrences.push({
+          ...item,
+          occurrenceStart: toIsoDate(cursor),
+          occurrenceEnd: toIsoDate(cursor)
+        });
+        cursor = addUtcDays(cursor, item.interval * 7);
+      }
+      continue;
+    }
+
+    if (item.recurrenceType === "monthly_last_weekday") {
+      let year = rangeStart.getUTCFullYear();
+      let month = rangeStart.getUTCMonth();
+      while (year < rangeEnd.getUTCFullYear() || (year === rangeEnd.getUTCFullYear() && month <= rangeEnd.getUTCMonth())) {
+        const date = lastWeekdayOfMonth(year, month, item.weekday);
+        if (date >= rangeStart && date <= rangeEnd) {
+          occurrences.push({
+            ...item,
+            occurrenceStart: toIsoDate(date),
+            occurrenceEnd: toIsoDate(date)
+          });
+        }
+        month += 1;
+        if (month > 11) {
+          month = 0;
+          year += 1;
+        }
+      }
+    }
+  }
+
+  return occurrences.sort((a, b) => {
+    const startCompare = a.occurrenceStart.localeCompare(b.occurrenceStart);
+    if (startCompare !== 0) {
+      return startCompare;
+    }
+    return a.name.localeCompare(b.name);
+  });
+}
+
+function renderIcsFeed({ title, description, items }) {
+  const nowStamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
+  const feedStart = toIsoDate(toUtcDate(new Date().getUTCFullYear(), new Date().getUTCMonth(), 1));
+  const feedEnd = toIsoDate(addUtcDays(toUtcDate(new Date().getUTCFullYear() + 2, 11, 31), 0));
+  const occurrences = buildCalendarOccurrences(items, feedStart, feedEnd, 2000);
+  const lines = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Caribbean Tech Communities//Events Calendar//EN",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    `X-WR-CALNAME:${escapeIcsText(title)}`,
+    `X-WR-CALDESC:${escapeIcsText(description)}`
+  ];
+
+  for (const occurrence of occurrences) {
+    const start = new Date(`${occurrence.occurrenceStart}T00:00:00Z`);
+    const endExclusive = addUtcDays(new Date(`${occurrence.occurrenceEnd}T00:00:00Z`), 1);
+    const location = [occurrence.city, getDisplayName(occurrence.country)].filter(Boolean).join(", ");
+    const details = normalizeCalendarDescription([
+      occurrence.description,
+      occurrence.hostCommunity ? `Host community: ${occurrence.hostCommunity}` : "",
+      occurrence.scheduleLabel ? `Schedule listed in directory: ${occurrence.scheduleLabel}` : "",
+      occurrence.inferenceNote || "",
+      occurrence.url || ""
+    ]);
+
+    lines.push("BEGIN:VEVENT");
+    lines.push(`UID:${escapeIcsText(`${occurrence.id}-${occurrence.occurrenceStart}@caribbean-tech-communities`)}`);
+    lines.push(`DTSTAMP:${nowStamp}`);
+    lines.push(`SUMMARY:${escapeIcsText(occurrence.name)}`);
+    lines.push(`DTSTART;VALUE=DATE:${start.toISOString().slice(0, 10).replace(/-/g, "")}`);
+    lines.push(`DTEND;VALUE=DATE:${endExclusive.toISOString().slice(0, 10).replace(/-/g, "")}`);
+    if (location) {
+      lines.push(`LOCATION:${escapeIcsText(location)}`);
+    }
+    if (occurrence.url) {
+      lines.push(`URL:${escapeIcsText(occurrence.url)}`);
+    }
+    lines.push(`DESCRIPTION:${escapeIcsText(details)}`);
+    lines.push("END:VEVENT");
+  }
+
+  lines.push("END:VCALENDAR");
+  return lines.map(foldIcsLine).join("\r\n") + "\r\n";
+}
+
+function renderSubscribeMenu(links, label = "Subscribe to calendar") {
+  const items = links
+    .map((link) => {
+      const downloadAttr = link.download ? " download" : "";
+      return `<a href="${escapeHtml(link.url)}"${downloadAttr} target="_blank" rel="noreferrer">${escapeHtml(link.label)}</a>`;
+    })
+    .join("");
+
+  return [
+    '<details class="subscribe-menu">',
+    `  <summary class="subscribe-button">${escapeHtml(label)}<span aria-hidden="true">&#9662;</span></summary>`,
+    `  <div class="subscribe-menu-list">${items}</div>`,
+    "</details>"
+  ].join("\n");
 }
 
 function resetOutputDir() {
@@ -666,6 +1078,7 @@ function renderLayout({ title, description, body, relativeRoot, script, headExtr
     '      <a class="site-brand" href="' + rootHref + '/index.html">Caribbean Tech Communities and Events</a>',
     '      <div class="site-header-actions">',
     "        <nav>",
+    '          <a class="site-nav-link" href="' + rootHref + '/calendar.html">Calendar</a>',
     '          <a class="site-nav-link" href="' + rootHref + '/map.html">Map</a>',
     '          <a class="site-nav-link" href="' + rootHref + '/print-communities.html">Print Communities</a>',
     '          <a class="site-nav-link" href="' + rootHref + '/print-events.html">Print Events</a>',
@@ -727,7 +1140,8 @@ function renderHomePage(communities, events, communitiesByCountry, eventsByCount
     `      <div class="stat"><strong>${totalEvents}</strong><span>events listed</span></div>`,
     "    </div>",
     '    <div class="hero-actions">',
-      '      <a class="button" href="#directory">Browse directory</a>',
+    '      <a class="button" href="#directory">Browse directory</a>',
+    '      <a class="button button-update" href="./calendar.html">Open events calendar</a>',
     "    </div>",
     "  </section>",
     topCountriesTracker,
@@ -793,6 +1207,7 @@ function renderCountryPage(country, communities, events) {
     `    <p class="country-status">CARICOM: ${escapeHtml(status.caricom)} | CSME: ${escapeHtml(status.csme)}</p>`,
     '    <p class="status-note"><a href="https://caricom.org/our-community/who-we-are/" target="_blank" rel="noreferrer">CARICOM</a> stands for the Caribbean Community, and <a href="https://csme.me/" target="_blank" rel="noreferrer">CSME</a> stands for the CARICOM Single Market and Economy.</p>',
     `    <p class="listing-count">${renderCommunityCount(communities.length)} | ${renderEventCount(events.length)}</p>`,
+    events.length > 0 ? '    <a class="button" href="../calendar.html">Open events calendar</a>' : "",
     '    <a class="back-link" href="../index.html">Back to directory</a>',
     "  </section>",
     contributionPanel,
@@ -807,6 +1222,199 @@ function renderCountryPage(country, communities, events) {
     body,
     relativeRoot: "..",
     script: renderBackToTopScript()
+  });
+}
+
+function renderCalendarPage(calendarCollections) {
+  const { buildDate, mainFeed, optionalFeeds, omittedEvents } = calendarCollections;
+  const exactCount = mainFeed.items.filter((item) => item.sourceType === "exact").length;
+  const recurringCount = mainFeed.items.filter((item) => item.sourceType === "recurring").length;
+  const calendarData = {
+    buildDate,
+    mainFeedTitle: mainFeed.title,
+    items: mainFeed.items
+  };
+
+  const omittedMarkup = omittedEvents.length
+    ? [
+        '<section class="listing-section">',
+        '  <details class="calendar-omitted-details">',
+        '    <summary class="calendar-omitted-summary">',
+        "      <span>Events coming soon</span>",
+        `      <strong>${omittedEvents.length} more</strong>`,
+        "    </summary>",
+        '    <div class="section-heading calendar-omitted-copy">',
+        "      <p>We know about these events, but we are still waiting on clearer date information before adding them to the calendar.</p>",
+        "    </div>",
+        '    <div class="calendar-note-list">',
+        omittedEvents
+          .map(
+            (item) => [
+              '<article class="calendar-note-card">',
+              `  <h3>${escapeHtml(item.name)}</h3>`,
+              `  <p>${escapeHtml(item.reason)}</p>`,
+              "</article>"
+            ].join("\n")
+          )
+          .join("\n"),
+        "    </div>",
+        "  </details>",
+        "</section>"
+      ].join("\n")
+    : "";
+
+  const body = [
+    '<main class="main-content">',
+    '  <section class="hero calendar-hero">',
+    "    <p class=\"eyebrow\">Events Calendar</p>",
+    "    <h1>Caribbean tech events calendar.</h1>",
+    "    <p class=\"hero-copy\">Find Caribbean tech events in one place, including confirmed dates and recurring meetups we can share with confidence. If an event's timing is still unclear, we leave it off the main calendar until more details are available.</p>",
+    '    <div class="hero-stats">',
+    `      <div class="stat"><strong>${mainFeed.items.length}</strong><span>events on the calendar</span></div>`,
+    `      <div class="stat"><strong>${exactCount}</strong><span>events with confirmed dates</span></div>`,
+    `      <div class="stat"><strong>${recurringCount}</strong><span>recurring meetups included</span></div>`,
+    "    </div>",
+    '    <div class="calendar-hero-actions">',
+    renderSubscribeMenu(mainFeed.links),
+    '      <a class="button" href="./print-events.html">Print events list</a>',
+    "    </div>",
+    `    <p class="status-note">Last updated: ${escapeHtml(formatUtcDate(new Date(`${buildDate}T00:00:00Z`)))} (UTC).</p>`,
+    "  </section>",
+    '  <section class="calendar-shell">',
+    '    <div class="calendar-board">',
+    '      <div class="calendar-toolbar">',
+    '        <button class="button button-reset calendar-nav-button" type="button" data-calendar-nav="prev">Previous</button>',
+    '        <div class="calendar-toolbar-copy">',
+    '          <p class="eyebrow">Month view</p>',
+    '          <h2 id="calendar-month-label">Calendar</h2>',
+    "        </div>",
+    '        <button class="button button-reset calendar-nav-button" type="button" data-calendar-nav="next">Next</button>',
+    "      </div>",
+    '      <div class="calendar-weekdays" aria-hidden="true">',
+    "        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>",
+    "      </div>",
+    '      <div class="calendar-grid" data-calendar-grid></div>',
+    "    </div>",
+    '    <aside class="map-sidepanel calendar-agenda">',
+    "      <h2>Upcoming</h2>",
+    '      <p class="hero-copy">The next twelve events coming up on the main calendar.</p>',
+    '      <div class="calendar-agenda-list" data-calendar-agenda></div>',
+    "    </aside>",
+    "  </section>",
+    omittedMarkup,
+    "</main>"
+  ].filter(Boolean).join("\n");
+
+  const script = [
+    `const calendarPageData = ${JSON.stringify(calendarData)};`,
+    "(() => {",
+    "  const monthLabel = document.querySelector('#calendar-month-label');",
+    "  const grid = document.querySelector('[data-calendar-grid]');",
+    "  const agenda = document.querySelector('[data-calendar-agenda]');",
+    "  const prevButton = document.querySelector('[data-calendar-nav=\"prev\"]');",
+    "  const nextButton = document.querySelector('[data-calendar-nav=\"next\"]');",
+    "  if (!monthLabel || !grid || !agenda || !prevButton || !nextButton) return;",
+    "  const today = new Date();",
+    "  let currentMonth = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1));",
+    "  const toDate = (value) => new Date(`${value}T00:00:00Z`);",
+    "  const toIso = (date) => date.toISOString().slice(0, 10);",
+    "  const addDays = (date, days) => { const next = new Date(date.getTime()); next.setUTCDate(next.getUTCDate() + days); return next; };",
+    "  const lastWeekdayOfMonth = (year, monthIndex, weekday) => { const last = new Date(Date.UTC(year, monthIndex + 1, 0)); const offset = (last.getUTCDay() - weekday + 7) % 7; return addDays(last, -offset); };",
+    "  const buildOccurrences = (items, rangeStart, rangeEnd) => {",
+    "    const occurrences = [];",
+    "    for (const item of items) {",
+    "      if (item.sourceType === 'exact') {",
+    "        const start = toDate(item.startDate);",
+    "        const end = toDate(item.endDate);",
+    "        if (end < rangeStart || start > rangeEnd) continue;",
+    "        occurrences.push({ ...item, occurrenceStart: item.startDate, occurrenceEnd: item.endDate });",
+    "        continue;",
+    "      }",
+    "      if (item.recurrenceType === 'biweekly_weekday') {",
+    "        let cursor = toDate(item.anchorDate);",
+    "        while (cursor < rangeStart) cursor = addDays(cursor, item.interval * 7);",
+    "        while (cursor <= rangeEnd) {",
+    "          occurrences.push({ ...item, occurrenceStart: toIso(cursor), occurrenceEnd: toIso(cursor) });",
+    "          cursor = addDays(cursor, item.interval * 7);",
+    "        }",
+    "        continue;",
+    "      }",
+    "      if (item.recurrenceType === 'monthly_last_weekday') {",
+    "        let year = rangeStart.getUTCFullYear();",
+    "        let month = rangeStart.getUTCMonth();",
+    "        while (year < rangeEnd.getUTCFullYear() || (year === rangeEnd.getUTCFullYear() && month <= rangeEnd.getUTCMonth())) {",
+    "          const occurrence = lastWeekdayOfMonth(year, month, item.weekday);",
+    "          if (occurrence >= rangeStart && occurrence <= rangeEnd) {",
+    "            occurrences.push({ ...item, occurrenceStart: toIso(occurrence), occurrenceEnd: toIso(occurrence) });",
+    "          }",
+    "          month += 1;",
+    "          if (month > 11) { month = 0; year += 1; }",
+    "        }",
+    "      }",
+    "    }",
+    "    return occurrences.sort((a, b) => a.occurrenceStart.localeCompare(b.occurrenceStart) || a.name.localeCompare(b.name));",
+    "  };",
+    "  const monthFormatter = new Intl.DateTimeFormat('en-US', { timeZone: 'UTC', month: 'long', year: 'numeric' });",
+    "  const dayFormatter = new Intl.DateTimeFormat('en-US', { timeZone: 'UTC', month: 'short', day: 'numeric', year: 'numeric' });",
+    "  const renderAgenda = () => {",
+    "    const rangeEnd = addDays(new Date(Date.UTC(today.getUTCFullYear() + 1, today.getUTCMonth(), today.getUTCDate())), 31);",
+    "    const upcoming = buildOccurrences(calendarPageData.items, new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate())), rangeEnd).slice(0, 12);",
+    "    if (!upcoming.length) { agenda.innerHTML = '<p class=\"hero-copy\">No upcoming events are on the default calendar yet.</p>'; return; }",
+    "    agenda.innerHTML = upcoming.map((occurrence) => {",
+    "      const start = toDate(occurrence.occurrenceStart);",
+    "      const end = toDate(occurrence.occurrenceEnd);",
+    "      const dateLabel = occurrence.occurrenceStart === occurrence.occurrenceEnd ? dayFormatter.format(start) : `${dayFormatter.format(start)} - ${dayFormatter.format(end)}`;",
+    "      const note = occurrence.inferenceNote ? `<p class=\"calendar-agenda-note\">${occurrence.inferenceNote}</p>` : '';",
+    "      const link = occurrence.url ? `<a class=\"text-link\" href=\"${occurrence.url}\" target=\"_blank\" rel=\"noreferrer\">Event link</a>` : '';",
+    "      return `<article class=\"calendar-agenda-item\"><p class=\"calendar-agenda-date\">${dateLabel}</p><h3>${occurrence.name}</h3><p class=\"community-description\">${occurrence.country}${occurrence.city ? `, ${occurrence.city}` : ''}</p>${note}${link}</article>`;",
+    "    }).join('');",
+    "  };",
+    "  const renderMonth = () => {",
+    "    const monthStart = new Date(Date.UTC(currentMonth.getUTCFullYear(), currentMonth.getUTCMonth(), 1));",
+    "    const monthEnd = new Date(Date.UTC(currentMonth.getUTCFullYear(), currentMonth.getUTCMonth() + 1, 0));",
+    "    const gridStart = addDays(monthStart, -monthStart.getUTCDay());",
+    "    const gridEnd = addDays(monthEnd, 6 - monthEnd.getUTCDay());",
+    "    const occurrences = buildOccurrences(calendarPageData.items, gridStart, gridEnd);",
+    "    const byDate = occurrences.reduce((map, occurrence) => {",
+    "      let cursor = toDate(occurrence.occurrenceStart);",
+    "      const last = toDate(occurrence.occurrenceEnd);",
+    "      while (cursor <= last) {",
+    "        const key = toIso(cursor);",
+    "        const bucket = map.get(key) || [];",
+    "        bucket.push(occurrence);",
+    "        map.set(key, bucket);",
+    "        cursor = addDays(cursor, 1);",
+    "      }",
+    "      return map;",
+    "    }, new Map());",
+    "    monthLabel.textContent = monthFormatter.format(monthStart);",
+    "    const cells = [];",
+    "    let cursor = new Date(gridStart.getTime());",
+    "    while (cursor <= gridEnd) {",
+    "      const iso = toIso(cursor);",
+    "      const dayItems = byDate.get(iso) || [];",
+    "      const isCurrentMonth = cursor.getUTCMonth() === currentMonth.getUTCMonth();",
+    "      const isToday = iso === toIso(new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate())));",
+    "      const badges = dayItems.map((occurrence) => `<a class=\"calendar-event-pill\" href=\"${occurrence.url || '#'}\"${occurrence.url ? ' target=\"_blank\" rel=\"noreferrer\"' : ''}>${occurrence.name}</a>`).join('');",
+    "      cells.push(`<article class=\"calendar-day${isCurrentMonth ? '' : ' is-muted'}${isToday ? ' is-today' : ''}\"><div class=\"calendar-day-head\"><span>${cursor.getUTCDate()}</span><strong>${dayItems.length ? `${dayItems.length} event${dayItems.length === 1 ? '' : 's'}` : ''}</strong></div><div class=\"calendar-day-events\">${badges || '<span class=\"calendar-empty-slot\">No events</span>'}</div></article>`);",
+    "      cursor = addDays(cursor, 1);",
+    "    }",
+    "    grid.innerHTML = cells.join('');",
+    "  };",
+    "  prevButton.addEventListener('click', () => { currentMonth = new Date(Date.UTC(currentMonth.getUTCFullYear(), currentMonth.getUTCMonth() - 1, 1)); renderMonth(); });",
+    "  nextButton.addEventListener('click', () => { currentMonth = new Date(Date.UTC(currentMonth.getUTCFullYear(), currentMonth.getUTCMonth() + 1, 1)); renderMonth(); });",
+    "  renderMonth();",
+    "  renderAgenda();",
+    "})();",
+    renderBackToTopScript()
+  ].join("\n");
+
+  return renderLayout({
+    title: "Caribbean Tech Events Calendar",
+    description: "Calendar view and subscription feeds for Caribbean tech events with dependable dates or recurrence rules.",
+    body,
+    relativeRoot: ".",
+    script
   });
 }
 
@@ -1057,6 +1665,14 @@ function renderStyles() {
     ".button:focus-visible, .country-card-cta:focus-visible { outline: 3px solid rgba(242, 116, 5, 0.45); outline-offset: 3px; }",
     ".button-update { background: var(--accent-warm); }",
     ".button-update:hover, .button-update:focus-visible { background: var(--accent-warm-strong); color: #fff; text-decoration: none; box-shadow: 0 14px 28px rgba(115, 23, 2, 0.24); }",
+    ".subscribe-menu { position: relative; width: fit-content; flex: 0 0 auto; }",
+    ".subscribe-menu[open] { z-index: 5; }",
+    ".subscribe-button { list-style: none; display: inline-flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 330px; padding: 18px 24px; border-radius: 18px; background: #ffffff; border: 2px solid rgba(3, 166, 120, 0.38); color: #0a8cdf; font-weight: 700; box-shadow: 0 18px 32px rgba(1, 64, 64, 0.08); cursor: pointer; }",
+    ".subscribe-button::-webkit-details-marker { display: none; }",
+    ".subscribe-button:hover, .subscribe-menu[open] .subscribe-button { border-color: #0a8cdf; box-shadow: 0 20px 36px rgba(1, 64, 64, 0.12); }",
+    ".subscribe-menu-list { position: absolute; top: calc(100% + 12px); left: 0; min-width: min(100vw - 32px, 330px); padding: 12px 0; background: #ffffff; border: 1px solid var(--border); border-radius: 18px; box-shadow: 0 20px 36px rgba(1, 64, 64, 0.14); display: grid; }",
+    ".subscribe-menu-list a { padding: 14px 20px; text-decoration: none; color: var(--text); }",
+    ".subscribe-menu-list a:hover, .subscribe-menu-list a:focus-visible { background: #f6fbfa; color: var(--accent-strong); outline: none; }",
     ".contribution-panel {",
     "  border-color: rgba(115, 23, 2, 0.42);",
     "  border-radius: 30px;",
@@ -1067,6 +1683,49 @@ function renderStyles() {
     ".section-stack { display: grid; gap: 20px; }",
     ".directory-section { display: grid; gap: 16px; }",
     ".section-heading { max-width: 96ch; }",
+    ".calendar-hero-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; margin-bottom: 14px; }",
+    ".calendar-shell { display: grid; gap: 20px; grid-template-columns: minmax(0, 1.62fr) minmax(260px, 0.72fr); align-items: start; }",
+    ".calendar-board { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 24px; box-shadow: var(--shadow); display: grid; gap: 16px; align-self: stretch; }",
+    ".calendar-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }",
+    ".calendar-toolbar-copy h2 { margin-bottom: 0; }",
+    ".calendar-nav-button { min-width: 116px; }",
+    ".calendar-weekdays { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; color: var(--accent-strong); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.78rem; }",
+    ".calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; }",
+    ".calendar-day { min-height: 150px; padding: 12px; border-radius: 18px; background: #fffdfa; border: 1px solid rgba(1, 64, 64, 0.1); display: grid; gap: 10px; align-content: start; min-width: 0; overflow: hidden; }",
+    ".calendar-day.is-muted { opacity: 0.58; }",
+    ".calendar-day.is-today { border-color: var(--accent-bright); box-shadow: inset 0 0 0 1px rgba(3, 166, 120, 0.22); }",
+    ".calendar-day-head { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; min-height: 28px; }",
+    ".calendar-day-head span { font-weight: 700; font-size: 1.05rem; }",
+    ".calendar-day-head strong { font-size: 0.72rem; color: var(--accent-warm); text-align: right; white-space: nowrap; flex: 0 0 auto; }",
+    ".calendar-day-events { display: grid; gap: 8px; margin-top: 4px; align-content: start; min-width: 0; }",
+    ".calendar-event-pill { display: flex; align-items: center; width: 100%; max-width: 100%; min-width: 0; padding: 8px 10px; border-radius: 12px; background: #ddf3ee; border: 1px solid #8ecabf; text-decoration: none; color: var(--accent-strong); font-size: 0.88rem; line-height: 1.25; overflow-wrap: anywhere; word-break: break-word; }",
+    ".calendar-event-pill:hover, .calendar-event-pill:focus-visible { background: #ffffff; border-color: var(--accent-bright); outline: none; }",
+    ".calendar-empty-slot { color: var(--muted); font-size: 0.84rem; }",
+    ".calendar-agenda { align-self: stretch; max-height: 100%; min-height: 0; overflow: hidden; display: grid; grid-template-rows: auto auto minmax(0, 1fr); }",
+    ".calendar-agenda-list { display: grid; gap: 14px; }",
+    ".calendar-shell > * { min-height: 0; }",
+    ".calendar-shell .calendar-agenda-list { overflow-y: auto; padding-right: 8px; max-height: 760px; scrollbar-width: thin; scrollbar-color: var(--accent-bright) rgba(1, 64, 64, 0.08); }",
+    ".calendar-shell .calendar-agenda-list::-webkit-scrollbar { width: 12px; }",
+    ".calendar-shell .calendar-agenda-list::-webkit-scrollbar-track { background: rgba(1, 64, 64, 0.08); border-radius: 999px; }",
+    ".calendar-shell .calendar-agenda-list::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--accent-bright), var(--accent)); border-radius: 999px; border: 2px solid rgba(255, 253, 248, 0.95); }",
+    ".calendar-shell .calendar-agenda-list::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, var(--accent), var(--accent-strong)); }",
+    ".calendar-agenda-item { padding-bottom: 14px; border-bottom: 1px solid rgba(1, 64, 64, 0.12); }",
+    ".calendar-agenda-item:last-child { padding-bottom: 0; border-bottom: 0; }",
+    ".calendar-agenda-item h3 { margin-bottom: 6px; }",
+    ".calendar-agenda-date { margin-bottom: 8px; color: var(--accent-warm); font-weight: 700; }",
+    ".calendar-agenda-note { margin-bottom: 8px; color: var(--muted); font-size: 0.92rem; }",
+    ".calendar-note-list { display: grid; gap: 14px; }",
+    ".calendar-omitted-details { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; box-shadow: var(--shadow); overflow: hidden; }",
+    ".calendar-omitted-summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 24px; cursor: pointer; font-size: clamp(1.1rem, 2vw, 1.4rem); font-weight: 700; color: var(--accent-strong); }",
+    ".calendar-omitted-summary::-webkit-details-marker { display: none; }",
+    ".calendar-omitted-summary strong { font-size: 0.9rem; color: var(--accent-warm); }",
+    ".calendar-omitted-summary:hover, .calendar-omitted-summary:focus-visible { background: #f8f5ed; outline: none; }",
+    ".calendar-omitted-copy { padding: 0 24px 8px; }",
+    ".calendar-omitted-details .calendar-note-list { padding: 0 24px 24px; }",
+    ".calendar-note-card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 18px 20px; box-shadow: var(--shadow); }",
+    ".calendar-note-card h3 { margin-bottom: 8px; }",
+    ".calendar-note-card p { margin-bottom: 0; color: var(--muted); }",
+    ".calendar-option-card .subscribe-menu { margin-top: 10px; }",
     ".country-count, .country-status { padding-bottom: 20px; }",
     ".country-breakdown { color: var(--muted); margin-top: -12px; padding-bottom: 16px; }",
     ".country-grid, .community-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }",
@@ -1153,6 +1812,12 @@ function renderStyles() {
     "  .country-search-field { width: 100%; }",
     "  .country-search input { width: 100%; min-width: 0; }",
     "  .hero, .summary-panel, .country-hero { padding: 20px; }",
+    "  .calendar-shell { grid-template-columns: 1fr; }",
+    "  .calendar-toolbar { flex-direction: column; align-items: stretch; }",
+    "  .calendar-nav-button, .subscribe-button { width: 100%; min-width: 0; }",
+    "  .calendar-weekdays { display: none; }",
+    "  .calendar-grid { grid-template-columns: 1fr; }",
+    "  .calendar-day { min-height: 0; }",
     "  .back-to-top { right: 16px; bottom: 16px; }",
     "  .map-section { grid-template-columns: 1fr; }",
     "  .directory-map { min-height: 460px; }",
@@ -1225,11 +1890,35 @@ function main() {
   const events = sortCommunities(readJson(EVENTS_PATH));
   const communitiesByCountry = buildCommunitiesByCountry(communities);
   const eventsByCountry = buildEventsByCountry(events);
+  const calendarCollections = buildCalendarCollections(events);
 
   resetOutputDir();
   fs.writeFileSync(STYLES_PATH, renderStyles(), "utf8");
   writeFile("index.html", renderHomePage(communities, events, communitiesByCountry, eventsByCountry));
+  writeFile(CALENDAR_PATH, renderCalendarPage(calendarCollections));
   writeFile("map.html", renderMapPage(communitiesByCountry, eventsByCountry));
+  writeFile(CALENDAR_FEED_PATH, renderIcsFeed({
+    title: calendarCollections.mainFeed.title,
+    description: "Calendar feed of Caribbean tech events with dependable exact dates or recurrence rules.",
+    items: calendarCollections.mainFeed.items
+  }));
+  writeFile(CALENDAR_OUTLOOK_FEED_PATH, renderIcsFeed({
+    title: calendarCollections.mainFeed.title,
+    description: "Calendar feed of Caribbean tech events with dependable exact dates or recurrence rules.",
+    items: calendarCollections.mainFeed.items
+  }));
+  for (const feed of calendarCollections.optionalFeeds) {
+    writeFile(feed.icsPath, renderIcsFeed({
+      title: feed.label,
+      description: `${feed.label} calendar option from the Caribbean tech directory.`,
+      items: [feed.item]
+    }));
+    writeFile(feed.icsPath.replace(/\.ics$/, "-outlook.ics"), renderIcsFeed({
+      title: feed.label,
+      description: `${feed.label} calendar option from the Caribbean tech directory.`,
+      items: [feed.item]
+    }));
+  }
   const printCommunitiesSections = DIRECTORY_SECTIONS.map((section) => renderPrintCommunitiesSection(section, communitiesByCountry))
     .filter(Boolean)
     .join("\n");
