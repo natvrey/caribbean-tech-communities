@@ -186,6 +186,15 @@ function validateEventRecord(record, index, seenLinks) {
     fail(`${label}: 'city' must be a non-empty string when provided.`);
   }
 
+  if (
+    record.calendar_dates !== undefined &&
+    (!Array.isArray(record.calendar_dates) ||
+      record.calendar_dates.length === 0 ||
+      record.calendar_dates.some((item) => !isNonEmptyString(item) || !/^\d{4}-\d{2}-\d{2}$/.test(item)))
+  ) {
+    fail(`${label}: 'calendar_dates' must be a non-empty array of YYYY-MM-DD strings when provided.`);
+  }
+
   validateLinks(record, label, seenLinks);
 }
 

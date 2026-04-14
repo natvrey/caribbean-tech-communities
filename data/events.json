@@ -230,8 +230,20 @@
   {
     "name": "WiTC Monthly Meetup",
     "country": "Regional",
+    "city": "Virtual",
     "schedule": "Last Saturday or Sunday of each month",
     "frequency": "Monthly meetup",
+    "calendar_dates": [
+      "2026-02-28",
+      "2026-03-29",
+      "2026-04-25",
+      "2026-05-30",
+      "2026-06-27",
+      "2026-07-26",
+      "2026-08-30",
+      "2026-09-27",
+      "2026-10-31"
+    ],
     "host_community": "Women in Tech Caribbean",
     "links": [
       {
@@ -239,7 +251,7 @@
         "url": "https://discord.gg/VTJHjnxDxW"
       }
     ],
-    "description": "Recurring regional meetup hosted by Women in Tech Caribbean for community building, networking, and conversations that support women in tech across the Caribbean and the diaspora."
+    "description": "Virtual recurring regional meetup hosted by Women in Tech Caribbean for community building, networking, and conversations that support women in tech across the Caribbean and the diaspora."
   },
   {
     "name": "NCTI ICT Conference",
