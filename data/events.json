@@ -276,5 +276,19 @@
       }
     ],
     "description": "Virtual robotics event listing from the National Centre of Technological Innovation in Saint Vincent and the Grenadines, with current details and participation information published on the event page."
+  },
+  {
+    "name": "WiDS TT 2026 Datathon",
+    "country": "Trinidad and Tobago",
+    "schedule": "January 27 - May 1, 2026",
+    "frequency": "Annual datathon program",
+    "host_community": "Women in Data Science Trinidad and Tobago",
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://widstt.com/2026-datathon/"
+      }
+    ],
+    "description": "Women in Data Science Trinidad and Tobago datathon program supporting the 2026 WiDS challenge, Predicting Wildfire Impact: From Infrastructure to Equity, with workshops, mentorship, and regional events for participants building practical data science skills."
   }
 ]

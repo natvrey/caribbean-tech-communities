@@ -18,4 +18,4 @@ Regional status: CARICOM Member State | CSME Participant
 
 | Event | City | Date | Frequency | Host Community | Description | Attend |
 | --- | --- | --- | --- | --- | --- | --- |
-| No event listings yet | - | - | - | - | Submit the first event listing for this area. | - |
+| WiDS TT 2026 Datathon | - | January 27 - May 1, 2026 | Annual datathon program | Women in Data Science Trinidad and Tobago | Women in Data Science Trinidad and Tobago datathon program supporting the 2026 WiDS challenge, Predicting Wildfire Impact: From Infrastructure to Equity, with workshops, mentorship, and regional events for participants building practical data science skills. | [Website](https://widstt.com/2026-datathon/) |
