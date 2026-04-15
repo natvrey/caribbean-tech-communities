@@ -44,16 +44,17 @@
   {
     "name": "BizTech Conference",
     "country": "Jamaica",
-    "schedule": "Date varies",
-    "frequency": "Recurring conference",
+    "city": "Kingston",
+    "schedule": "March 19 - 20, 2026",
+    "frequency": "Annual conference",
     "host_community": "Jamaica Technology & Digital Alliance (JTDA)",
     "links": [
       {
         "label": "Website",
-        "url": "https://www.jtda.org/events"
+        "url": "https://biztechconf.com/"
       }
     ],
-    "description": "Business and technology conference by the Jamaica Technology & Digital Alliance bringing together industry experts, entrepreneurs, investors, and stakeholders to explore trends, innovation, and digital transformation across Jamaica and the wider Caribbean."
+    "description": "JTDA's flagship technology conference bringing industry leaders, startups, investors, policymakers, and innovators together in Kingston and online to explore digital transformation, trust, resilience, startup growth, and the Caribbean's technology future."
   },
   {
     "name": "JGDS Virtual Meetup",
