@@ -559,6 +559,12 @@ function escapeHtml(value) {
     .replace(/'/g, "&#39;");
 }
 
+function escapeInlineScript(value) {
+  return String(value)
+    .replace(/<\/script/gi, "<\\/script")
+    .replace(/<!--/g, "<\\!--");
+}
+
 function renderCommunityCount(count) {
   return `${count} ${count === 1 ? "community" : "communities"}`;
 }
@@ -1109,7 +1115,7 @@ function renderLayout({ title, description, body, relativeRoot, script, headExtr
     '    <button class="back-to-top button-reset" type="button" aria-label="Back to top" hidden>Back to top</button>',
     "  </div>",
     bodyEnd,
-    script ? `  <script>${script}</script>` : "",
+    script ? `  <script>${escapeInlineScript(script)}</script>` : "",
     "</body>",
     "</html>",
     ""

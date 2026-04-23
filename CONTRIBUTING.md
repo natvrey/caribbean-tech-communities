@@ -10,10 +10,14 @@ To contribute:
 2. Add a new record or update existing record(s) with current information
 3. Run `npm run validate`
 4. Run `npm run generate`
-5. Commit the updated data and generated files
-6. Open a pull request
+5. Run `npm run build:site`
+6. Run `npm test`
+7. Commit the updated data and generated files
+8. Open a pull request
 
 If you do not want to open a pull request, use the [directory submission form](https://github.com/natvrey/caribbean-tech-communities/issues/new?template=directory-submission.yml) to submit a new community, submit a new event, or update outdated information in an existing listing.
+
+For a brief explanation of the static site regression suite, see [tests/README.md](tests/README.md).
 
 ## Record Schema
 
