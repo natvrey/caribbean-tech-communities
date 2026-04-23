@@ -10,7 +10,7 @@ To contribute:
 2. Add a new record or update existing record(s) with current information
 3. Run `npm run validate`
 4. Run `npm run generate`
-5. Commit the updated data and generated markdown files
+5. Commit the updated data and generated files
 6. Open a pull request
 
 If you do not want to open a pull request, use the [directory submission form](https://github.com/natvrey/caribbean-tech-communities/issues/new?template=directory-submission.yml) to submit a new community, submit a new event, or update outdated information in an existing listing.
@@ -152,8 +152,8 @@ Use one of the supported directory scopes:
 
 ## Maintainer Direction
 
-Treat this repository as a dataset first, README second. Manual edits to generated markdown files are not the preferred contribution path.
+Treat this repository as a dataset first, generated output second. Manual edits to generated files are not the preferred contribution path.
 
-If a contributor updates `data/communities.json` or `data/events.json`, they should also run `npm run validate` and `npm run generate` before opening a pull request.
+If a contributor updates `data/communities.json` or `data/events.json`, they should also run `npm run validate`, `npm run generate`, and `npm run build:site` before opening a pull request.
 
 If you are contributing from Windows, this repository uses `.gitattributes` to keep generated files and documentation on consistent line endings. If Git shows many files as modified after generation, run `git add --renormalize .` once and review the diff before committing.
