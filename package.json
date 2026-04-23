@@ -6,6 +6,7 @@
   "scripts": {
     "generate": "node scripts/generate-readme.js",
     "serve:site": "node scripts/serve-dist.js",
+    "test": "node tests/static-site.test.js",
     "validate": "node scripts/validate-data.js",
     "build:site": "node scripts/generate-site.js"
   }
