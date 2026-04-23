@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 
@@ -261,6 +262,16 @@ function checkForDuplicates(existingRecords, record, listingTypeLabel) {
   }
 }
 
+function appendGithubOutput(name, value) {
+  const normalizedValue = String(value || "");
+  let delimiter = `__CODEX_${crypto.randomUUID()}__`;
+  while (normalizedValue.includes(delimiter)) {
+    delimiter = `__CODEX_${crypto.randomUUID()}__`;
+  }
+
+  fs.appendFileSync(process.env.GITHUB_OUTPUT, `${name}<<${delimiter}\n${normalizedValue}\n${delimiter}\n`);
+}
+
 function writeOutputs(record, submissionType, listingType) {
   if (!process.env.GITHUB_OUTPUT) {
     return;
@@ -272,17 +283,13 @@ function writeOutputs(record, submissionType, listingType) {
       ? `Update ${listingType.toLowerCase()} submission`
       : `Add ${listingType.toLowerCase()} submission`;
   const prTitle = `${prPrefix}: ${record.name}`;
-  const lines = [
-    `branch_name<<__EOF__\n${branchName}\n__EOF__`,
-    `listing_name<<__EOF__\n${record.name}\n__EOF__`,
-    `listing_type<<__EOF__\n${listingType}\n__EOF__`,
-    `country<<__EOF__\n${record.country}\n__EOF__`,
-    `submission_type<<__EOF__\n${submissionType}\n__EOF__`,
-    `pr_title<<__EOF__\n${prTitle}\n__EOF__`,
-    `issue_url<<__EOF__\n${ISSUE_URL}\n__EOF__`
-  ];
-
-  fs.appendFileSync(process.env.GITHUB_OUTPUT, `${lines.join("\n")}\n`);
+  appendGithubOutput("branch_name", branchName);
+  appendGithubOutput("listing_name", record.name);
+  appendGithubOutput("listing_type", listingType);
+  appendGithubOutput("country", record.country);
+  appendGithubOutput("submission_type", submissionType);
+  appendGithubOutput("pr_title", prTitle);
+  appendGithubOutput("issue_url", ISSUE_URL);
 }
 
 function main() {
