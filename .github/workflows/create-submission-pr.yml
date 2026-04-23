@@ -49,7 +49,7 @@ jobs:
       - name: Validate dataset
         run: npm run validate
 
-      - name: Generate markdown files
+      - name: Generate directory markdown
         run: npm run generate
 
       - name: Create or update pull request
